@@ -12,7 +12,7 @@ var apimanager = function(database, app)	{
 };
 
 apimanager.prototype.apibase		=	function(req, res)	{
-	
+	res.json({"status":"NOK","error":"No Command"});
 };
 
 apimanager.prototype.login			=	function(req, res)	{
@@ -27,7 +27,7 @@ apimanager.prototype.login			=	function(req, res)	{
 				}
 			});
 		}else{
-			res.render('login',{ message: "Invalid username or password!"});
+			res.json({"status":"NOK","error":"Invalid username or password!"});
 		}
 	});
 };
