@@ -27,6 +27,100 @@ exports.Schemas = function(mg)	{
 	machineSchema.methods.GetMounts			=	function(cb)	{	return this.model("Mounts")		.find({"machineuuid":this.uuid}, cb); };
 	machineSchema.methods.GetDRBDs			=	function(cb)	{	return this.model("DRBD")		.find({"machineuuid":this.uuid}, cb); };
 	machineSchema.methods.GetMYSQLs			=	function(cb)	{	return this.model("MYSQL")		.find({"machineuuid":this.uuid}, cb); };
+	
+	/** Clean functions **/
+	machineSchema.methods.CleanDevices		=	function(cb)	{
+		var thisschema = this;
+		this.GetDevices(function(data)	{
+			if(data.length > 0)		{
+					data[0].remove(function (err, product) {
+						thisschema.CleanDevices(cb);
+					});
+			}else
+				cb();
+		});
+	};
+	machineSchema.methods.CleanEthernets	=	function(cb)	{
+		var thisschema = this;
+		this.GetEthernets(function(data)	{
+			if(data.length > 0)		{
+					data[0].remove(function (err, product) {
+						thisschema.CleanEthernets(cb);
+					});
+			}else
+				cb();
+		});
+	};
+	machineSchema.methods.CleanDisks		=	function(cb)	{
+		var thisschema = this;
+		this.GetDisks(function(data)	{
+			if(data.length > 0)		{
+					data[0].remove(function (err, product) {
+						thisschema.CleanDevices(cb);
+					});
+			}else
+				cb();
+		});
+	};	
+	machineSchema.methods.CleanMounts		=	function(cb)	{
+		var thisschema = this;
+		this.GetMounts(function(data)	{
+			if(data.length > 0)		{
+					data[0].remove(function (err, product) {
+						thisschema.CleanMounts(cb);
+					});
+			}else
+				cb();
+		});
+	};
+	machineSchema.methods.CleanDRBDs		=	function(cb)	{
+		var thisschema = this;
+		this.GetDRBDs(function(data)	{
+			if(data.length > 0)		{
+					data[0].CleanConnections(function()	{			
+						data[0].remove(function (err, product) {
+							thisschema.CleanDRBDs(cb);
+						});
+					})
+			}else
+				cb();
+		});
+	};
+	machineSchema.methods.CleanMYSQLs		=	function(cb)	{
+		var thisschema = this;
+		this.GetMYSQLs(function(data)	{
+			if(data.length > 0)		{
+					data[0].remove(function (err, product) {
+						thisschema.CleanMYSQLs(cb);
+					});
+			}else
+				cb();
+		});
+	}
+
+	machineSchema.methods.CleanMachineData	=	function(cb)	{
+		/** TODO: Better way to clean **/
+		var thisschema = this;
+		console.log("Cleaning Devices");
+		this.CleanDevices(function()	{
+			console.log("Cleaning Ethernets");
+			thisschema.CleanEthernets(function()	{
+				console.log("Cleaning Disks");
+				thisschema.CleanDisks(function()	{
+					console.log("Cleaning Mounts");
+					thisschema.CleanMounts(function()	{
+						thisschema.CleanDRBDs(function()	{
+							console.log("Cleaning MySQLs");
+							thisschema.CleanMYSQLs(function()	{
+								console.log("Clean finish");
+								cb();
+							});
+						});
+					});
+				});
+			});
+		});
+	};
 
 	var deviceSchema = new Schema({
 		machineuuid			: { type: String, index: true },
@@ -73,6 +167,18 @@ exports.Schemas = function(mg)	{
 	});
 
 	drbdSchema.methods.GenUUID          	= 	function()  	{  	this.uuid = uuid.v1();  };
+	drbdSchema.methods.GetConnections		=	function(cb)	{	return this.model("DRBDCONN")		.find({"drbduuid":this.uuid}, cb); };
+	drbdSchema.methods.CleanConnections		=	function(cb)	{
+		var thisschema = this;
+		this.GetConnections(function(data)	{
+			if(data.length > 0)		{
+				data[0].remove(function (err, product) {
+					thisschema.CleanConnections(cb);
+				});
+			}else
+				cb();
+		});
+	};
 
 	var drbdconnSchema = new Schema({
 		drbduuid			: { type: String, index: true },

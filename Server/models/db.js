@@ -217,7 +217,67 @@ database.prototype.AddMYSQL	=	function(machineuuid, masterhost, masteruser, slav
 		}else
 			cb(null,"Machine ("+machineuuid+" doesnt not exists.");
 	});
+};
+
+database.prototype.UpdateMachine	=	function(uuid, data, cb)	{
+	var dbthis = this;
+	this.Machines.find({"uuid":uuid}, function(err, machines)	{
+		if(machines != null && machines.length > 0 )	{
+			var m 			= 	machines[0];
+			m.name 			= 	data.name;
+			m.processor 	= 	data.processor;
+			m.total_memory	=	data.total_memory;
+			m.free_memory	=	data.free_memory;
+			m.total_swap	=	data.total_swap;
+			m.free_swap		=	data.free_swap;
+			m.current_status=	1;
+			m.uptime		=	data.uptime;
+			m.lastupdate	=	Date.now();
+			m.save(function()	{
+				m.CleanMachineData(function()	{
+					dbthis._AddMachineData(uuid, data, cb);
+				});
+			});
+		}else{
+			dbthis.AddMachine(data.owneruuid, data.name, data.processor, data.total_memory, data.free_memory, data.total_swap, data.free_swap, 1, data.uptime, function(machine)	{
+				dbthis._AddMachineData(machine.uuid, data, cb);
+			});
+		}
+	});
+};
+database.prototype._AddMachineData	=	function(uuid, data, cb)	{
+	var dbthis = this;
+	//	Add Devices
+	if(data.hasOwnProperty("devices"))
+		for(var i in data.devices)	
+			this.AddDevice(uuid, data.devices[i].name, data.devices[i].type);
+	//	Add Ethernets
+	if(data.hasOwnProperty("ethernets"))
+		for(var i in data.ethernets)	
+			this.AddDevice(uuid,  data.ethernets[i].iface,  data.ethernets[i].address,  data.ethernets[i].broadcast,  data.ethernets[i].netmask,  data.ethernets[i].rxbytes,  data.ethernets[i].txbytes);
+	//	Add Disks
+	if(data.hasOwnProperty("disks"))
+		for(var i in data.disks)	
+			this.AddDevice(uuid, data.disks[i].family, data.disks[i].capacity, data.disks[i].ontime, data.disks[i].powercycles, data.disks[i].readerrors, data.disks[i].realocatedsectors, data.disks[i].diskstatus, data.disks[i].device);
+	//	Add Mounts
+	if(data.hasOwnProperty("mounts"))
+		for(var i in data.mounts)	
+			this.AddDevice(uuid, data.mounts[i].mountpoint, data.mounts[i].device, data.mounts[i].used, data.mounts[i].free, data.mounts[i].size);
+	//	Add DRBDs
+	if(data.hasOwnProperty("drbds"))
+		for(var i in data.drbds)	
+			this.AddDevice(uuid, data.drbds[i].version, data.drbds[i].connections, function(drbd, msg, err)	{
+				if(drbd != null)	{
+					if(data.drbds[i].hasOwnProperty("connections"))
+						for(var z in data.drbds[i].connections)
+							dbthis.AddDRBDCONN(drbd.uuid, data.drbds[i].connections[z].cs, data.drbds[i].connections[z].ro, data.drbds[i].connections[z].ds, data.drbds[i].connections[z].ns);
+					
+				}
+			});
+	//	Add MySQLs
+	if(data.hasOwnProperty("mysqls"))
+		for(var i in data.mysqls)	
+			this.AddDevice(uuid, data.mysqls[i].masterhost, data.mysqls[i].masteruser, data.mysqls[i].slavestate, data.mysqls[i].salveiorunning, data.mysqls[i].slavesqlrunning);
+	cb();
 }
-
-
 exports.Database = database;
