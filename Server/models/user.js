@@ -25,7 +25,8 @@ exports.Schemas = function(mg) {
     sessionkey  : String,
     useruuid    : { type: String, index: true}
     startdate   : Number,
-    maxdays     : Number 
+    maxdays     : Number,
+    level       : Number
   });
 
   sessionSchema.methods.GenKey    = function()  {    this.sessionkey = uuid.v1();  };

@@ -78,6 +78,39 @@ database.prototype.TestLogin	=	function(username, password, cb)	{
 	});
 };
 
+database.prototype.CheckSession =	function(sessionkey, cb)	{
+	this.Sessions.find({"sessionkey":sessionkey}, function(err, data)	{
+		if(data.length > 0)	{
+			if(data[0].IsValid())	{
+				cb(true, data[0]);
+			}else{
+				data[0].remove();
+				cb(false);
+			}
+		}else
+			cb(false);
+	});
+};
+
+database.prototype.CreateSession=	function(useruuid, level, maxdays, cb)	{
+	this.CheckUserUUID(useruuid, function(ok)	{
+		if(ok)	{
+			var session = new this.Sessions({
+				"useruuid"		: useruuid,
+				"level"			: level,
+				"maxdays"		: maxdays,
+				"startdate"		: Date.now()
+			});
+			session.GenKey();
+			session.save(function(err) 	{
+				if(err) cb(null, "Save error", err);
+				cb(session);
+			});
+		}else
+			cb(null, "User ("+useruuid+") does not exists.");
+	});
+};
+
 database.prototype.AddMachine	=	function(owneruuid, name, processor, total_memory, free_memory, total_swap, free_swap, current_status, uptime, cb)	{
 	this.CheckUserUUID(owneruuid, function(ok)	{
 		if(ok)	{
@@ -99,7 +132,7 @@ database.prototype.AddMachine	=	function(owneruuid, name, processor, total_memor
 				cb(machine);
 			});	
 		}else
-			cb(null,"User ("+owneruuid+" doesnt not exists.");
+			cb(null,"User ("+owneruuid+" does not exists.");
 	}
 };
 
@@ -116,7 +149,7 @@ database.prototype.AddDevice	=	function(machineuuid, name, type, cb)	{
 				cb(device);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" doesnt not exists.");
+			cb(null,"Machine ("+machineuuid+" does not exists.");
 	}
 };
 
@@ -137,7 +170,7 @@ database.prototype.AddEthernet	=	function(machineuuid, iface, address, broadcast
 				cb(ethernet);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" doesnt not exists.");
+			cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
@@ -160,7 +193,7 @@ database.prototype.AddDisk	=	function(machineuuid, family, capacity, ontime, pow
 				cb(disk);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" doesnt not exists.");
+			cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
@@ -180,7 +213,7 @@ database.prototype.AddMount	=	function(machineuuid, mountpoint, device, used, fr
 				cb(mount);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" doesnt not exists.");
+			cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
@@ -198,7 +231,7 @@ database.prototype.AddDRBD	=	function(machineuuid, version, connections, cb)	{
 				cb(drbd);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" doesnt not exists.");
+			cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
@@ -218,7 +251,7 @@ database.prototype.AddDRBDCONN	=	function(drbduuid, connid, cs, ro, ds, ns, cb)	
 				cb(drbd);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" doesnt not exists.");
+			cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
@@ -238,7 +271,7 @@ database.prototype.AddMYSQL	=	function(machineuuid, masterhost, masteruser, slav
 				cb(mysql);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" doesnt not exists.");
+			cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
