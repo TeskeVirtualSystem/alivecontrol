@@ -23,15 +23,19 @@ exports.Schemas = function(mg) {
 
   var sessionSchema = new Schema({
     sessionkey  : String,
-    useruuid    : { type: String, index: true}
+    useruuid    : { type: String, index: true},
     startdate   : Number,
     maxdays     : Number,
     level       : Number
   });
 
-  sessionSchema.methods.GenKey    = function()  {    this.sessionkey = uuid.v1();  };
-  sessionSchema.methods.IsValid   = function()  {   
+  sessionSchema.methods.GenKey      = function()  {    this.sessionkey = uuid.v1();  };
+  sessionSchema.methods.IsValid     = function()  {   
       return (maxdays == -1) || ( startdate + (maxdays * 24 * 60 * 60 * 1000) > Date.now());
+  };
+  sessionSchema.methods.UpdateDate  = function()  {
+    this.startdate = Date.now();
+    this.save();
   };
   return {"userSchema":userSchema,"sessionSchema":sessionSchema};
 }

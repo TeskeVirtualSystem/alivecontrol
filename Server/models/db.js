@@ -22,7 +22,7 @@ var database = function(url)	{
 	this.DRBD 		=	this._mg.model("DRBD", 		this.mscheme.drbdSchema); 
 	this.DRBDCONN	=	this._mg.model("DRBDCONN", 	this.mscheme.drbdconnSchema); 
 	this.MYSQL		=	this._mg.model("MYSQL", 	this.mscheme.mysqlSchema); 
-	return this;
+	//return this;
 };
 
 database.prototype.CheckSessions	=	function()	{
@@ -62,7 +62,10 @@ database.prototype.AddUser		=	function(username, password, name, cb)	{
 	var user = new this.Users({"username":username,"name":name});
 	user.GenUUID();
 	user.SetPassword(password);
-	user.save(cb);
+	user.save(function(err)	{
+		if(err)	cb(null,"Save error", err);
+		cb(user);
+	});
 	return user;
 };
 
@@ -133,7 +136,7 @@ database.prototype.AddMachine	=	function(owneruuid, name, processor, total_memor
 			});	
 		}else
 			cb(null,"User ("+owneruuid+" does not exists.");
-	}
+	});
 };
 
 database.prototype.AddDevice	=	function(machineuuid, name, type, cb)	{
@@ -150,7 +153,7 @@ database.prototype.AddDevice	=	function(machineuuid, name, type, cb)	{
 			});	
 		}else
 			cb(null,"Machine ("+machineuuid+" does not exists.");
-	}
+	});
 };
 
 database.prototype.AddEthernet	=	function(machineuuid, iface, address, broadcast, netmask, rxbytes, txbytes, cb)	{
@@ -277,29 +280,37 @@ database.prototype.AddMYSQL	=	function(machineuuid, masterhost, masteruser, slav
 
 database.prototype.UpdateMachine	=	function(uuid, data, cb)	{
 	var dbthis = this;
-	this.Machines.find({"uuid":uuid}, function(err, machines)	{
-		if(machines != null && machines.length > 0 )	{
-			var m 			= 	machines[0];
-			m.name 			= 	data.name;
-			m.processor 	= 	data.processor;
-			m.total_memory	=	data.total_memory;
-			m.free_memory	=	data.free_memory;
-			m.total_swap	=	data.total_swap;
-			m.free_swap		=	data.free_swap;
-			m.current_status=	1;
-			m.uptime		=	data.uptime;
-			m.lastupdate	=	Date.now();
-			m.save(function()	{
-				m.CleanMachineData(function()	{
-					dbthis._AddMachineData(uuid, data, cb);
+	if(uuid == null)	{
+		dbthis.AddMachine(data.owneruuid, data.name, data.processor, data.total_memory, data.free_memory, data.total_swap, data.free_swap, 1, data.uptime, function(machine)	{
+			data.uuid = machine.uuid;
+			dbthis._AddMachineData(machine.uuid, data, cb);
+		});		
+	}else{
+		this.Machines.find({"uuid":uuid}, function(err, machines)	{
+			if(machines != null && machines.length > 0 )	{
+				var m 			= 	machines[0];
+				m.name 			= 	data.name;
+				m.processor 	= 	data.processor;
+				m.total_memory	=	data.total_memory;
+				m.free_memory	=	data.free_memory;
+				m.total_swap	=	data.total_swap;
+				m.free_swap		=	data.free_swap;
+				m.current_status=	1;
+				m.uptime		=	data.uptime;
+				m.lastupdate	=	Date.now();
+				m.save(function()	{
+					m.CleanMachineData(function()	{
+						dbthis._AddMachineData(uuid, data, cb);
+					});
 				});
-			});
-		}else{
-			dbthis.AddMachine(data.owneruuid, data.name, data.processor, data.total_memory, data.free_memory, data.total_swap, data.free_swap, 1, data.uptime, function(machine)	{
-				dbthis._AddMachineData(machine.uuid, data, cb);
-			});
-		}
-	});
+			}else{
+				dbthis.AddMachine(data.owneruuid, data.name, data.processor, data.total_memory, data.free_memory, data.total_swap, data.free_swap, 1, data.uptime, function(machine)	{
+					data.uuid = machine.uuid;
+					dbthis._AddMachineData(machine.uuid, data, cb);
+				});
+			}
+		});
+	}
 };
 database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 	var dbthis = this;
@@ -340,6 +351,6 @@ database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 	if(data.hasOwnProperty("mysqls"))
 		for(var i in data.mysqls)	
 			this.AddMYSQL(uuid, data.mysqls[i].masterhost, data.mysqls[i].masteruser, data.mysqls[i].slavestate, data.mysqls[i].salveiorunning, data.mysqls[i].slavesqlrunning);
-	cb();
+	cb(uuid, data);
 }
 exports.Database = database;
