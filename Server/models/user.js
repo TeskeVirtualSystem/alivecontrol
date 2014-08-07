@@ -1,6 +1,9 @@
 var mongoose      = require('mongoose');
 var uuid          = require('node-uuid');
 var bcrypt        = require('bcryptjs');
+var crypto        = require('crypto');
+
+function sha(data)          { return crypto.createHash('sha1').digest("hex");   };
 
 exports.Schemas = function(mg) {
   var Schema        = mg.Schema;
@@ -17,6 +20,18 @@ exports.Schemas = function(mg) {
   userSchema.methods.SetPassword      = function(password)  {
     this.password = bcrypt.hashSync(password,  8);
   }
-  return {"userSchema":userSchema};;
+
+  var sessionSchema = new Schema({
+    sessionkey  : String,
+    useruuid    : { type: String, index: true}
+    startdate   : Number,
+    maxdays     : Number 
+  });
+
+  sessionSchema.methods.GenKey    = function()  {    this.sessionkey = uuid.v1();  };
+  sessionSchema.methods.IsValid   = function()  {   
+      return (maxdays == -1) || ( startdate + (maxdays * 24 * 60 * 60 * 1000) > Date.now());
+  };
+  return {"userSchema":userSchema,"sessionSchema":sessionSchema};
 }
 
