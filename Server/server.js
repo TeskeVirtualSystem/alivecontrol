@@ -1,5 +1,5 @@
-var express 			= 	require('express');
-var app					= 	express();
+var express 			  = 	require('express');
+var app					    = 	express();
 var cookieParser 		= 	require('cookie-parser');
 var bodyParser 			= 	require('body-parser');
 
@@ -7,8 +7,10 @@ var bodyParser 			= 	require('body-parser');
 var http        		=   require('http');
 var httpserver  		=   http.createServer(app);
 
-var _db_				=	require("./models/db.js");
-var db 					= 	new _db_.Database();
+var _db_				    =	  require("./models/db.js");
+var db 					    = 	new _db_.Database();
+var apiman          =   requre("./apimanager.js");
+var api             =   new apiman.api(db,app);
 
 console.log(db);
 

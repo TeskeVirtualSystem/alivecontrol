@@ -1,6 +1,7 @@
 
 
 var apimanager = function(database, app)	{
+	console.log("Initializing API Manager")
 	this.db 	= database;
 	this.app 	= app;
 
@@ -9,10 +10,34 @@ var apimanager = function(database, app)	{
 	app.post("/api/login"			, 	this.login);
 	app.post("/api/logout"			, 	this.logout);
 	app.post("/api/updatemachine"	, 	this.updatemachine);
+	app.post("/api/adduser"			,	this.adduser);
 };
 
 apimanager.prototype.apibase		=	function(req, res)	{
 	res.json({"status":"NOK","error":"No Command"});
+};
+
+apimanager.prototype.adduser		=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, data)	{
+		if(ok)	{
+			data.GetUser(function(data)	{
+				if(data.length > 0)	{
+					if(data[0].level > 1)	{
+						db.AddUser(req.body.add_username,req.body.add_password,req.body.add_name, function(data,msg,err)	{
+							if(data != null)	
+								res.json({"status":"OK","uuid":data.uuid});
+							else
+								res.json({"status":"NOK","error":msg});
+						});
+					}else
+						res.json({"status":"NOK","error":"Access denied"});
+				}else
+					res.json({"status":"NOK","error":"Access denied"});
+			});
+		}else
+			res.json({"status":"NOK","error":"Access denied"});
+	});
 };
 
 apimanager.prototype.login			=	function(req, res)	{

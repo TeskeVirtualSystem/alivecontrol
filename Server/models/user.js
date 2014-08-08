@@ -11,7 +11,8 @@ exports.Schemas = function(mg) {
     uuid      :   { type: String, unique: true }, 
     username  :   { type: String, index: true },
     password  :   String,
-    name      :   String
+    name      :   String,
+    level     :   Number 
   });
   userSchema.methods.GenUUID          = function()  {  this.uuid = uuid.v1();  };
   userSchema.methods.ComparePassword  = function(password)  {
@@ -37,6 +38,7 @@ exports.Schemas = function(mg) {
     this.startdate = Date.now();
     this.save();
   };
+  sessionSchema.methods.GetUser     = function(cb)  { return this.model("Users").find({"uuid":this.useruuid}, cb)};
   return {"userSchema":userSchema,"sessionSchema":sessionSchema};
 }
 
