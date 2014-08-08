@@ -46,6 +46,12 @@ database.prototype.CheckUserUUID	=	function(uuid, cb)	{
 	});
 };	
 
+database.prototype.CheckUsername	=	function(username, cb)	{
+	this.Users.find({"username":username}, function(err, data)	{
+		cb(data != null && data.length > 0);
+	});	
+};
+
 database.prototype.CheckMachineUUID	=	function(uuid, cb)	{
 	this.Machines.find({"uuid":uuid}, function(err, data)	{
 		cb(data != null && data.length > 0);
@@ -59,14 +65,19 @@ database.prototype.CheckDRBDUUID	=	function(uuid, cb)	{
 };
 
 database.prototype.AddUser		=	function(username, password, name, cb)	{
-	var user = new this.Users({"username":username,"name":name});
-	user.GenUUID();
-	user.SetPassword(password);
-	user.save(function(err)	{
-		if(err)	cb(null,"Save error", err);
-		cb(user);
+	this.CheckUsername(username, function(exists)	{
+		if(exists)	
+			cb(null, "Already exists");
+		else{
+			var user = new this.Users({"username":username,"name":name});
+			user.GenUUID();
+			user.SetPassword(password);
+			user.save(function(err)	{
+				if(err)	cb(null,"Save error", err);
+				cb(user);
+			});
+		}
 	});
-	return user;
 };
 
 database.prototype.TestLogin	=	function(username, password, cb)	{
