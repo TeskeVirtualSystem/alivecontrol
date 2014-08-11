@@ -18,6 +18,7 @@ var RXRegex		=	/RX bytes:([0-9]*)/;
 
 /**
  *	Got from http://stackoverflow.com/questions/281264/remove-empty-elements-from-an-array-in-javascript
+ *  Cleans the array from empty elements
  **/
 function cleanArray(actual)	{
   var newArray = new Array();
@@ -31,6 +32,7 @@ function cleanArray(actual)	{
 
 /**
  *	Got from http://stackoverflow.com/questions/1303646/check-whether-variable-is-number-or-string-in-javascript
+ *  Checks if the string/float/int is a number
  **/
 function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
 
@@ -55,6 +57,10 @@ function secondsToTime(secs)	{
     };
 }
 
+/**
+ *	Converts the following value to a numeric base one like 1.2k for 1200
+ *  Returns an array with first element the reduced number (1.2) and the second the notation unit (k)
+ **/
 function toNotationUnit(value, base)	{
  	if(base == null || base == undefined)
  		base = 10;
@@ -88,27 +94,42 @@ function toNotationUnit(value, base)	{
 
 exports.toNotationUnit = toNotationUnit;
 
+/**
+ *	Does an log to syslog and console
+ **/
 exports.LOG 	=	function(msg)	{
 	// TODO: Output to syslog
 	console.log("SMMON: ",msg);
 }
 
+/**
+ *	Does an warn log to syslog and console
+ **/
 exports.WARN 	=	function(msg)	{
 	// TODO: Output to syslog
 	console.warn("SMMON: ",msg);
 }
 
+/**
+ *	Does an Syncronous Shell Command
+ **/
 function ExecuteShell(cmd)	{
 	return execSync(cmd);
 }
 exports.ExecuteShell = ExecuteShell;
 
+/**
+ *	Get the local disk list
+ **/
 exports.GetDiskList			=	function()	{
 	var disks = ExecuteShell('ls /sys/block/ |grep "sd\\|xvd\\|drbd"');
 	return cleanArray(disks.split("\n"));
 }
 
-exports.GetSmartData		=	function(disk)	{
+/**
+ *	Get the Smart Data for a disk
+ **/
+exports.GetmartData		=	function(disk)	{
 	var data = ExecuteShell("smartctl -a "+disk);
 	if("START OF INFORMATION SECTION" in data)	{
             ModelFamily          =    ExecuteShell('smartctl -a '+disk+' | grep "Model Family" | cut -d: -f2').trim()
@@ -137,7 +158,14 @@ exports.GetSmartData		=	function(disk)	{
 	}
 }
 
+/**
+ *	Initializes 3Ware Smart Controller
+ **/
 exports.Init3WareSmart		=	function()	{	ExecuteShell("smartctl -d 3ware,0 /dev/twa0");	}
+
+/**
+ *	Initializes 3Ware controller and get smartdata from its devices
+ **/
 exports.Get3WareSmartData	=	function()	{
 	Init3WareSmart();
 	var smlist = [];
@@ -172,6 +200,9 @@ exports.Get3WareSmartData	=	function()	{
 	return smlist;
 }
 
+/**
+ *	Get the disk usage
+ **/
 exports.GetDiskUsage	=	function()	{
 	var disks = [];
 	var data = cleanArray(ExecuteShell('df -h |grep "/dev/sd\\|/dev/xvd\\|/dev/mapper/\\|/dev/drbd"').split("\n"));
@@ -189,6 +220,9 @@ exports.GetDiskUsage	=	function()	{
 	return disks;
 }
 
+/**
+ *	Get Network Device Data
+ **/
 exports.GetNetDevData	=	function(dev)	{
 	var devdata 		= 	{ 'Device' : dev, "TX" : "(0.0 B)", "RX" : "(0.0 B)", "IP" : "Unknown", "Broadcast" : "Unknown", "NetMask" : "Unknown" };
 	var netstring 		= 	ExecuteShell('LANG="en_US.UTF-8" LANGUAGE="en" ifconfig '+dev);
@@ -211,6 +245,9 @@ exports.GetNetDevData	=	function(dev)	{
 	return devdata;
 }
 
+/**
+ *	Get the network devices on the machine
+ **/
 exports.GetNetworkDevices	=	function()	{
 	var data = cleanArray(ExecuteShell('cat /proc/net/dev').split('\n')).slice(2);
 	var devices = [];
@@ -220,6 +257,9 @@ exports.GetNetworkDevices	=	function()	{
 	return devices;
 }
 
+/**
+ *	Get the network usage for all devices
+ **/
 exports.GetNetworkUsage		=	function()	{
 	var devices = exports.GetNetworkDevices();
 	var usages = [];
@@ -228,6 +268,10 @@ exports.GetNetworkUsage		=	function()	{
 	return usages;
 }
 
+
+/**
+ *	Get PCI/PCI-e devices list
+ **/
 exports.GetDevicesInfo		=	function()	{
 	var devices = ExecuteShell("lspci").split("\n");
 	for(var i in devices)	
@@ -236,6 +280,9 @@ exports.GetDevicesInfo		=	function()	{
 	return devices;
 }
 
+/**
+ *	Get the Memory Info (RAM and Swap)
+ **/
 exports.GetMemInfo			=	function()	{
 	var total		=	toNotationUnit(parseInt(ExecuteShell("cat /proc/meminfo |grep MemTotal  | cut -d: -f2").trim().slice(0,-3))*1000);
 	var free		=	toNotationUnit(parseInt(ExecuteShell("cat /proc/meminfo |grep MemFree   | cut -d: -f2").trim().slice(0,-3))*1000);
@@ -250,12 +297,18 @@ exports.GetMemInfo			=	function()	{
 	};
 }
 
+/**
+ *	Get System Uptime
+ **/
 exports.GetUpTime			=	function()	{
 	var uptime 		=	parseFloat(ExecuteShell("cat /proc/uptime").split(" ")[0])
 	uptime 			= 	secondsToTime(uptime);
 	return uptime.d + " days " + uptime.h + " hours " + uptime.m + " minutes " + uptime.s + " seconds";
 }
 
+/**
+ *	Get the CPU Info
+ **/
 exports.GetCPUInfo			=	function()	{
 
     var cpu_family         	=    ExecuteShell('cat /proc/cpuinfo |grep "cpu family" |head -n1 |cut -d: -f2').trim();
@@ -274,6 +327,9 @@ exports.GetCPUInfo			=	function()	{
     }
 }
 
+/**
+ *	Get DRBD Info
+ **/
 exports.GetDRBDInfo			=	function()	{
 	var drbdinfo = {"conn" : {}}
 	try	{
@@ -316,6 +372,9 @@ exports.GetDRBDInfo			=	function()	{
 	return drbdinfo;
 }
 
+/**
+ *	Get MySQL Slave Status
+ **/
 exports.GetMySQLSlave	=	function(hostname, username, password, cb)	{
 	// TODO
 	cb();
