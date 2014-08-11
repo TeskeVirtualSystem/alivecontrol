@@ -12,8 +12,6 @@ var db 					    = 	new _db_.Database();
 var apiman          =   requre("./apimanager.js");
 var api             =   new apiman.api(db,app);
 
-console.log(db);
-
 app.use(cookieParser("secret"));
 app.use(bodyParser());
 app.set('view engine', 'ejs');

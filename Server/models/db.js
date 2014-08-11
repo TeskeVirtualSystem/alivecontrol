@@ -22,6 +22,7 @@ var database = function(url)	{
 	this.DRBD 		=	this._mg.model("DRBD", 		this.mscheme.drbdSchema); 
 	this.DRBDCONN	=	this._mg.model("DRBDCONN", 	this.mscheme.drbdconnSchema); 
 	this.MYSQL		=	this._mg.model("MYSQL", 	this.mscheme.mysqlSchema); 
+	this.VMS		=	this._mg.model("VMS", 		this.mscheme.vmSchema); 
 	//return this;
 };
 
@@ -289,6 +290,9 @@ database.prototype.AddMYSQL	=	function(machineuuid, masterhost, masteruser, slav
 	});
 };
 
+
+/*	TODO: AddVMS	*/	
+
 database.prototype.UpdateMachine	=	function(uuid, data, cb)	{
 	var dbthis = this;
 	if(uuid == null)	{
@@ -362,6 +366,10 @@ database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 	if(data.hasOwnProperty("mysqls"))
 		for(var i in data.mysqls)	
 			this.AddMYSQL(uuid, data.mysqls[i].masterhost, data.mysqls[i].masteruser, data.mysqls[i].slavestate, data.mysqls[i].salveiorunning, data.mysqls[i].slavesqlrunning);
+	
+	//	Add VMS
+	/*	TODO	*/
+
 	cb(uuid, data);
 }
 exports.Database = database;

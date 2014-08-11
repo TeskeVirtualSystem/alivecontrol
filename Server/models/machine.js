@@ -27,7 +27,8 @@ exports.Schemas = function(mg)	{
 	machineSchema.methods.GetMounts			=	function(cb)	{	return this.model("Mounts")		.find({"machineuuid":this.uuid}, cb); };
 	machineSchema.methods.GetDRBDs			=	function(cb)	{	return this.model("DRBD")		.find({"machineuuid":this.uuid}, cb); };
 	machineSchema.methods.GetMYSQLs			=	function(cb)	{	return this.model("MYSQL")		.find({"machineuuid":this.uuid}, cb); };
-	
+	machineSchema.methods.GetVMs			=	function(cb)	{	return this.model("VMS")		.find({"machineuuid":this.uuid}, cb); };
+
 	/** Clean functions **/
 	machineSchema.methods.CleanDevices		=	function(cb)	{
 		var thisschema = this;
@@ -96,7 +97,19 @@ exports.Schemas = function(mg)	{
 			}else
 				cb();
 		});
-	}
+	};
+
+	machineSchema.methods.CleanVMs		=	function(cb)	{
+		var thisschema = this;
+		this.GetVMs(function(data)	{
+			if(data.length > 0)		{
+					data[0].remove(function (err, product) {
+						thisschema.CleanVMs(cb);
+					});
+			}else
+				cb();
+		});
+	};
 
 	machineSchema.methods.CleanMachineData	=	function(cb)	{
 		/** TODO: Better way to clean **/
@@ -112,8 +125,11 @@ exports.Schemas = function(mg)	{
 						thisschema.CleanDRBDs(function()	{
 							console.log("Cleaning MySQLs");
 							thisschema.CleanMYSQLs(function()	{
-								console.log("Clean finish");
-								cb();
+								console.log("Cleaning VMs");
+								thisschema.CleanVMs(function()	{
+									console.log("Clean finish");
+									cb();
+								});
 							});
 						});
 					});
@@ -166,6 +182,16 @@ exports.Schemas = function(mg)	{
 		connections			: Number  
 	});
 
+	var vmSchema	= new Schema({
+		machineuuid			: { type: String, index: true },
+		name				: String,
+		guestos				: String,
+		memory 				: Number,
+		cpus				: Number,
+		type				: String,
+		status 				: Number
+	});
+
 	drbdSchema.methods.GenUUID          	= 	function()  	{  	this.uuid = uuid.v1();  };
 	drbdSchema.methods.GetConnections		=	function(cb)	{	return this.model("DRBDCONN")		.find({"drbduuid":this.uuid}, cb); };
 	drbdSchema.methods.CleanConnections		=	function(cb)	{
@@ -206,6 +232,7 @@ exports.Schemas = function(mg)	{
 	ex.drbdSchema 			=	drbdSchema;
 	ex.drbdconnSchema		=	drbdconnSchema;
 	ex.mysqlSchema			=	mysqlSchema;
+	ex.vmSchema				=	vmSchema;
 	return ex;
 };
 /*
