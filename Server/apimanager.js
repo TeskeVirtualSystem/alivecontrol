@@ -46,7 +46,9 @@ apimanager.prototype.login			=	function(req, res)	{
 		if(ok)	{
 			db.CreateSession(user.uuid, req.body.level, req.body.maxdays, function(data, error)	{
 				if(data != null)	{
-					res.json({"status":"OK","sessionkey":data.sessionkey,"uuid":user.uuid});
+					delete user.password;
+					console.log(user);
+					res.json({"status":"OK","sessionkey":data.sessionkey,"uuid":user.uuid,"userdata":user});
 				}else{
 					console.log("Session error: "+error);
 					res.json({"error":error,"status":"NOK"});

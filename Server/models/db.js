@@ -55,8 +55,13 @@ database.prototype.CheckUsername	=	function(username, cb)	{
 
 database.prototype.GetUser			=	function(uuid, cb)		{
 	this.Users.find({"uuid":uuid}, function(err, data)	{
-		if(cb !== undefined)
-			if(data.length >0)	cb(true, data[0]);	else cb(false);
+		if(cb !== undefined)	{
+			if(data.length >0)	{
+				data[0].password = undefined;
+				cb(true, data[0]);	
+			}else 
+				cb(false);
+		}
 	});
 };
 
@@ -91,9 +96,10 @@ database.prototype.AddUser		=	function(username, password, name, cb)	{
 database.prototype.TestLogin	=	function(username, password, cb)	{
 	this.Users.find({"username":username}, function(err, data) {
 		if(data.length > 0)	{
-			if(data[0].ComparePassword(password))
+			if(data[0].ComparePassword(password))	{
+				data[0].password = undefined;
 				if(cb !== undefined) cb(true, data[0]);
-			else
+			}else
 				if(cb !== undefined) cb(false);
 		}else
 			if(cb !== undefined) cb(false);
