@@ -9,8 +9,9 @@ var httpserver  		=   http.createServer(app);
 
 var _db_				    =	  require("./models/db.js");
 var db 					    = 	new _db_.Database();
-var apiman          =   requre("./apimanager.js");
-var api             =   new apiman.api(db,app);
+var apiman          =   require("./apimanager.js");
+var _page_          =   require("./pagemanager.js");
+var config          =   require("./includes/config.js").cfg;
 
 app.use(cookieParser("secret"));
 app.use(bodyParser());
@@ -22,9 +23,9 @@ app.post('/login', 	loginPost);
 app.get('/adduser', adduserGet);
 app.post('/adduser', adduserPost);
 
-app.use("/js", express.static(__dirname + "/pages/js"));
-app.use("/img", express.static(__dirname + "/pages/img"));
-app.use("/css", express.static(__dirname + "/pages/css"));
+
+var api             =   new apiman.api(db,app);
+var page            =   new _page_.page(db,app,config);
 
 function adduserGet(req, res)	{
 	res.render('adduser');

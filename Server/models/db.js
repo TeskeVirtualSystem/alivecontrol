@@ -43,39 +43,39 @@ database.prototype.GetMachines	=	function(cb)	{
 
 database.prototype.CheckUserUUID	=	function(uuid, cb)	{
 	this.Users.find({"uuid":uuid}, function(err, data)	{
-		cb(data != null && data.length > 0);
+		if(cb !== undefined) cb(data != null && data.length > 0);
 	});
 };	
 
 database.prototype.CheckUsername	=	function(username, cb)	{
 	this.Users.find({"username":username}, function(err, data)	{
-		cb(data != null && data.length > 0);
+		if(cb !== undefined) cb(data != null && data.length > 0);
 	});	
 };
 
 database.prototype.CheckMachineUUID	=	function(uuid, cb)	{
 	this.Machines.find({"uuid":uuid}, function(err, data)	{
-		cb(data != null && data.length > 0);
+		if(cb !== undefined) cb(data != null && data.length > 0);
 	});
 };
 
 database.prototype.CheckDRBDUUID	=	function(uuid, cb)	{
 	this.DRBD.find({"uuid":uuid}, function(err, data)	{
-		cb(data != null && data.length > 0);
+		if(cb !== undefined) cb(data != null && data.length > 0);
 	});	
 };
 
 database.prototype.AddUser		=	function(username, password, name, cb)	{
 	this.CheckUsername(username, function(exists)	{
 		if(exists)	
-			cb(null, "Already exists");
+			if(cb !== undefined) cb(null, "Already exists");
 		else{
-			var user = new this.Users({"username":username,"name":name});
+			var user = new _this.Users({"username":username,"name":name});
 			user.GenUUID();
 			user.SetPassword(password);
 			user.save(function(err)	{
-				if(err)	cb(null,"Save error", err);
-				cb(user);
+				if(err)	if(cb !== undefined) cb(null,"Save error", err);
+				if(cb !== undefined) cb(user);
 			});
 		}
 	});
@@ -85,11 +85,11 @@ database.prototype.TestLogin	=	function(username, password, cb)	{
 	this.Users.find({"username":username}, function(err, data) {
 		if(data.length > 0)	{
 			if(data[0].ComparePassword(password))
-				cb(true, data[0]);
+				if(cb !== undefined) cb(true, data[0]);
 			else
-				cb(false);
+				if(cb !== undefined) cb(false);
 		}else
-			cb(false);
+			if(cb !== undefined) cb(false);
 	});
 };
 
@@ -97,20 +97,21 @@ database.prototype.CheckSession =	function(sessionkey, cb)	{
 	this.Sessions.find({"sessionkey":sessionkey}, function(err, data)	{
 		if(data.length > 0)	{
 			if(data[0].IsValid())	{
-				cb(true, data[0]);
+				if(cb !== undefined) cb(true, data[0]);
 			}else{
 				data[0].remove();
-				cb(false);
+				if(cb !== undefined) cb(false);
 			}
 		}else
-			cb(false);
+			if(cb !== undefined) cb(false);
 	});
 };
 
 database.prototype.CreateSession=	function(useruuid, level, maxdays, cb)	{
+	var _this = this;
 	this.CheckUserUUID(useruuid, function(ok)	{
 		if(ok)	{
-			var session = new this.Sessions({
+			var session = new _this.Sessions({
 				"useruuid"		: useruuid,
 				"level"			: level,
 				"maxdays"		: maxdays,
@@ -118,18 +119,19 @@ database.prototype.CreateSession=	function(useruuid, level, maxdays, cb)	{
 			});
 			session.GenKey();
 			session.save(function(err) 	{
-				if(err) cb(null, "Save error", err);
-				cb(session);
+				if(err) if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(session);
 			});
 		}else
-			cb(null, "User ("+useruuid+") does not exists.");
+			if(cb !== undefined) cb(null, "User ("+useruuid+") does not exists.");
 	});
 };
 
 database.prototype.AddMachine	=	function(owneruuid, name, processor, total_memory, free_memory, total_swap, free_swap, current_status, uptime, cb)	{
+	var _this = this;
 	this.CheckUserUUID(owneruuid, function(ok)	{
 		if(ok)	{
-			var machine = new this.Machines({
+			var machine = new _this.Machines({
 			  owneruuid 		:   owneruuid,
 			  name				:   name,
 			  processor 		:   processor,
@@ -143,35 +145,37 @@ database.prototype.AddMachine	=	function(owneruuid, name, processor, total_memor
 			});
 			machine.GenUUID();
 			machine.save(function(err)	{
-				if(err)	cb(null, "Save error", err);
-				cb(machine);
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(machine);
 			});	
 		}else
-			cb(null,"User ("+owneruuid+" does not exists.");
+			if(cb !== undefined) cb(null,"User ("+owneruuid+" does not exists.");
 	});
 };
 
 database.prototype.AddDevice	=	function(machineuuid, name, type, cb)	{
+	var _this = this;
 	this.CheckMachineUUID(machineuuid, function(ok)	{
 		if(ok)	{
-			var device = new this.Devices({
+			var device = new _this.Devices({
 				machineuuid			: machineuuid,
 				name				: name,
 				type				: type 
 			});
 			device.save(function(err)	{
-				if(err)	cb(null, "Save error", err);
-				cb(device);
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(device);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" does not exists.");
+			if(cb !== undefined) cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
 database.prototype.AddEthernet	=	function(machineuuid, iface, address, broadcast, netmask, rxbytes, txbytes, cb)	{
+	var _this = this;
 	this.CheckMachineUUID(machineuuid, function(ok)	{
 		if(ok)	{
-			var ethernet = new this.Ethernets({
+			var ethernet = new _this.Ethernets({
 				machineuuid			: machineuuid,
 				iface				: iface,
 				address				: address,
@@ -181,18 +185,19 @@ database.prototype.AddEthernet	=	function(machineuuid, iface, address, broadcast
 				rxbytes				: rxbytes  
 			});
 			ethernet.save(function(err)	{
-				if(err)	cb(null, "Save error", err);
-				cb(ethernet);
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(ethernet);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" does not exists.");
+			if(cb !== undefined) cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
 database.prototype.AddDisk	=	function(machineuuid, family, capacity, ontime, powercycles, readerrors, realocatedsectors, diskstatus, device, cb)	{
+	var _this = this;
 	this.CheckMachineUUID(machineuuid, function(ok)	{
 		if(ok)	{
-			var disk = new this.Disks({
+			var disk = new _this.Disks({
 				machineuuid			: machineuuid,
 				family				: family,
 				capacity			: capacity,
@@ -204,18 +209,19 @@ database.prototype.AddDisk	=	function(machineuuid, family, capacity, ontime, pow
 				device 				: device
 			});
 			disk.save(function(err)	{
-				if(err)	cb(null, "Save error", err);
-				cb(disk);
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(disk);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" does not exists.");
+			if(cb !== undefined) cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
 database.prototype.AddMount	=	function(machineuuid, mountpoint, device, used, free, size, cb)	{
+	var _this = this;
 	this.CheckMachineUUID(machineuuid, function(ok)	{
 		if(ok)	{
-			var mount = new this.Mounts({
+			var mount = new _this.Mounts({
 				machineuuid			: machineuuid,
 				mountpoint			: mountpoint,
 				device 				: device,
@@ -224,36 +230,38 @@ database.prototype.AddMount	=	function(machineuuid, mountpoint, device, used, fr
 				size 				: size
 			});
 			mount.save(function(err)	{
-				if(err)	cb(null, "Save error", err);
-				cb(mount);
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(mount);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" does not exists.");
+			if(cb !== undefined) cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
 database.prototype.AddDRBD	=	function(machineuuid, version, connections, cb)	{
+	var _this = this;
 	this.CheckMachineUUID(machineuuid, function(ok)	{
 		if(ok)	{
-			var drbd = new this.DRBD({
+			var drbd = new _this.DRBD({
 				machineuuid			: machineuuid,
 				version				: version,
 				connections			: connections 
 			});
 			drbd.GenUUID();
 			drbd.save(function(err)	{
-				if(err)	cb(null, "Save error", err);
-				cb(drbd);
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(drbd);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" does not exists.");
+			if(cb !== undefined) cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
 database.prototype.AddDRBDCONN	=	function(drbduuid, connid, cs, ro, ds, ns, cb)	{
+	var _this = this;
 	this.CheckDRBDUUID(drbduuid, function(ok)	{
 		if(ok)	{
-			var drbd = new this.DRBDCONN({
+			var drbd = new _this.DRBDCONN({
 				drbduuid			: drbduuid,
 				connid				: connid,
 				cs 					: cs,
@@ -262,18 +270,19 @@ database.prototype.AddDRBDCONN	=	function(drbduuid, connid, cs, ro, ds, ns, cb)	
 				ns 					: ns
 			});
 			drbd.save(function(err)	{
-				if(err)	cb(null, "Save error", err);
-				cb(drbd);
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(drbd);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" does not exists.");
+			if(cb !== undefined) cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
 database.prototype.AddMYSQL	=	function(machineuuid, masterhost, masteruser, slavestate, salveiorunning, slavesqlrunning, cb)	{
+	var _this = this;
 	this.CheckMachineUUID(machineuuid, function(ok)	{
 		if(ok)	{
-			var mysql = new this.MYSQL({
+			var mysql = new _this.MYSQL({
 				machineuuid			: machineuuid,
 				masterhost			: masterhost,
 				masteruser			: masteruser,
@@ -282,11 +291,11 @@ database.prototype.AddMYSQL	=	function(machineuuid, masterhost, masteruser, slav
 				slavesqlrunning		: slavesqlrunning  
 			});
 			mysql.save(function(err)	{
-				if(err)	cb(null, "Save error", err);
-				cb(mysql);
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(mysql);
 			});	
 		}else
-			cb(null,"Machine ("+machineuuid+" does not exists.");
+			if(cb !== undefined) cb(null,"Machine ("+machineuuid+" does not exists.");
 	});
 };
 
@@ -296,7 +305,10 @@ database.prototype.AddMYSQL	=	function(machineuuid, masterhost, masteruser, slav
 database.prototype.UpdateMachine	=	function(uuid, data, cb)	{
 	var dbthis = this;
 	if(uuid == null)	{
-		dbthis.AddMachine(data.owneruuid, data.name, data.processor, data.total_memory, data.free_memory, data.total_swap, data.free_swap, 1, data.uptime, function(machine)	{
+		dbthis.AddMachine(data.owneruuid, data.name, data.processor, data.total_memory, data.free_memory, data.total_swap, data.free_swap, 1, data.uptime, function(machine, error, err)	{
+			if(err)	{
+				console.log("Error: ",err);
+			}
 			data.uuid = machine.uuid;
 			dbthis._AddMachineData(machine.uuid, data, cb);
 		});		
@@ -370,6 +382,6 @@ database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 	//	Add VMS
 	/*	TODO	*/
 
-	cb(uuid, data);
+	if(cb !== undefined) cb(uuid, data);
 }
 exports.Database = database;

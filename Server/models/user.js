@@ -32,7 +32,7 @@ exports.Schemas = function(mg) {
 
   sessionSchema.methods.GenKey      = function()  {    this.sessionkey = uuid.v1();  };
   sessionSchema.methods.IsValid     = function()  {   
-      return (maxdays == -1) || ( startdate + (maxdays * 24 * 60 * 60 * 1000) > Date.now());
+      return (this.maxdays == -1) || ( this.startdate + (this.maxdays * 24 * 60 * 60 * 1000) > Date.now());
   };
   sessionSchema.methods.UpdateDate  = function()  {
     this.startdate = Date.now();

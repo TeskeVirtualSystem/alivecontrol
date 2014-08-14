@@ -4,13 +4,13 @@ var apimanager = function(database, app)	{
 	console.log("Initializing API Manager")
 	this.db 	= database;
 	this.app 	= app;
-
-	app.get("/api/"					,	this.apibase);
-	app.post("/api/"				,	this.apibase);
-	app.post("/api/login"			, 	this.login);
-	app.post("/api/logout"			, 	this.logout);
-	app.post("/api/updatemachine"	, 	this.updatemachine);
-	app.post("/api/adduser"			,	this.adduser);
+	var _this = this;
+	app.get("/api/"					,	function(r, q) { _this.apibase(r,q); });
+	app.post("/api/"				,	function(r, q) { _this.apibase(r,q); });
+	app.post("/api/login"			, 	function(r, q) { _this.login(r,q); });
+	app.post("/api/logout"			, 	function(r, q) { _this.logout(r,q); });
+	app.post("/api/updatemachine"	, 	function(r, q) { _this.updatemachine(r,q);});
+	app.post("/api/adduser"			,	function(r, q) { _this.adduser(r,q); });
 };
 
 apimanager.prototype.apibase		=	function(req, res)	{
@@ -41,11 +41,12 @@ apimanager.prototype.adduser		=	function(req, res)	{
 };
 
 apimanager.prototype.login			=	function(req, res)	{
+	var db = this.db;
 	db.TestLogin(req.body.username, req.body.password, function(ok, user)	{
 		if(ok)	{
 			db.CreateSession(user.uuid, req.body.level, req.body.maxdays, function(data, error)	{
 				if(data != null)	{
-					res.json("status":"OK","sessionkey":data.sessionkey);
+					res.json({"status":"OK","sessionkey":data.sessionkey,"uuid":user.uuid});
 				}else{
 					console.log("Session error: "+error);
 					res.json({"error":error,"status":"NOK"});
@@ -58,6 +59,7 @@ apimanager.prototype.login			=	function(req, res)	{
 };
 
 apimanager.prototype.logout			=	function(req, res)	{
+	var db = this.db;
 	db.CheckSession(req.body.sessionkey, function(ok, data)	{
 		if(ok)
 			data.remove();
@@ -79,7 +81,7 @@ apimanager.prototype.updatemachine	=	function(req, res)	{
 				/** Checks if its a new machine, or updating an older **/
 				if(machinedata.machineuuid != null)	{
 					/** If updating older, lets see if we can find the machineuuid and if its belongs to the session user **/
-					db.Machines.find({"machineuuid":machinedata.machineuuid}, function(err, data)	{
+					db.Machines.find({"uuid":machinedata.machineuuid}, function(err, data)	{
 						/** If we find, lets check the ownership **/
 						if(data.length > 0)	{
 							/** If belongs to the user, lets just update **/

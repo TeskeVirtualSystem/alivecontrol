@@ -224,7 +224,8 @@ exports.GetDiskUsage	=	function()	{
  *	Get Network Device Data
  **/
 exports.GetNetDevData	=	function(dev)	{
-	var devdata 		= 	{ 'Device' : dev, "TX" : "(0.0 B)", "RX" : "(0.0 B)", "IP" : "Unknown", "Broadcast" : "Unknown", "NetMask" : "Unknown" };
+	//var devdata 		= 	{ 'Device' : dev, "TX" : "(0.0 B)", "RX" : "(0.0 B)", "IP" : "Unknown", "Broadcast" : "Unknown", "NetMask" : "Unknown" };
+	var devdata 		= 	{ 'Device' : dev, "TX" : 0, "RX" : 0, "IP" : "Unknown", "Broadcast" : "Unknown", "NetMask" : "Unknown" };
 	var netstring 		= 	ExecuteShell('LANG="en_US.UTF-8" LANGUAGE="en" ifconfig '+dev);
 	var ip 		= "Unknown",
 		bcast 	= "Unknown", 
@@ -234,14 +235,16 @@ exports.GetNetDevData	=	function(dev)	{
 	try	{	bcast 	= 	bcastRegex.exec(netstring).slice(1).join(".");	}catch(e)	{};
 	try	{	mask 	=	maskRegex.exec(netstring).slice(1).join(".");	}catch(e)	{};
 	
-	var tx 				=	toNotationUnit(parseInt(TXRegex.exec(netstring).slice(1)[0]));
-	var rx 				=	toNotationUnit(parseInt(RXRegex.exec(netstring).slice(1)[0]));
+	//var tx 				=	toNotationUnit(parseInt(TXRegex.exec(netstring).slice(1)[0]));
+	//var rx 				=	toNotationUnit(parseInt(RXRegex.exec(netstring).slice(1)[0]));
+	var tx 				=	parseInt(TXRegex.exec(netstring).slice(1)[0]);
+	var rx 				=	parseInt(RXRegex.exec(netstring).slice(1)[0]);
 
 	devdata.IP  		=	ip;
 	devdata.Broadcast	=	bcast;
 	devdata.NetMask		=	mask;
-	devdata.TX 			=	"("+tx[0].toFixed(2)+" "+tx[1]+"B)";
-	devdata.RX 			=	"("+rx[0].toFixed(2)+" "+rx[1]+"B)";
+	devdata.TX 			=	tx;
+	devdata.RX 			=	rx;
 	return devdata;
 }
 
@@ -284,16 +287,16 @@ exports.GetDevicesInfo		=	function()	{
  *	Get the Memory Info (RAM and Swap)
  **/
 exports.GetMemInfo			=	function()	{
-	var total		=	toNotationUnit(parseInt(ExecuteShell("cat /proc/meminfo |grep MemTotal  | cut -d: -f2").trim().slice(0,-3))*1000);
-	var free		=	toNotationUnit(parseInt(ExecuteShell("cat /proc/meminfo |grep MemFree   | cut -d: -f2").trim().slice(0,-3))*1000);
-	var swaptotal	=	toNotationUnit(parseInt(ExecuteShell("cat /proc/meminfo |grep SwapTotal | cut -d: -f2").trim().slice(0,-3))*1000);
-	var swapfree	=	toNotationUnit(parseInt(ExecuteShell("cat /proc/meminfo |grep SwapFree  | cut -d: -f2").trim().slice(0,-3))*1000);
+	var total		=	parseInt(ExecuteShell("cat /proc/meminfo |grep MemTotal  | cut -d: -f2").trim().slice(0,-3))*1000;
+	var free		=	parseInt(ExecuteShell("cat /proc/meminfo |grep MemFree   | cut -d: -f2").trim().slice(0,-3))*1000;
+	var swaptotal	=	parseInt(ExecuteShell("cat /proc/meminfo |grep SwapTotal | cut -d: -f2").trim().slice(0,-3))*1000;
+	var swapfree	=	parseInt(ExecuteShell("cat /proc/meminfo |grep SwapFree  | cut -d: -f2").trim().slice(0,-3))*1000;
 
 	return {
-		"total"			:  total[0].toFixed(2)		+" "+	total[1]		+"B", 
-		"free"			:  free[0].toFixed(2)		+" "+	free[1]			+"B", 
-		"swaptotal"		:  swaptotal[0].toFixed(2)	+" "+	swaptotal[1]	+"B", 
-		"swapfree"		:  swapfree[0].toFixed(2)	+" "+	swapfree[1]		+"B",
+		"total"			:  total,
+		"free"			:  free,
+		"swaptotal"		:  swaptotal,
+		"swapfree"		:  swapfree
 	};
 }
 
@@ -365,7 +368,7 @@ exports.GetDRBDInfo			=	function()	{
 			}
 
 		}
-	}catch()	{
+	}catch(e)	{
 		drbdinfo.has = false;
 	}
 

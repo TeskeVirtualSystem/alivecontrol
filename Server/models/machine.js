@@ -32,7 +32,7 @@ exports.Schemas = function(mg)	{
 	/** Clean functions **/
 	machineSchema.methods.CleanDevices		=	function(cb)	{
 		var thisschema = this;
-		this.GetDevices(function(data)	{
+		this.GetDevices(function(err, data)	{
 			if(data.length > 0)		{
 					data[0].remove(function (err, product) {
 						thisschema.CleanDevices(cb);
@@ -43,7 +43,7 @@ exports.Schemas = function(mg)	{
 	};
 	machineSchema.methods.CleanEthernets	=	function(cb)	{
 		var thisschema = this;
-		this.GetEthernets(function(data)	{
+		this.GetEthernets(function(err, data)	{
 			if(data.length > 0)		{
 					data[0].remove(function (err, product) {
 						thisschema.CleanEthernets(cb);
@@ -54,7 +54,7 @@ exports.Schemas = function(mg)	{
 	};
 	machineSchema.methods.CleanDisks		=	function(cb)	{
 		var thisschema = this;
-		this.GetDisks(function(data)	{
+		this.GetDisks(function(err, data)	{
 			if(data.length > 0)		{
 					data[0].remove(function (err, product) {
 						thisschema.CleanDevices(cb);
@@ -65,7 +65,7 @@ exports.Schemas = function(mg)	{
 	};	
 	machineSchema.methods.CleanMounts		=	function(cb)	{
 		var thisschema = this;
-		this.GetMounts(function(data)	{
+		this.GetMounts(function(err, data)	{
 			if(data.length > 0)		{
 					data[0].remove(function (err, product) {
 						thisschema.CleanMounts(cb);
@@ -76,7 +76,7 @@ exports.Schemas = function(mg)	{
 	};
 	machineSchema.methods.CleanDRBDs		=	function(cb)	{
 		var thisschema = this;
-		this.GetDRBDs(function(data)	{
+		this.GetDRBDs(function(err, data)	{
 			if(data.length > 0)		{
 					data[0].CleanConnections(function()	{			
 						data[0].remove(function (err, product) {
@@ -89,7 +89,7 @@ exports.Schemas = function(mg)	{
 	};
 	machineSchema.methods.CleanMYSQLs		=	function(cb)	{
 		var thisschema = this;
-		this.GetMYSQLs(function(data)	{
+		this.GetMYSQLs(function(err, data)	{
 			if(data.length > 0)		{
 					data[0].remove(function (err, product) {
 						thisschema.CleanMYSQLs(cb);
@@ -101,7 +101,7 @@ exports.Schemas = function(mg)	{
 
 	machineSchema.methods.CleanVMs		=	function(cb)	{
 		var thisschema = this;
-		this.GetVMs(function(data)	{
+		this.GetVMs(function(err, data)	{
 			if(data.length > 0)		{
 					data[0].remove(function (err, product) {
 						thisschema.CleanVMs(cb);
