@@ -1,5 +1,6 @@
 var machine 		= require("./machine.js");
 var user 			= require("./user.js");
+var info			= require("./info.js");
 
 var database = function(url)	{
 	if(url == undefined)	
@@ -10,10 +11,16 @@ var database = function(url)	{
 
 	this.mscheme 	=	machine.Schemas(this._mg);
 	this.usrchema 	=	user.Schemas(this._mg);
+	this.infoschema	=	info.Schemas(this._mg);
+
 	this.Users 		= 	this._mg.model("Users", 	this.usrchema.userSchema);
 	this.Machines 	= 	this._mg.model("Machines", 	this.mscheme.machineSchema); 
 	this.Sessions	=	this._mg.model("Sessions",	this.usrchema.sessionSchema);
+	this.Alerts		=	this._mg.model("Alerts",    this.infoschema.alertSchema);
 
+	this.Warnings	=	this._mg.model("Warnings",	this.infoschema.TWPSchema);
+	this.Tasks		=	this._mg.model("Tasks",		this.infoschema.TWPSchema);
+	this.Problems	=	this._mg.model("Problems",	this.infoschema.TWPSchema);
 
 	this.Devices	=	this._mg.model("Devices", 	this.mscheme.deviceSchema); 
 	this.Ethernets	=	this._mg.model("Ethernets", this.mscheme.ethernetSchema); 
@@ -36,6 +43,22 @@ database.prototype.CheckSessions	=	function()	{
 		}
 	});
 };
+
+database.prototype.GetUnsolvedTasks	=	function(uuid, cb)	{
+	return this.Tasks.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).exec(cb);
+}
+
+database.prototype.GetUnsolvedProblems	=	function(uuid, cb)	{
+	return this.Problems.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).exec(cb);
+}
+
+database.prototype.GetUnsolvedWarnings	=	function(uuid, cb)	{
+	return this.Warnings.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).exec(cb);
+}
+
+database.prototype.GetAlerts		=	function(uuid, cb)	{
+	return this.Alerts.find({}).or([{"to":uuid},{"to":"ALL"}]).exec(cb);
+}
 
 database.prototype.GetMachines	=	function(cb)	{
 	return this.Machines.find({}, cb);
