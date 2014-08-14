@@ -1,5 +1,56 @@
 var LoadingBarStack	=	0;
 
+function secondsToTime(secs)	{
+    secs = Math.round(secs);
+    var hours = Math.floor(secs / (60 * 60));
+    var days = Math.floor(hours / 24);
+
+    hours -= days * 24;
+
+    var divisor_for_minutes = secs % (60 * 60);
+    var minutes = Math.floor(divisor_for_minutes / 60);
+
+    var divisor_for_seconds = divisor_for_minutes % 60;
+    var seconds = Math.ceil(divisor_for_seconds);
+
+    return obj = {
+    	"d": days,
+        "h": hours,
+        "m": minutes,
+        "s": seconds
+    };
+}
+function toNotationUnit(value, base)	{
+ 	if(base == null || base == undefined)
+ 		base = 10;
+    var units = [ 'y','z','a','f','p','n','u','m',' ', 'k','M','G','T','P','E','Z','Y'] ;
+    var counter = 8;
+    var div = 1.0;
+    if(base == 10)	
+    	div = 1000.0;
+    else if(base == 2)	
+    	div = 1024.0;
+    else{
+    	// TODO: Other bases, maybe?
+    	console.log("Unsuported base!");
+    	return null;
+    }
+
+    val = value > 0 ? value : -value
+    if(val < 1)	{
+        while(( val < 1.00) && !(counter == 0))	{
+            counter = counter - 1;
+            val = val * div;
+        }
+    }else{
+        while(( val >= div ) && !(counter == 16))	{
+            counter = counter + 1;
+        	val = val / div;
+        }
+    }	
+	return [ ( value > 0 ? val : -val) , units[counter]]   
+}
+
 function ShowLoadingBar()					{	LoadingBarStack++; $("#loadingdiv").fadeIn();							};
 function HideLoadingBar()					{	LoadingBarStack--; if(LoadingBarStack==0)$("#loadingdiv").fadeOut();	};
 function ShowError(title,content,buttons)	{	ShowMessage(title,content,buttons,"btn-danger");		};
@@ -48,19 +99,21 @@ function SetLoggedUser()	{
 	}
 };
 
-function LoadAlert(id)	{
+function LoadAlert(id)	{	Page("alert",id);	}
 
-}
 function HidePages()	{	
 	$("#dashboard").hide();
 	$("#machines").hide();
 }
-function Page(page)	{
+
+
+function Page(page, data)	{
 	HidePages();
 	switch(page)	{
-		case "dashboard": 	$("#dashboard").fadeIn(); 		break; 
-		case "machines":  	$("#machines").fadeIn(); 		break;
-		default:  			$("#dashboard").fadeIn(); 		break; 
+		case "dashboard"	: 	$("#dashboard").fadeIn(); 		break; 
+		case "machines"		:  	$("#machines").fadeIn(); 		break;
+		case "machine" 		:   LoadMachine(data);				break; 
+		default 			:	$("#dashboard").fadeIn(); 		break; 
 	}
 }
 
@@ -123,10 +176,49 @@ function RefreshMachines()	{
 "lastupdate" : 1407782280601, 
 	**/
 	var machines = GetT("machines");
+	$("#machinetablerows").html("");
 	if(Array.isArray(machines) && machines.length > 0)	{
 		$("#dashboardmachines").html(machines.length);
+		for(var i in machines)	{
+			$("#machinetablerows").append(BuildMachineLine(machines[i]));
+		}
 	}else
 		$("#dashboardmachines").html("0");
 	
 	$("#dashboardmachinebox").fadeIn();
 };
+
+function BuildMachineLine(machine)	{
+	// A table line with following columns: OS Image (32x32) - Name - Processor - Total Memory - Last update
+	var output;
+	if(machine.current_status == 1)
+		output	 = "<tr class=\"success\">\n";
+	else
+		output	 = "<tr class=\"danger\">\n";
+
+	var osimage = "os_other";
+	var lastupdate = secondsToTime( (Date.now() - machine.lastupdate)/1000);
+	var lastupdate = (lastupdate.d > 0)	?	
+	lastupdate.d+" dias atrás."	: 
+	(
+		(lastupdate.h > 0) ? 
+			lastupdate.h + " horas atrás." :
+			(
+				(lastupdate.m > 0) ?
+				lastupdate.m + " minutos atrás." :
+				lastupdate.s + " segundos atrás "
+			)
+
+	) ;
+	var memory = toNotationUnit(machine.total_memory, 2);
+	var memory10 = toNotationUnit(machine.total_memory, 10);
+
+	output +=  '	<td><img src="img/os/'+osimage+'.png" width=32 height=32 id="os_image_'+machine.uuid+'"/></td>\n';
+	output +=  '	<td>'+machine.name+'</td>\n';
+	output +=  '	<td>'+machine.processor+'</td>\n';
+	output +=  '	<td>'+memory[0].toFixed(2)+' '+memory[1]+'iB ('+memory10[0].toFixed(0)+' '+memory10[1]+'B)</td>\n';
+	output +=  '	<td>'+lastupdate+'</td>\n';
+
+	output += "</tr>\n";
+	return output;
+}

@@ -139,13 +139,13 @@
 			    <div class="collapse navbar-collapse navbar-ex1-collapse" >
 			        <ul id="menu" class="nav navbar-nav side-nav" style="display: none">
 			            <li class="active">
-			                <a href="index.html"><i class="fa fa-fw fa-dashboard"></i> Painel</a>
+			                <a href="#"><i class="fa fa-fw fa-dashboard"></i> Painel</a>
 			            </li>
 			            <li>
-			                <a href=""><i class="fa fa-fw fa-desktop"></i> Máquinas</a>
+			                <a href="#" onClick="Page('machines')"><i class="fa fa-fw fa-desktop"></i> Máquinas</a>
 			            </li>
 			            <li>
-			                <a href=""><i class="fa fa-fw fa-wrench"></i> Configurações</a>
+			                <a href="#"><i class="fa fa-fw fa-wrench"></i> Configurações</a>
 			            </li>
 			        </ul>
 			    </div>
@@ -153,7 +153,22 @@
 
         	<div id="page-wrapper"  style="display: none">
         		<div id="machines" class="container-fluid" style="display: none">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>OS</th>
+                                        <th>Nome</th>
+                                        <th>Processador</th>
+                                        <th>Memoria Total</th>
+                                        <th>Ultima atualização</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="machinetablerows">
 
+                                </tbody>
+                            </table>
+                        </div>
         		</div>
 
          		<div id="dashboard" class="container-fluid" style="display: none" >

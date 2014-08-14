@@ -151,6 +151,26 @@ function DoLogout()			{
 	);
 };
 
+function LoadMachine(data)	{
+	ShowLoadingBar();
+	console.log("Carregando máquina "+data.uuid);
+	APIRequest("loadmachine",{"machineuuid":data.uuid},
+		function(mdata)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				RefreshMachine(mdata.data);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_OWNER")	{
+				console.error("Esta máquina não pertence a você!");
+				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
+				Page("dashboard");
+			}else
+				console.error("Não foi possível carregar as maquinas!");
+		}
+	);
+}
+
 function APIRequest(cmd,data,callback,error_callback)		{
 	if(GetT("sessionkey") !== undefined)
 		data.sessionkey = GetT("sessionkey");

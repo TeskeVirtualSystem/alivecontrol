@@ -66,8 +66,11 @@ database.prototype.GetMachines	=	function(cb)	{
 
 database.prototype.GetUserMachines	=	function(uuid, cb)	{
 	return this.Machines.find({"owneruuid":uuid}, cb);
-}
+};
 
+database.prototype.GetMachine 		=	function(uuid, cb)	{
+	return this.Machines.findOne({"uuid":uuid}, cb);
+};
 
 database.prototype.CheckUserUUID	=	function(uuid, cb)	{
 	this.Users.find({"uuid":uuid}, function(err, data)	{
