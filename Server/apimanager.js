@@ -14,7 +14,7 @@ var apimanager = function(database, app)	{
 };
 
 apimanager.prototype.apibase		=	function(req, res)	{
-	res.json({"status":"NOK","error":"No Command"});
+	res.json({"status":"NOK","code":"NO_COMMAND","error":"No Command"});
 };
 
 apimanager.prototype.adduser		=	function(req, res)	{
@@ -28,15 +28,15 @@ apimanager.prototype.adduser		=	function(req, res)	{
 							if(data != null)	
 								res.json({"status":"OK","uuid":data.uuid});
 							else
-								res.json({"status":"NOK","error":msg});
+								res.json({"status":"NOK","code":"GENERIC_ERROR","error":msg});
 						});
 					}else
-						res.json({"status":"NOK","error":"Access denied"});
+						res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
 				}else
-					res.json({"status":"NOK","error":"Access denied"});
+					res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
 			});
 		}else
-			res.json({"status":"NOK","error":"Access denied"});
+			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
 	});
 };
 
@@ -53,10 +53,28 @@ apimanager.prototype.login			=	function(req, res)	{
 				}
 			});
 		}else{
-			res.json({"status":"NOK","error":"Invalid username or password!"});
+			res.json({"status":"NOK","code":"INVALID_USER","error":"Invalid username or password!"});
 		}
 	});
 };
+
+apimanager.prototype.checklogin		=	function(req, res)	{
+	var db = this.db;
+	if(req.body.hasOwnProperty("sessionkey"))	{
+		db.CheckSession(req.body.sessionkey, function(ok, data)	{
+			db.GetUser(data.useruuid, function(ok, udata)	{
+				if(ok)	
+					res.json({"status":"OK","data":udata});
+				else{	//	Unlikely, but if so, there is a ghost session
+					data.remove();
+					res.json({"status":"NOK","code":"NOT_AUTHORIZED"});
+				}
+			});
+		});
+	}else
+		res.json({"status":"NOK","code":"NOT_AUTHORIZED"});
+
+}
 
 apimanager.prototype.logout			=	function(req, res)	{
 	var db = this.db;
@@ -107,9 +125,9 @@ apimanager.prototype.updatemachine	=	function(req, res)	{
 						res.json({"status":"OK","machineuuid":uuid});
 					});
 			}else
-				res.json({"status":"NOK","error":"No Machine Data"});
+				res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"No Machine Data"});
 		}else
-			res.json({"status":"NOK", "error":"Not Authorized"});
+			res.json({"status":"NOK","code":"NOT_AUTHORIZED", "error":"Not Authorized"});
 	});
 };
 

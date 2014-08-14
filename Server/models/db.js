@@ -53,6 +53,13 @@ database.prototype.CheckUsername	=	function(username, cb)	{
 	});	
 };
 
+database.prototype.GetUser			=	function(uuid, cb)		{
+	this.Users.find({"uuid":uuid}, function(err, data)	{
+		if(cb !== undefined)
+			if(data.length >0)	cb(true, data[0]);	else cb(false);
+	});
+};
+
 database.prototype.CheckMachineUUID	=	function(uuid, cb)	{
 	this.Machines.find({"uuid":uuid}, function(err, data)	{
 		if(cb !== undefined) cb(data != null && data.length > 0);
