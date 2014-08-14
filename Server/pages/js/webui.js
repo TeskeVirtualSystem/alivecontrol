@@ -33,6 +33,7 @@ function SetLoggedUser()	{
 		    $("#page-wrapper").fadeIn();
 		    $("#menu").fadeIn();
 		    $("#unloggedbar").hide(1, function() {$("#loggedbar").fadeIn();});
+		    Page("dashboard");
 		    LoadAlerts();
 		    LoadTasks();
 		    LoadWarnings();
@@ -50,10 +51,19 @@ function SetLoggedUser()	{
 function LoadAlert(id)	{
 
 }
-
-function Page(page)	{
-
+function HidePages()	{	
+	$("#dashboard").hide();
+	$("#machines").hide();
 }
+function Page(page)	{
+	HidePages();
+	switch(page)	{
+		case "dashboard": 	$("#dashboard").fadeIn(); 		break; 
+		case "machines":  	$("#machines").fadeIn(); 		break;
+		default:  			$("#dashboard").fadeIn(); 		break; 
+	}
+}
+
 function RefreshWarnings()	{
 	var warnings = GetT("warnings");
 	if(Array.isArray(warnings) && warnings.length > 0)	{
