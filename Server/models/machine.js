@@ -9,6 +9,7 @@ exports.Schemas = function(mg)	{
 	  owneruuid 		:   String,
 	  name				:   String,
 	  processor 		:   String,
+	  os				:   String, 
 	  total_memory 	    :   Number, 
 	  free_memory 	    :   Number, 
 	  total_swap 	    :   Number, 

@@ -12,13 +12,40 @@ var apimanager = function(database, app)	{
 	app.post("/api/updatemachine"	, 	function(r, q) { _this.updatemachine(r,q);	});
 	app.post("/api/adduser"			,	function(r, q) { _this.adduser(r,q); 		});
 	app.post("/api/loadalerts"		,	function(r, q) { _this.loadalerts(r,q);		});
+	app.post("/api/loadmachines"	,	function(r, q) { _this.loadmachines(r,q);	});
 };
 
 apimanager.prototype.apibase		=	function(req, res)	{
 	res.json({"status":"NOK","code":"NO_COMMAND","error":"No Command"});
 };
 
-apimanager.prototype.loadalerts		=	function(req, res)	{
+apimanager.prototype.loadmachines		=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, sdata)	{
+		if(ok)	{
+			sdata.GetUser(function(udata)	{
+				if(udata[0].level > 1)	{
+					db.GetMachines(function(err, mdata)	{
+						if(err)
+							res.json({"status":"OK","data":[]});
+						else
+							res.json({"status":"OK","data":mdata});
+					});
+				}else{
+					db.GetUserMachines(udata.uuid, function(err, mdata)	{
+						if(err)
+							res.json({"status":"OK","data":[]});
+						else
+							res.json({"status":"OK","data":mdata});
+					});
+				}
+			});
+		}else
+			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
+	});	
+}
+
+apimanager.prototype.loadalerts	=	function(req, res)	{
 	var db = this.db;
 	db.CheckSession(req.body.sessionkey, function(ok, data)	{
 		if(ok)	{

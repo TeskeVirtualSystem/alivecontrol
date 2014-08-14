@@ -41,6 +41,11 @@ database.prototype.GetMachines	=	function(cb)	{
 	return this.Machines.find({}, cb);
 };
 
+database.prototype.GetUserMachines	=	function(uuid, cb)	{
+	return this.Machines.find({"owneruuid":uuid}, cb);
+}
+
+
 database.prototype.CheckUserUUID	=	function(uuid, cb)	{
 	this.Users.find({"uuid":uuid}, function(err, data)	{
 		if(cb !== undefined) cb(data != null && data.length > 0);
@@ -338,6 +343,7 @@ database.prototype.UpdateMachine	=	function(uuid, data, cb)	{
 				m.current_status=	1;
 				m.uptime		=	data.uptime;
 				m.lastupdate	=	Date.now();
+				m.os			=	data.os === undefined ? "Unknown" : data.os;
 				m.save(function()	{
 					m.CleanMachineData(function()	{
 						dbthis._AddMachineData(uuid, data, cb);
