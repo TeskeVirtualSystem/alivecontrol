@@ -1,0 +1,19 @@
+
+#loadingdiv	{
+  	z-index: 100000;
+	position:absolute;
+	top: 15px;
+	width: 200px;
+	left: 50%;
+	margin-left: -100px;
+	display: none;
+}
+
+#pagelogo	{
+	margin-top: -8px;
+	margin-left: -4px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	height: 40px;
+}

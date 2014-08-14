@@ -52,7 +52,10 @@ apimanager.prototype.loadalerts	=	function(req, res)	{
 	var db = this.db;
 	db.CheckSession(req.body.sessionkey, function(ok, data)	{
 		if(ok)	{
-			res.json({"status":"OK","data":[]});
+			db.GetAlerts(data.useruuid, function(err, adata)	{
+				if(err)	res.json({"status":"OK","data":[]});
+				else    res.json({"status":"OK","data":adata});
+			});
 		}else
 			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
 	});	
@@ -63,7 +66,10 @@ apimanager.prototype.loadtasks	=	function(req, res)	{
 	var db = this.db;
 	db.CheckSession(req.body.sessionkey, function(ok, data)	{
 		if(ok)	{
-			res.json({"status":"OK","data":[]});
+			db.GetUnsolvedTasks(data.useruuid, function(err, adata)	{
+				if(err)	res.json({"status":"OK","data":[]});
+				else    res.json({"status":"OK","data":adata});
+			});
 		}else
 			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
 	});	
@@ -73,7 +79,10 @@ apimanager.prototype.loadwarnings	=	function(req, res)	{
 	var db = this.db;
 	db.CheckSession(req.body.sessionkey, function(ok, data)	{
 		if(ok)	{
-			res.json({"status":"OK","data":[]});
+			db.GetUnsolvedWarnings(data.useruuid, function(err, adata)	{
+				if(err)	res.json({"status":"OK","data":[]});
+				else    res.json({"status":"OK","data":adata});
+			});
 		}else
 			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
 	});	
@@ -83,7 +92,10 @@ apimanager.prototype.loadproblems	=	function(req, res)	{
 	var db = this.db;
 	db.CheckSession(req.body.sessionkey, function(ok, data)	{
 		if(ok)	{
-			res.json({"status":"OK","data":[]});
+			db.GetUnsolvedProblems(data.useruuid, function(err, adata)	{
+				if(err)	res.json({"status":"OK","data":[]});
+				else    res.json({"status":"OK","data":adata});
+			});
 		}else
 			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
 	});	
