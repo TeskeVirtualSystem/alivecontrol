@@ -222,3 +222,31 @@ function BuildMachineLine(machine)	{
 	output += "</tr>\n";
 	return output;
 }
+
+function RefreshMachineDevices(data)	{
+
+}
+
+function RefreshMachineEthernets(data)	{
+
+}
+
+function RefreshMachineDisks(data)	{
+
+}
+
+function RefreshMachineMounts(data)	{
+
+}
+
+function RefreshMachineMYSQLs(data)	{
+
+}
+
+function RefreshMachineDRBDs(data)	{
+
+}
+
+function RefreshMachineVMs(data)	{
+	
+}

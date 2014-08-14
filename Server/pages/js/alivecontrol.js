@@ -134,6 +134,153 @@ function LoadMachines()		{
 	);
 }
 
+function LoadMachineDevices(uuid)		{
+	ShowLoadingBar();
+	console.log("Carregando Dispositivos para "+uuid);
+	APIRequest("loadmdevices",{"uuid":machineuuid},
+		function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				console.log(data.data.length+" dispositivos carregadas.");
+				RefreshMachineDevices(data.data);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_OWNER")	{
+				console.error("Esta máquina não pertence a você!");
+				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
+				Page("dashboard");
+			}else
+				console.error("Não foi possível carregar as maquinas!");
+		}
+	);
+}
+
+function LoadMachineEthernets(uuid)		{
+	ShowLoadingBar();
+	console.log("Carregando Dispositivos de Rede para "+uuid);
+	APIRequest("loadmethernets",{"uuid":machineuuid},
+		function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				console.log(data.data.length+" dispositivos de rede carregadas.");
+				RefreshMachineEthernets(data.data);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_OWNER")	{
+				console.error("Esta máquina não pertence a você!");
+				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
+				Page("dashboard");
+			}else
+				console.error("Não foi possível carregar as maquinas!");
+		}
+	);
+}
+
+function LoadMachineDisks(uuid)		{
+	ShowLoadingBar();
+	console.log("Carregando Discos para "+uuid);
+	APIRequest("loadmedisks",{"uuid":machineuuid},
+		function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				console.log(data.data.length+" discos carregados.");
+				RefreshMachineDisks(data.data);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_OWNER")	{
+				console.error("Esta máquina não pertence a você!");
+				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
+				Page("dashboard");
+			}else
+				console.error("Não foi possível carregar as maquinas!");
+		}
+	);
+}
+
+function LoadMachineMounts(uuid)		{
+	ShowLoadingBar();
+	console.log("Carregando Pontos de Montagem para "+uuid);
+	APIRequest("loadmmounts",{"uuid":machineuuid},
+		function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				console.log(data.data.length+" pontos de montagem carregados.");
+				RefreshMachineDisks(data.data);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_OWNER")	{
+				console.error("Esta máquina não pertence a você!");
+				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
+				Page("dashboard");
+			}else
+				console.error("Não foi possível carregar as maquinas!");
+		}
+	);
+}
+
+function LoadMachineDRBDs(uuid)		{
+	ShowLoadingBar();
+	console.log("Carregando Dispositivos DRBD para "+uuid);
+	APIRequest("loadmethernets",{"uuid":machineuuid},
+		function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				console.log(data.data.length+" dispositivos DRBD carregados.");
+				RefreshMachineDRBDs(data.data);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_OWNER")	{
+				console.error("Esta máquina não pertence a você!");
+				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
+				Page("dashboard");
+			}else
+				console.error("Não foi possível carregar as maquinas!");
+		}
+	);
+}
+
+function LoadMachineMYSQLs(uuid)		{
+	ShowLoadingBar();
+	console.log("Carregando MySQLs para "+uuid);
+	APIRequest("loadmmysqls",{"uuid":machineuuid},
+		function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				console.log(data.data.length+" MySQLs carregados.");
+				RefreshMachineMYSQLs(data.data);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_OWNER")	{
+				console.error("Esta máquina não pertence a você!");
+				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
+				Page("dashboard");
+			}else
+				console.error("Não foi possível carregar as maquinas!");
+		}
+	);
+}
+
+function LoadMachineVMs(uuid)		{
+	ShowLoadingBar();
+	console.log("Carregando Máquinas Virtuais para "+uuid);
+	APIRequest("loadmvms",{"uuid":machineuuid},
+		function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				console.log(data.data.length+" máquinas virtuais carregadas.");
+				RefreshMachineVMs(data.data);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_OWNER")	{
+				console.error("Esta máquina não pertence a você!");
+				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
+				Page("dashboard");
+			}else
+				console.error("Não foi possível carregar as maquinas!");
+		}
+	);
+}
+
 function NotAuthorizedFallback()	{
 	ClearT();
 	SetLoggedUser();
