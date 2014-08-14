@@ -23,7 +23,7 @@ apimanager.prototype.loadmachines		=	function(req, res)	{
 	var db = this.db;
 	db.CheckSession(req.body.sessionkey, function(ok, sdata)	{
 		if(ok)	{
-			sdata.GetUser(function(udata)	{
+			sdata.GetUser(function(err, udata)	{
 				if(udata[0].level > 1)	{
 					db.GetMachines(function(err, mdata)	{
 						if(err)
@@ -62,7 +62,7 @@ apimanager.prototype.adduser		=	function(req, res)	{
 			data.GetUser(function(data)	{
 				if(data.length > 0)	{
 					if(data[0].level > 1)	{
-						db.AddUser(req.body.add_username,req.body.add_password,req.body.add_name, function(data,msg,err)	{
+						db.AddUser(req.body.add_username,req.body.add_password,req.body.add_name,req.body.add_level, function(data,msg,err)	{
 							if(data != null)	
 								res.json({"status":"OK","uuid":data.uuid});
 							else
@@ -85,7 +85,6 @@ apimanager.prototype.login			=	function(req, res)	{
 			db.CreateSession(user.uuid, req.body.level, req.body.maxdays, function(data, error)	{
 				if(data != null)	{
 					delete user.password;
-					console.log(user);
 					res.json({"status":"OK","sessionkey":data.sessionkey,"uuid":user.uuid,"userdata":user});
 				}else{
 					console.log("Session error: "+error);
