@@ -12,6 +12,9 @@ var apimanager = function(database, app)	{
 	app.post("/api/updatemachine"	, 	function(r, q) { _this.updatemachine(r,q);	});
 	app.post("/api/adduser"			,	function(r, q) { _this.adduser(r,q); 		});
 	app.post("/api/loadalerts"		,	function(r, q) { _this.loadalerts(r,q);		});
+	app.post("/api/loadtasks"		,	function(r, q) { _this.loadtasks(r,q);		});
+	app.post("/api/loadwarnings"	,	function(r, q) { _this.loadwarnings(r,q);	});
+	app.post("/api/loadproblems"	,	function(r, q) { _this.loadproblems(r,q);	});
 	app.post("/api/loadmachines"	,	function(r, q) { _this.loadmachines(r,q);	});
 };
 
@@ -54,6 +57,38 @@ apimanager.prototype.loadalerts	=	function(req, res)	{
 			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
 	});	
 }
+
+
+apimanager.prototype.loadtasks	=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, data)	{
+		if(ok)	{
+			res.json({"status":"OK","data":[]});
+		}else
+			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
+	});	
+}
+
+apimanager.prototype.loadwarnings	=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, data)	{
+		if(ok)	{
+			res.json({"status":"OK","data":[]});
+		}else
+			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
+	});	
+}
+
+apimanager.prototype.loadproblems	=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, data)	{
+		if(ok)	{
+			res.json({"status":"OK","data":[]});
+		}else
+			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
+	});	
+}
+
 
 apimanager.prototype.adduser		=	function(req, res)	{
 	var db = this.db;
