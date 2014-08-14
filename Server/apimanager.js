@@ -5,17 +5,28 @@ var apimanager = function(database, app)	{
 	this.db 	= database;
 	this.app 	= app;
 	var _this = this;
-	app.get("/api/"					,	function(r, q) { _this.apibase(r,q); });
-	app.post("/api/"				,	function(r, q) { _this.apibase(r,q); });
-	app.post("/api/login"			, 	function(r, q) { _this.login(r,q); });
-	app.post("/api/logout"			, 	function(r, q) { _this.logout(r,q); });
-	app.post("/api/updatemachine"	, 	function(r, q) { _this.updatemachine(r,q);});
-	app.post("/api/adduser"			,	function(r, q) { _this.adduser(r,q); });
+	app.get("/api/"					,	function(r, q) { _this.apibase(r,q); 		});
+	app.post("/api/"				,	function(r, q) { _this.apibase(r,q); 		});
+	app.post("/api/login"			, 	function(r, q) { _this.login(r,q); 			});
+	app.post("/api/logout"			, 	function(r, q) { _this.logout(r,q); 		});
+	app.post("/api/updatemachine"	, 	function(r, q) { _this.updatemachine(r,q);	});
+	app.post("/api/adduser"			,	function(r, q) { _this.adduser(r,q); 		});
+	app.post("/api/loadalerts"		,	function(r, q) { _this.loadalerts(r,q);		});
 };
 
 apimanager.prototype.apibase		=	function(req, res)	{
 	res.json({"status":"NOK","code":"NO_COMMAND","error":"No Command"});
 };
+
+apimanager.prototype.loadalerts		=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, data)	{
+		if(ok)	{
+			res.json({"status":"OK","data":[]});
+		}else
+			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
+	});	
+}
 
 apimanager.prototype.adduser		=	function(req, res)	{
 	var db = this.db;
