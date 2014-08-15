@@ -1,5 +1,12 @@
 var LoadingBarStack	=	0;
 
+var WebUI_Parameters	=	{
+	diskPercentCritical		: 5,
+	diskPercentWarning 		: 20,
+	diskSmartOK				: ["PASSED"],
+	diskSmartProblem		: ["FAIL"],
+};
+
 function secondsToTime(secs)	{
     secs = Math.round(secs);
     var hours = Math.floor(secs / (60 * 60));
@@ -282,11 +289,18 @@ function RefreshMachineDisks(data)	{
 		var d 			= data[i];
 		var capacity 	= toNotationUnit(d.capacity, 2);
 		var capacity10 	= toNotationUnit(d.capacity, 10);
+		var diskclass	= "";
+
+		if(WebUI_Parameters.diskSmartOK.indexOf(d.diskstatus) > -1)
+			diskclass = "success";
+		else if(WebUI_Parameters.diskSmartProblem.indexOf(d.diskstatus) > -1)
+			diskclass = "danger";
+
 		$("#diskstablerows").append('\
-			<tr>\
+			<tr class="'+diskclass+'">\
 				<td>'+d.device+'</td>\
 				<td>'+d.family+'</td>\
-				<td>'+capacity[0].toFixed(2)+' '+capacity[1]+'iB ('+capacity10[0].toFixed(0)+' '+capacity10[1]+'B</td>\
+				<td>'+capacity[0].toFixed(2)+' '+capacity[1]+'iB ('+capacity10[0].toFixed(0)+' '+capacity10[1]+'B)</td>\
 				<td>'+d.ontime+'</td>\
 				<td>'+d.powercycles+'</td>\
 				<td>'+d.readerrors+'</td>\
@@ -306,8 +320,15 @@ function RefreshMachineMounts(data)	{
 		var used 	= toNotationUnit(d.used, 10);
 		var free 	= toNotationUnit(d.free, 10);
 		var size	= toNotationUnit(d.size, 10);
+		var percent = 100*(d.free/d.size);
+		var mountclass = "success";
+		if(percent < WebUI_Parameters.diskPercentCritical)
+			mountclass = "danger";
+		else if(percent < WebUI_Parameters.diskPercentWarning)
+			mountclass = "warning";
+
 		$("#mountstablerows").append('\
-			<tr>\
+			<tr class="'+mountclass+'">\
                 <td>'+d.mountpoint+'</td>\
                 <td>'+d.device+'</td>\
                 <td>'+used[0].toFixed(2)+' '+used[1]+'B</td>\
