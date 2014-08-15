@@ -129,23 +129,23 @@ exports.GetDiskList			=	function()	{
 /**
  *	Get the Smart Data for a disk
  **/
-exports.GetmartData		=	function(disk)	{
-	var data = ExecuteShell("smartctl -a "+disk);
-	if("START OF INFORMATION SECTION" in data)	{
-            ModelFamily          =    ExecuteShell('smartctl -a '+disk+' | grep "Model Family" | cut -d: -f2').trim()
-            DeviceModel          =    ExecuteShell('smartctl -a '+disk+' | grep "Device Model" | cut -d: -f2').trim()
-            UserCapacity         =    ExecuteShell('smartctl -a '+disk+' | grep "User Capacity" | cut -d: -f2' ).trim()
-            DiskHealth           =    ExecuteShell('smartctl -a '+disk+' | grep "SMART overall-health" | cut -d: -f2').trim()
-            PowerOnHours         =    ExecuteShell('smartctl -a '+disk+' | grep "Power_On_Hours"').trim().split(' ')
+exports.GetSmartData		=	function(disk)	{
+	var data = ExecuteShell("smartctl -d sat -a /dev/"+disk);
+	if(data.indexOf("START OF INFORMATION SECTION") > -1 )	{
+            ModelFamily          =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "Model Family" | cut -d: -f2').trim()
+            DeviceModel          =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "Device Model" | cut -d: -f2').trim()
+            UserCapacity         =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "User Capacity" | cut -d: -f2' ).trim().split("bytes")[0].trim().replace(/\./g,"")
+            DiskHealth           =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "SMART overall-health" | cut -d: -f2').trim()
+            PowerOnHours         =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "Power_On_Hours"').trim().split(' ')
             PowerOnHours         =    PowerOnHours[PowerOnHours.length-1]
-            PowerCycleCount      =    ExecuteShell('smartctl -a '+disk+' | grep "Power_Cycle_Count"').trim().split(' ')
+            PowerCycleCount      =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "Power_Cycle_Count"').trim().split(' ')
             PowerCycleCount      =    PowerCycleCount[PowerCycleCount.length-1]
-            ReadErrorRate        =    ExecuteShell('smartctl -a '+disk+' | grep "Raw_Read_Error_Rate"').trim().split(' ')
+            ReadErrorRate        =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "Raw_Read_Error_Rate"').trim().split(' ')
             ReadErrorRate        =    ReadErrorRate[ReadErrorRate.length-1]    
-            ReallocatedSector    =    ExecuteShell('smartctl -a '+disk+' | grep "Reallocated_Sector_Ct"').trim().split(' ')    
+            ReallocatedSector    =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "Reallocated_Sector_Ct"').trim().split(' ')    
             ReallocatedSector    =    ReallocatedSector[ReallocatedSector.length-1]			
             return { 
-            	"Device"				: disk, 
+            	"Device"				: "/dev/"+disk, 
             	"ModelFamily" 			: ModelFamily, 
             	"DeviceModel" 			: DeviceModel, 
             	"UserCapacity" 			: UserCapacity, 
@@ -155,7 +155,8 @@ exports.GetmartData		=	function(disk)	{
             	"ReadErrorRate" 		: ReadErrorRate, 
             	"ReallocatedSector" 	: ReallocatedSector 
             }
-	}
+	}else
+		return null;
 }
 
 /**
@@ -167,14 +168,14 @@ exports.Init3WareSmart		=	function()	{	ExecuteShell("smartctl -d 3ware,0 /dev/tw
  *	Initializes 3Ware controller and get smartdata from its devices
  **/
 exports.Get3WareSmartData	=	function()	{
-	Init3WareSmart();
+	exports.Init3WareSmart();
 	var smlist = [];
 	for(var i=0;i<12;i++)	{
 		var data = ExecuteShell("smartctl -a -d 3ware,"+i+" /dev/twa0 ");
-		if("START OF INFORMATION SECTION" in data)	{
+		if(data.indexOf("START OF INFORMATION SECTION") > -1)	{
 	            ModelFamily          =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "Model Family" | cut -d: -f2').trim()
 	            DeviceModel          =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "Device Model" | cut -d: -f2').trim()
-	            UserCapacity         =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "User Capacity" | cut -d: -f2' ).trim()
+	            UserCapacity         =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "User Capacity" | cut -d: -f2' ).trim().split("bytes")[0].trim().replace(/\./g,"")
 	            DiskHealth           =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "SMART overall-health" | cut -d: -f2').trim()
 	            PowerOnHours         =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "Power_On_Hours"').trim().split(' ')
 	            PowerOnHours         =    PowerOnHours[PowerOnHours.length-1]
@@ -185,7 +186,7 @@ exports.Get3WareSmartData	=	function()	{
 	            ReallocatedSector    =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "Reallocated_Sector_Ct"').trim().split(' ')    
 	            ReallocatedSector    =    ReallocatedSector[ReallocatedSector.length-1]			
 	            smlist.push({ 
-	            	"Device"				: disk, 
+	            	"Device"				: "3ware,"+i, 
 	            	"ModelFamily" 			: ModelFamily, 
 	            	"DeviceModel" 			: DeviceModel, 
 	            	"UserCapacity" 			: UserCapacity, 

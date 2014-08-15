@@ -51,6 +51,21 @@ function DoUpdate()	{
 	var disksuse				=	tvs.GetDiskUsage();
 	console.log("Getting Uptime");
 	var uptime					=	tvs.GetUpTime();
+	console.log("Getting DRBD Info");
+	var drbd 					=	tvs.GetDRBDInfo();
+	console.log("Getting Disks");
+	var disks 					=	tvs.GetDiskList();
+	console.log("Getting SmartData");
+	var smart 					=	[];
+	for(var i in disks)	{
+		var sm = tvs.GetSmartData(disks[i]);
+		if(sm != null)
+			smart.push(sm);
+	}
+	console.log("Getting 3Ware Smart Data");
+	var sm3ware 				=	tvs.Get3WareSmartData();
+	for(var i in sm3ware)
+		smart.push(sm3ware[i]);
 
 	machinedata.processor 		= 	cpu.cpu_model_name;
 	machinedata.total_memory	=	mem.total;
@@ -89,6 +104,22 @@ function DoUpdate()	{
 			"size"			: disksuse[i].Size,
 		});
 	}
+
+	machinedata.disks  				=	[];
+	for(var i in smart)	{
+		var sm = smart[i];
+		machinedata.disks.push({
+			"family"			: sm.ModelFamily,
+			"capacity"  		: sm.UserCapacity,
+			"ontime"			: sm.PowerOnHours,
+			"powercycles"		: sm.PowerCycleCount,
+			"readerrors"		: sm.ReadErrorRate,
+			"realocatedsectors"	: sm.ReallocatedSector,
+			"diskstatus"		: sm.DiskHealth,
+			"device" 			: sm.Device
+		});
+	}
+
 	console.log("Sending");
 	api.updatemachine(machinedata, dataConfig.Key, function(ok, machineuuid)	{
 		if(ok)		{

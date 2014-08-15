@@ -476,10 +476,14 @@ apimanager.prototype.updatemachine	=	function(req, res)	{
 						/** If we find, lets check the ownership **/
 						if(data.length > 0)	{
 							/** If belongs to the user, lets just update **/
-							if(data[0].owneruuid == session.useruuid)
+							if(data[0].owneruuid == session.useruuid)	{
+								data[0].current_status = 1;
+								data[0].lastupdate = Date.now();
+								data[0].save();
 								db.UpdateMachine(data[0].uuid, machinedata, function(uuid, data) {
 									res.json({"status":"OK","machineuuid":uuid});
 								});
+							}
 							else{
 							/** If not, we create a new machine  and ignore the Machine UUID **/
 								db.UpdateMachine(null, machinedata, function(uuid, data) {

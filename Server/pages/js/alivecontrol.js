@@ -152,10 +152,10 @@ function LoadMachine(data)	{
 
 	) ;
 	$("#machinelastupdate").html(lastupdate);
-	switch(data.status)	{
+	switch(data.current_status)	{
 		case 0: $("#machinestatus").html("<font color=\"red\">OFFLINE</font>"); break;
-		case 1: $("#machinestatus").html("<font color=\"red\">ONLINE</font>"); break;
-		default: $("#machinestatus").html("<font color=\"gray\">UNKNOWN ("+data.status+")</font>"); break;
+		case 1: $("#machinestatus").html("<font color=\"green\">ONLINE</font>"); break;
+		default: $("#machinestatus").html("<font color=\"gray\">UNKNOWN ("+data.current_status+")</font>"); break;
 	}
 	$.plot("#ram-graph",  
 		[
