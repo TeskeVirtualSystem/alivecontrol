@@ -11,6 +11,15 @@ var apimanager = function(database, app)	{
 	app.post("/api/logout"			, 	function(r, q) { _this.logout(r,q); 		});
 
 	app.post("/api/updatemachine"	, 	function(r, q) { _this.updatemachine(r,q);	});
+
+	app.post("/api/updatedevices"	,	function(r, q) { _this.updatedevices(r,q);  });
+	app.post("/api/updateethernets"	,	function(r, q) { _this.updateethernets(r,q);});
+	app.post("/api/updatedisks"		,	function(r, q) { _this.updatedisks(r,q);  	});
+	app.post("/api/updatemounts"	,	function(r, q) { _this.updatemounts(r,q);  	});
+	app.post("/api/updatemysqls"	,	function(r, q) { _this.updatemysqls(r,q);  	});
+	app.post("/api/updatedrbds"		,	function(r, q) { _this.updatedrbds(r,q);  	});
+	app.post("/api/updatevms"		,	function(r, q) { _this.updatevms(r,q);  	});
+
 	app.post("/api/adduser"			,	function(r, q) { _this.adduser(r,q); 		});
 
 	app.post("/api/loadalerts"		,	function(r, q) { _this.loadalerts(r,q);		});
@@ -31,6 +40,117 @@ var apimanager = function(database, app)	{
 
 apimanager.prototype.apibase		=	function(req, res)	{
 	res.json({"status":"NOK","code":"NO_COMMAND","error":"No Command"});
+};
+
+apimanager.prototype.updatedevices	=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("devices"))
+				data.CleanDevices(function()	{
+					for(var i in req.body.devices)	
+						db.AddDevice(req.body.machineuuid, req.body.devices[i].name, req.body.devices[i].type);
+					res.json({"status":"OK"});
+				});
+		}
+	});
+};
+
+apimanager.prototype.updateethernets	=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("ethernets"))	{
+				data.CleanEthernets(function()	{
+					for(var i in req.body.ethernets)	
+						db.AddEthernet(req.body.machineuuid,  req.body.ethernets[i].iface,  req.body.ethernets[i].address,  req.body.ethernets[i].broadcast,  req.body.ethernets[i].netmask,  req.body.ethernets[i].rxbytes,  req.body.ethernets[i].txbytes);
+					res.json({"status":"OK"});
+				});
+			}
+		}
+	});
+};
+
+apimanager.prototype.updatedisks	=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("disks"))	{
+				data.CleanDisks(function()	{
+					for(var i in req.body.disks)	
+						db.AddDisk(req.body.machineuuid, req.body.disks[i].family, req.body.disks[i].capacity, req.body.disks[i].ontime, req.body.disks[i].powercycles, req.body.disks[i].readerrors, req.body.disks[i].realocatedsectors, req.body.disks[i].diskstatus, req.body.disks[i].device);
+					res.json({"status":"OK"});
+				});
+			}
+		}
+	});
+};
+
+apimanager.prototype.updatemounts	=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("mounts"))	{
+				data.CleanMounts(function()	{
+					for(var i in req.body.mounts)	
+						db.AddMount(req.body.machineuuid, req.body.mounts[i].mountpoint, req.body.mounts[i].device, req.body.mounts[i].used, req.body.mounts[i].free, req.body.mounts[i].size);
+					res.json({"status":"OK"});
+				});
+			}
+		}
+	});
+};
+
+apimanager.prototype.updatemysqls	=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("mysqls"))	{
+				data.CleanMYSQLs(function()	{
+					for(var i in req.body.mysqls)	
+						db.AddMYSQL(req.body.machineuuid, req.body.mysqls[i].masterhost, req.body.mysqls[i].masteruser, req.body.mysqls[i].slavestate, req.body.mysqls[i].slaveiorunning, req.body.mysqls[i].slavesqlrunning);
+					res.json({"status":"OK"});
+				});
+			}
+		}
+	});
+};
+
+apimanager.prototype.updatedrbds	=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("drbds"))	{
+				data.CleanDRBDs(function()	{
+					for(var i in req.body.drbds)	{
+						db.AddDRBD(uuid, req.body.drbds[i].version, req.body.drbds[i].connections, function(drbd, msg, err)	{
+							if(drbd != null)	{
+								if(req.body.drbds[i].hasOwnProperty("connections"))
+									for(var z in req.body.drbds[i].connections)
+										db.AddDRBDCONN(drbd.uuid, req.body.drbds[i].connections[z].cs, req.body.drbds[i].connections[z].ro, req.body.drbds[i].connections[z].ds, req.body.drbds[i].connections[z].ns);
+								
+							}
+							res.json({"status":"OK"});
+						});
+					}
+				});
+			}
+		}
+	});
+};
+
+apimanager.prototype.updatevms	=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("vms"))	{
+				data.CleanVMs(function()	{
+					//TODO
+					res.json({"status":"OK"});
+				});
+			}
+		}
+	});
 };
 
 apimanager.prototype.loadmdevices		=	function(req, res)	{
@@ -148,13 +268,15 @@ apimanager.prototype._loadmachine		=	function(req, res, cb)	{
 							cb(err,mdata);
 						else{
 							res.json({"status":"NOK","status":"NOT_OWNER","data":{}});
-							cb(err,mdata);
+							cb("NOT_OWNER",mdata);
 						}
 					});
 				}
 			});
-		}else
-			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});
+		}else{
+			res.json({"status":"NOK","code":"NOT_AUTHORIZED","error":"Access denied"});	
+			cb("NOT_AUTHORIZED",null);
+		}
 	});		
 };
 

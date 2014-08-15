@@ -250,7 +250,6 @@ function ResetMachineFields()	{
 
 function RefreshMachineDevices(data)	{
 	$("#deviceslist").html("");
-	console.log(data);
 	for(var i in data)	
 		$("#deviceslist").append('<li class="list-group-item">'+data[i].name+'</li>');
 	if(data.length == 0)
@@ -260,7 +259,6 @@ function RefreshMachineDevices(data)	{
 function RefreshMachineEthernets(data)	{
 	$("#ethernetstablerows").html("");
 	for(var i in data)	{
-		console.log(data[i]);
 		var rx = toNotationUnit(data[i].rxbytes, 2);
 		var tx = toNotationUnit(data[i].txbytes, 2);
 		$("#ethernetstablerows").append('\
@@ -279,7 +277,6 @@ function RefreshMachineEthernets(data)	{
 }
 
 function RefreshMachineDisks(data)	{
-	console.log(data);
 	$("#diskstablerows").html("");
 	for(var i in data)	{
 		var d 			= data[i];
@@ -303,7 +300,6 @@ function RefreshMachineDisks(data)	{
 }
 
 function RefreshMachineMounts(data)	{
-	console.log(data);
 	$("#mountstablerows").html("");
 	for(var i in data)	{
 		var d 			= data[i];
@@ -325,7 +321,6 @@ function RefreshMachineMounts(data)	{
 }
 
 function RefreshMachineMYSQLs(data)	{
-	console.log(data);
 	$("#mysqltablerows").html("");
 	for(var i in data)	{
 		var d 			= data[i];
@@ -344,7 +339,6 @@ function RefreshMachineMYSQLs(data)	{
 }
 
 function RefreshMachineDRBDs(data)	{
-	console.log(data);
 	$("#drbdtablerows").html("");
 	$("#drbdinfo").html("Versão: "+data.version);
 	for(var i in data.conns)	{
@@ -364,7 +358,6 @@ function RefreshMachineDRBDs(data)	{
 }
 
 function RefreshMachineVMs(data)	{
-	console.log(data);
 	$("#vmstablerows").html("");
 	for(var i in data)	{
 		var d 			= data[i];

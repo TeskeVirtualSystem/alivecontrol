@@ -422,7 +422,7 @@ database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 	//	Add MySQLs
 	if(data.hasOwnProperty("mysqls"))
 		for(var i in data.mysqls)	
-			this.AddMYSQL(uuid, data.mysqls[i].masterhost, data.mysqls[i].masteruser, data.mysqls[i].slavestate, data.mysqls[i].salveiorunning, data.mysqls[i].slavesqlrunning);
+			this.AddMYSQL(uuid, data.mysqls[i].masterhost, data.mysqls[i].masteruser, data.mysqls[i].slavestate, data.mysqls[i].slaveiorunning, data.mysqls[i].slavesqlrunning);
 	
 	//	Add VMS
 	/*	TODO	*/
