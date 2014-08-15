@@ -134,10 +134,95 @@ function LoadMachines()		{
 	);
 }
 
+function LoadMachine(data)	{
+	$("#machineos").html(data.os);
+	$("#machinecpu").html(data.cpu);
+	$("#machinehead").html('<i class="fa fa-desktop"></i> '+data.name+' <small>'+data.uuid+'</small>');
+	var lastupdate = secondsToTime( (Date.now() - data.lastupdate)/1000);
+	var lastupdate = (lastupdate.d > 0)	?	
+	lastupdate.d+" dias atrás."	: 
+	(
+		(lastupdate.h > 0) ? 
+			lastupdate.h + " horas atrás." :
+			(
+				(lastupdate.m > 0) ?
+				lastupdate.m + " minutos atrás." :
+				lastupdate.s + " segundos atrás "
+			)
+
+	) ;
+	$("#machinelastupdate").html(lastupdate);
+	switch(data.status)	{
+		case 0: $("#machinestatus").html("<font color=\"red\">OFFLINE</font>"); break;
+		case 1: $("#machinestatus").html("<font color=\"red\">ONLINE</font>"); break;
+		default: $("#machinestatus").html("<font color=\"gray\">UNKNOWN ("+data.status+")</font>"); break;
+	}
+	$.plot("#ram-graph",  
+		[
+			{"label":"Livre","data":data.free_memory},
+			{"label":"Usado","data":(data.total_memory-data.free_memory)}
+		], 
+		{
+			series: {
+				pie: { 
+						show: true,
+						radius: 1,
+						label: {
+							show: true,
+							radius: 3/4,
+							formatter: labelFormatter,
+							background: { 
+								opacity: 0.8,
+								color: "#000000"
+							}
+						}
+					}	
+			},
+			legend: {
+				show: false
+			}
+		});
+	$.plot("#swap-graph", 
+		[
+			{"label":"Livre","data":data.free_swap},  
+			{"label":"Usado","data":(data.total_swap-data.free_swap)}
+		],     
+		{
+			series: {
+				pie: { 
+						show: true,
+						radius: 1,
+						label: {
+							show: true,
+							radius: 3/4,
+							formatter: labelFormatter,
+							background: { 
+								opacity: 0.8,
+								color: "#000000"
+							}
+						}
+					}	
+			},
+			legend: {
+				show: false
+			}
+		});
+
+	ResetMachineFields();
+	$("#machine").fadeIn();
+	$("#machines").hide();
+	LoadMachineDevices(data.uuid);
+	LoadMachineEthernets(data.uuid);
+	LoadMachineDisks(data.uuid);
+	LoadMachineMounts(data.uuid);
+	LoadMachineDRBDs(data.uuid);
+	LoadMachineMYSQLs(data.uuid);
+	LoadMachineVMs(data.uuid);
+}
 function LoadMachineDevices(uuid)		{
 	ShowLoadingBar();
 	console.log("Carregando Dispositivos para "+uuid);
-	APIRequest("loadmdevices",{"uuid":machineuuid},
+	APIRequest("loadmdevices",{"machineuuid":uuid},
 		function(data)	{
 			HideLoadingBar();
 			if(data.status == "OK")	{
@@ -158,7 +243,7 @@ function LoadMachineDevices(uuid)		{
 function LoadMachineEthernets(uuid)		{
 	ShowLoadingBar();
 	console.log("Carregando Dispositivos de Rede para "+uuid);
-	APIRequest("loadmethernets",{"uuid":machineuuid},
+	APIRequest("loadmethernets",{"machineuuid":uuid},
 		function(data)	{
 			HideLoadingBar();
 			if(data.status == "OK")	{
@@ -179,7 +264,7 @@ function LoadMachineEthernets(uuid)		{
 function LoadMachineDisks(uuid)		{
 	ShowLoadingBar();
 	console.log("Carregando Discos para "+uuid);
-	APIRequest("loadmedisks",{"uuid":machineuuid},
+	APIRequest("loadmdisks",{"machineuuid":uuid},
 		function(data)	{
 			HideLoadingBar();
 			if(data.status == "OK")	{
@@ -200,12 +285,12 @@ function LoadMachineDisks(uuid)		{
 function LoadMachineMounts(uuid)		{
 	ShowLoadingBar();
 	console.log("Carregando Pontos de Montagem para "+uuid);
-	APIRequest("loadmmounts",{"uuid":machineuuid},
+	APIRequest("loadmmounts",{"machineuuid":uuid},
 		function(data)	{
 			HideLoadingBar();
 			if(data.status == "OK")	{
 				console.log(data.data.length+" pontos de montagem carregados.");
-				RefreshMachineDisks(data.data);
+				RefreshMachineMounts(data.data);
 			}else if(data.status == "NOT_AUTHORIZED")
 				NotAuthorizedFallback();
 			else if(data.status == "NOT_OWNER")	{
@@ -221,7 +306,7 @@ function LoadMachineMounts(uuid)		{
 function LoadMachineDRBDs(uuid)		{
 	ShowLoadingBar();
 	console.log("Carregando Dispositivos DRBD para "+uuid);
-	APIRequest("loadmethernets",{"uuid":machineuuid},
+	APIRequest("loadmdrbds",{"machineuuid":uuid},
 		function(data)	{
 			HideLoadingBar();
 			if(data.status == "OK")	{
@@ -242,7 +327,7 @@ function LoadMachineDRBDs(uuid)		{
 function LoadMachineMYSQLs(uuid)		{
 	ShowLoadingBar();
 	console.log("Carregando MySQLs para "+uuid);
-	APIRequest("loadmmysqls",{"uuid":machineuuid},
+	APIRequest("loadmmysqls",{"machineuuid":uuid},
 		function(data)	{
 			HideLoadingBar();
 			if(data.status == "OK")	{
@@ -263,7 +348,7 @@ function LoadMachineMYSQLs(uuid)		{
 function LoadMachineVMs(uuid)		{
 	ShowLoadingBar();
 	console.log("Carregando Máquinas Virtuais para "+uuid);
-	APIRequest("loadmvms",{"uuid":machineuuid},
+	APIRequest("loadmvms",{"machineuuid":uuid},
 		function(data)	{
 			HideLoadingBar();
 			if(data.status == "OK")	{
@@ -298,25 +383,6 @@ function DoLogout()			{
 	);
 };
 
-function LoadMachine(data)	{
-	ShowLoadingBar();
-	console.log("Carregando máquina "+data.uuid);
-	APIRequest("loadmachine",{"machineuuid":data.uuid},
-		function(mdata)	{
-			HideLoadingBar();
-			if(data.status == "OK")	{
-				RefreshMachine(mdata.data);
-			}else if(data.status == "NOT_AUTHORIZED")
-				NotAuthorizedFallback();
-			else if(data.status == "NOT_OWNER")	{
-				console.error("Esta máquina não pertence a você!");
-				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
-				Page("dashboard");
-			}else
-				console.error("Não foi possível carregar as maquinas!");
-		}
-	);
-}
 
 function APIRequest(cmd,data,callback,error_callback)		{
 	if(GetT("sessionkey") !== undefined)

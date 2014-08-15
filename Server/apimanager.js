@@ -86,8 +86,20 @@ apimanager.prototype.loadmdrbds		=	function(req, res)	{
 	this._loadmachine(req, res, function(err, data)	{
 		if(!err)	{
 			data.GetDRBDs(function(err,mdata)	{
-				if(err) res.json({"status":"OK","data":[]});
-				else    res.json({"status":"OK","data":mdata});
+				if(err) res.json({"status":"OK","data":{"version":"0.00","conns":[]}});
+				else{
+					if(mdata.length >0)	{
+						mdata.GetConnections(function(err, ddata)	{
+							if(err)	
+								mdata[0].conns = [];
+							else
+								mdata[0].conns = ddata;
+							res.json({"status":"OK","data":mdata[0]});
+						});
+					}else{
+						res.json({"status":"OK","data":{"version":"0.00","conns":[]}});
+					}
+				}
 			});
 		}
 	});

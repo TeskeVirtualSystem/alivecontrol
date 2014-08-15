@@ -10,9 +10,6 @@
 	    <!-- Bootstrap Core CSS -->
 	    <link href="css/bootstrap.min.css" rel="stylesheet">
 
-	    <!-- Custom CSS -->
-	    <link href="css/sb-admin.css" rel="stylesheet">
-
 	    <!-- Custom Fonts -->
 	    <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">	
 
@@ -139,7 +136,7 @@
 			    <div class="collapse navbar-collapse navbar-ex1-collapse" >
 			        <ul id="menu" class="nav navbar-nav side-nav" style="display: none">
 			            <li class="active">
-			                <a href="#"><i class="fa fa-fw fa-dashboard"></i> Painel</a>
+			                <a href="#" onClick="Page('dashboard')"><i class="fa fa-fw fa-dashboard"></i> Painel</a>
 			            </li>
 			            <li>
 			                <a href="#" onClick="Page('machines')"><i class="fa fa-fw fa-desktop"></i> Máquinas</a>
@@ -152,23 +149,324 @@
 			</nav>
 
         	<div id="page-wrapper"  style="display: none">
-        		<div id="machines" class="container-fluid" style="display: none">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>OS</th>
-                                        <th>Nome</th>
-                                        <th>Processador</th>
-                                        <th>Memoria Total</th>
-                                        <th>Ultima atualização</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="machinetablerows">
 
-                                </tbody>
-                            </table>
-                        </div>
+        		<div id="machine" class="container-fluid" style="display: none">
+	                <!-- Page Heading -->
+	                <div class="row">
+	                    <div class="col-lg-12">
+	                        <h1 class="page-header" id="machinehead">
+	                        	<i class="fa fa-desktop"></i> NOME <small>UUID</small>
+	                        </h1>
+	                    </div>
+	                </div>
+	                <!-- /.row -->
+	                <div class="row">
+                   		<div class="col-md-6">
+                        	<div class="table-responsive">
+	                            <div class="form-group input-group" style="width: 100%">
+	                                <span class="input-group-addon" style="width: 20%; text-align: left">OS</span>
+	                                <span class="input-group-addon" style="width: 80%" id="machineos">Linux</span>
+	                            </div>
+                                <div class="form-group input-group" style="width: 100%">
+	                                <span class="input-group-addon" style="width: 20%; text-align: left">Processador</span>
+	                                <span class="input-group-addon" style="width: 80%" id="machinecpu">Intel(R) Core(TM) i7-3630QM CPU @ 2.40GHz</span>
+	                            </div>
+                                <div class="form-group input-group" style="width: 100%">
+	                                <span class="input-group-addon" style="width: 20%; text-align: left">Ultima Atualização</span>
+	                                <span class="input-group-addon" style="width: 80%" id="machinelastupdate">3 dias atrás.</span>
+	                            </div>
+                                <div class="form-group input-group" style="width: 100%">
+	                                <span class="input-group-addon" style="width: 20%; text-align: left">Status</span>
+	                                <span class="input-group-addon" style="width: 80%" id="machinestatus">ONLINE</span>
+	                            </div>
+                        	</div>
+                    	</div>           	
+	                	<!-- /.col -->
+                   		<div class="col-md-3">
+	                        <div class="panel panel-green">
+	                            <div class="panel-heading">
+	                                <h3 class="panel-title"><i class="fa fa-long-arrow-right"></i> Memória RAM</h3>
+	                            </div>
+	                            <div class="panel-body">
+	                                <div class="memory-graph">
+	                                    <div class="memory-graph-content" id="ram-graph"></div>
+	                                </div>
+	                            </div>
+	                        </div>
+                    	</div>                  	
+	                	<!-- /.col -->
+                   		<div class="col-md-3">
+	                        <div class="panel panel-green">
+	                            <div class="panel-heading">
+	                                <h3 class="panel-title"><i class="fa fa-long-arrow-right"></i> Memória SWAP</h3>
+	                            </div>
+	                            <div class="panel-body">
+	                                <div class="memory-graph">
+	                                    <div class="memory-graph-content" id="swap-graph"></div>
+	                                </div>
+	                            </div>
+	                        </div>
+                    	</div>         
+	                	<!-- /.col -->
+                    </div>
+	                <!-- /.row -->
+	                
+	                <div class="row">
+	                    <div class="col-md-12">
+							<div class="panel-group" id="devicesaccordion">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+							    		<h4 class="panel-title">	
+							    			<a data-toggle="collapse" data-parent="#devicesaccordion" href="#devicescollapse">Dispositivos PCI/PCI-e</a>
+										</h4>
+									</div>
+									<div id="devicescollapse" class="panel-collapse collapse">
+										<div class="panel-body">
+											<ul class="list-group" id="deviceslist">
+												<li class="list-group-item">Carregando</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+		                </div>
+	                </div>	                
+	                <!-- /.row -->
+
+	                <div class="row">
+	                    <div class="col-md-12">
+							<div class="panel-group" id="ethernetsaccordion">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+							    		<h4 class="panel-title">	
+							    			<a data-toggle="collapse" data-parent="#ethernetsaccordion" href="#ethernetscollapse">Dispositivos de Rede</a>
+										</h4>
+									</div>
+									<div id="ethernetscollapse" class="panel-collapse collapse">
+										<div class="panel-body">
+					                        <table class="table table-hover table-striped">
+					                            <thead>
+					                                <tr>
+					                                    <th>Dispositivo</th>
+					                                    <th>IP</th>
+					                                    <th>Broadcast</th>
+					                                    <th>Máscara</th>
+					                                    <th>RX Bytes</th>
+					                                    <th>TX Bytes</th>
+					                                </tr>
+					                            </thead>
+					                            <tbody id="ethernetstablerows">
+					                            	<td colspan=6>Carregando...</td>
+					                            </tbody>
+					                        </table>
+										</div>
+									</div>
+								</div>
+							</div>
+		                </div>
+	                </div>	                
+	                <!-- /.row -->
+	                <div class="row">
+	                    <div class="col-md-12">
+							<div class="panel-group" id="disksaccordion">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+							    		<h4 class="panel-title">	
+							    			<a data-toggle="collapse" data-parent="#disksaccordion" href="#diskscollapse">Discos</a>
+										</h4>
+									</div>
+									<div id="diskscollapse" class="panel-collapse collapse">
+										<div class="panel-body">
+					                        <table class="table table-hover table-striped">
+					                            <thead>
+					                                <tr>
+					                                    <th>Dispositivo</th>
+					                                    <th>Familia</th>
+					                                    <th>Capacidade</th>
+					                                    <th>Tempo Ligado</th>
+					                                    <th>Ciclos de Energia</th>
+					                                    <th>Erros de Leitura</th>
+					                                    <th>Setores Realocados</th>
+					                                    <th>Status</th>
+					                                </tr>
+					                            </thead>
+					                            <tbody id="diskstablerows">
+					                            	<td colspan=8>Carregando...</td>
+					                            </tbody>
+					                        </table>
+										</div>
+									</div>
+								</div>
+							</div>
+		                </div>
+	                </div>	                
+	                <!-- /.row -->
+	                <div class="row">
+	                    <div class="col-md-12">
+							<div class="panel-group" id="mountsaccordion">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+							    		<h4 class="panel-title">	
+							    			<a data-toggle="collapse" data-parent="#mountsaccordion" href="#mountscollapse">Pontos de montagem</a>
+										</h4>
+									</div>
+									<div id="mountscollapse" class="panel-collapse collapse">
+										<div class="panel-body">
+					                        <table class="table table-hover table-striped">
+					                            <thead>
+					                                <tr>
+					                                    <th>Ponto de Montagem</th>
+					                                    <th>Dispositivo</th>
+					                                    <th>Usado</th>
+					                                    <th>Livre</th>
+					                                    <th>Tamanho</th>
+					                                </tr>
+					                            </thead>
+					                            <tbody id="mountstablerows">
+					                            	<td colspan=5>Carregando...</td>
+					                            </tbody>
+					                        </table>
+										</div>
+									</div>
+								</div>
+							</div>
+		                </div>
+	                </div>	                
+	                <!-- /.row -->
+	                <div class="row">
+	                    <div class="col-md-12">
+							<div class="panel-group" id="mysqlsaccordion">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+							    		<h4 class="panel-title">	
+							    			<a data-toggle="collapse" data-parent="#mysqlsaccordion" href="#mysqlcollapse">MySQL</a>
+										</h4>
+									</div>
+									<div id="mysqlcollapse" class="panel-collapse collapse">
+										<div class="panel-body">
+					                        <table class="table table-hover table-striped">
+					                            <thead>
+					                                <tr>
+					                                    <th>Master Host</th>
+					                                    <th>Master User</th>
+					                                    <th>Estado do Slave</th>
+					                                    <th>Estado IO</th>
+					                                    <th>Estado SQL</th>		
+					                                </tr>
+					                            </thead>
+					                            <tbody id="mysqltablerows">
+					                            	<td colspan=5>Carregando...</td>
+					                            </tbody>
+					                        </table>
+										</div>
+									</div>
+								</div>
+							</div>
+		                </div>
+	                </div>	                
+	                <!-- /.row -->
+	                <div class="row">
+	                    <div class="col-md-12">
+							<div class="panel-group" id="drbdaccordion">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+							    		<h4 class="panel-title">	
+							    			<a data-toggle="collapse" data-parent="#drbdaccordion" href="#drbdcollapse">Conexões DRBD</a>
+										</h4>
+									</div>
+									<div id="drbdcollapse" class="panel-collapse collapse">
+										<div class="panel-body">
+											<div id="drbdinfo">
+												Versão: 0.00
+											</div>
+					                        <table class="table table-hover table-striped">
+					                            <thead>
+					                                <tr>
+					                                    <th>ID</th>
+					                                    <th>CS</th>
+					                                    <th>RO</th>
+					                                    <th>DS</th>
+					                                    <th>NS</th>
+					                                </tr>
+					                            </thead>
+					                            <tbody id="drbdtablerows">
+					                            	<td colspan=5>Carregando...</td>
+					                            </tbody>
+					                        </table>
+										</div>
+									</div>
+								</div>
+							</div>
+		                </div>
+	                </div>	                
+	                <!-- /.row -->
+	                <div class="row">
+	                    <div class="col-md-12">
+							<div class="panel-group" id="vmsaccordion">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+							    		<h4 class="panel-title">	
+							    			<a data-toggle="collapse" data-parent="#vmsaccordion" href="#vmscollapse">Máquinas Virtuais</a>
+										</h4>
+									</div>
+									<div id="vmscollapse" class="panel-collapse collapse">
+										<div class="panel-body">
+					                        <table class="table table-hover table-striped">
+					                            <thead>
+					                                <tr>
+					                                    <th>OS</th>
+					                                    <th>Nome</th>
+					                                    <th>Memória RAM</th>
+					                                    <th>CPUs</th>
+					                                    <th>Tipo</th>
+					                                    <th>Status</th>
+					                                </tr>
+					                            </thead>
+					                            <tbody id="vmstablerows">
+					                            	<td colspan=6>Carregando...</td>
+					                            </tbody>
+					                        </table>
+										</div>
+									</div>
+								</div>
+							</div>
+		                </div>
+	                </div>	                
+	                <!-- /.row -->
+
+        		</div>
+
+        		<div id="machines" class="container-fluid" style="display: none">
+	                <!-- Page Heading -->
+	                <div class="row">
+	                    <div class="col-lg-12">
+	                        <h1 class="page-header">
+	                        	<i class="fa fa-desktop"></i> Máquinas <small>Visão Geral</small>
+	                        </h1>
+	                    </div>
+	                </div>
+	                <!-- /.row -->
+
+	                <div class="row">
+	                    <div class="col-md-12">
+		                    <div class="table-responsive">
+		                        <table class="table table-hover table-striped">
+		                            <thead>
+		                                <tr>
+		                                    <th>OS</th>
+		                                    <th>Nome</th>
+		                                    <th>Processador</th>
+		                                    <th>Memoria Total</th>
+		                                    <th>Ultima atualização</th>
+		                                </tr>
+		                            </thead>
+		                            <tbody id="machinetablerows">
+
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                </div>
+	                </div>
         		</div>
 
          		<div id="dashboard" class="container-fluid" style="display: none" >
@@ -176,13 +474,8 @@
 	                <div class="row">
 	                    <div class="col-lg-12">
 	                        <h1 class="page-header">
-	                        	Painel <small>Visão Geral</small>
+	                        	 <i class="fa fa-dashboard"></i> Painel <small>Visão Geral</small>
 	                        </h1>
-	                        <ol class="breadcrumb">
-	                            <li class="active">
-	                                <i class="fa fa-dashboard"></i> Painel
-	                            </li>
-	                        </ol>
 	                    </div>
 	                </div>
 	                <!-- /.row -->
@@ -305,6 +598,9 @@
 
 	    <!-- Bootstrap Core JavaScript -->
 	    <script src="js/bootstrap.min.js"></script>
+	    <!-- Flot Graph -->
+		<script src="js/jquery.flot.js"></script>
+		<script src="js/jquery.flot.pie.js"></script>
 
 	    <!-- TVS Alive Control -->
 	    <script src="js/tvsstore.js"></script>

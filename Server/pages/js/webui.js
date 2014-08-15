@@ -104,6 +104,7 @@ function LoadAlert(id)	{	Page("alert",id);	}
 function HidePages()	{	
 	$("#dashboard").hide();
 	$("#machines").hide();
+	$("#machine").hide();
 }
 
 
@@ -188,6 +189,21 @@ function RefreshMachines()	{
 	$("#dashboardmachinebox").fadeIn();
 };
 
+function UILoadMachine(uuid)	{
+	var machines = GetT("machines");
+	if(Array.isArray(machines) && machines.length > 0)	{
+		for(var i in machines)	{
+			if(machines[i].uuid == uuid)	{
+				LoadMachine(machines[i]);
+				break;
+			}
+		}
+	}else{
+		ShowError("Máquina inválida!", "Máquina inválida! Tente recarregar a página.");
+		Page("dashboard");
+	}
+}
+
 function BuildMachineLine(machine)	{
 	// A table line with following columns: OS Image (32x32) - Name - Processor - Total Memory - Last update
 	var output;
@@ -214,7 +230,7 @@ function BuildMachineLine(machine)	{
 	var memory10 = toNotationUnit(machine.total_memory, 10);
 
 	output +=  '	<td><img src="img/os/'+osimage+'.png" width=32 height=32 id="os_image_'+machine.uuid+'"/></td>\n';
-	output +=  '	<td>'+machine.name+'</td>\n';
+	output +=  '	<td><a href="#" onClick="UILoadMachine(\''+machine.uuid+'\')">'+machine.name+'</a></td>\n';
 	output +=  '	<td>'+machine.processor+'</td>\n';
 	output +=  '	<td>'+memory[0].toFixed(2)+' '+memory[1]+'iB ('+memory10[0].toFixed(0)+' '+memory10[1]+'B)</td>\n';
 	output +=  '	<td>'+lastupdate+'</td>\n';
@@ -223,30 +239,159 @@ function BuildMachineLine(machine)	{
 	return output;
 }
 
-function RefreshMachineDevices(data)	{
+function ResetMachineFields()	{
+	$("#deviceslist").html('<li class="list-group-item">Carregando</li>');
+	$("#ethernetstablerows").html('<td colspan=6>Carregando...</td>');
+	$("#diskstablerows").html('<td colspan=8>Carregando...</td>');
+	$("#mountstablerows").html('<td colspan=5>Carregando...</td>');
+	$("#drbdtablerows").html('<td colspan=5>Carregando...</td>');
+	$("#vmstablerows").html('<td colspan=6>Carregando...</td>');
+}
 
+function RefreshMachineDevices(data)	{
+	$("#deviceslist").html("");
+	console.log(data);
+	for(var i in data)	
+		$("#deviceslist").append('<li class="list-group-item">'+data[i].name+'</li>');
+	if(data.length == 0)
+		$("#deviceslist").html('<li class="list-group-item">Nenhum dispositivo PCI/PCI-e</li>');
 }
 
 function RefreshMachineEthernets(data)	{
-
+	$("#ethernetstablerows").html("");
+	for(var i in data)	{
+		console.log(data[i]);
+		var rx = toNotationUnit(data[i].rxbytes, 2);
+		var tx = toNotationUnit(data[i].txbytes, 2);
+		$("#ethernetstablerows").append('\
+			<tr>\
+				<td>'+data[i].iface+'</td>\
+				<td>'+data[i].address+'</td>\
+				<td>'+data[i].broadcast+'</td>\
+				<td>'+data[i].netmask+'</td>\
+				<td>'+rx[0].toFixed(2)+' '+rx[1]+'iB</td>\
+				<td>'+tx[0].toFixed(2)+' '+tx[1]+'iB</td>\
+			</tr>\
+		');
+	}
+	if(data.length == 0)
+		$("#ethernetstablerows").html('<td colspan=6>Nenhum dispositivo de rede</td>');
 }
 
 function RefreshMachineDisks(data)	{
-
+	console.log(data);
+	$("#diskstablerows").html("");
+	for(var i in data)	{
+		var d 			= data[i];
+		var capacity 	= toNotationUnit(d.capacity, 2);
+		var capacity10 	= toNotationUnit(d.capacity, 10);
+		$("#diskstablerows").append('\
+			<tr>\
+				<td>'+d.device+'</td>\
+				<td>'+d.family+'</td>\
+				<td>'+capacity[0].toFixed(2)+' '+capacity[1]+'iB ('+capacity10[0].toFixed(0)+' '+capacity10[1]+'B</td>\
+				<td>'+d.ontime+'</td>\
+				<td>'+d.powercycles+'</td>\
+				<td>'+d.readerrors+'</td>\
+				<td>'+d.realocatedsectors+'</td>\
+				<td>'+d.diskstatus+'</td>\
+			</tr>\
+		');
+	}
+	if(data.length == 0)
+		$("#diskstablerows").html('<td colspan=8>Nenhum disco</td>');
 }
 
 function RefreshMachineMounts(data)	{
-
+	console.log(data);
+	$("#mountstablerows").html("");
+	for(var i in data)	{
+		var d 			= data[i];
+		var used 	= toNotationUnit(d.used, 10);
+		var free 	= toNotationUnit(d.free, 10);
+		var size	= toNotationUnit(d.size, 10);
+		$("#mountstablerows").append('\
+			<tr>\
+                <td>'+d.mountpoint+'</td>\
+                <td>'+d.device+'</td>\
+                <td>'+used[0].toFixed(2)+' '+used[1]+'B</td>\
+                <td>'+free[0].toFixed(2)+' '+free[1]+'B</td>\
+                <td>'+size[0].toFixed(2)+' '+size[1]+'B</td>\
+			</tr>\
+		');
+	}
+	if(data.length == 0)
+		$("#mountstablerows").html('<td colspan=4>Nenhum ponto de montagem</td>');
 }
 
 function RefreshMachineMYSQLs(data)	{
-
+	console.log(data);
+	$("#mysqltablerows").html("");
+	for(var i in data)	{
+		var d 			= data[i];
+		$("#mysqltablerows").append('\
+			<tr>\
+                <th>'+d.masterhost+'</th>\
+                <th>'+d.masteruser+'</th>\
+                <th>'+d.slavestate+'</th>\
+                <th>'+((d.slaveiorunning>0)?"Funcionando":"Parado")+'</th>\
+                <th>'+((d.slavesqlrunning>0)?"Funcionando":"Parado")+'</th>\
+			</tr>\
+		');
+	}
+	if(data.length == 0)
+		$("#mysqltablerows").html('<td colspan=5>Nenhum Slave MySQL</td>');
 }
 
 function RefreshMachineDRBDs(data)	{
-
+	console.log(data);
+	$("#drbdtablerows").html("");
+	$("#drbdinfo").html("Versão: "+data.version);
+	for(var i in data.conns)	{
+		var d 			= data.conns[i];
+		$("#drbdtablerows").append('\
+			<tr>\
+				<th>'+d.connid+'</th>\
+				<th>'+d.cs+'</th>\
+				<th>'+d.ro+'</th>\
+				<th>'+d.ds+'</th>\
+				<th>'+d.ns+'</th>\
+			</tr>\
+		');
+	}
+	if(data.conns.length == 0)
+		$("#drbdtablerows").html('<td colspan=5>Nenhum DRBD</td>');
 }
 
 function RefreshMachineVMs(data)	{
-	
+	console.log(data);
+	$("#vmstablerows").html("");
+	for(var i in data)	{
+		var d 			= data[i];
+		var status = "<font color=\"red\">PARADA</font>";
+		switch(d.status)	{
+			case 0: status = "<font color=\"red\">PARADA</font>"; break;
+			case 1: status = "<font color=\"green\">RODANDO</font>"; break; 
+			case 2: status = "<font color=\"green\">SALVANDO</font>"; break;
+			case 3: status = "<font color=\"yellow\">SALVA</font>"; break;
+			case 4: status = "<font color=\"red\">ABORTADA</font>"; break;
+			default: status = "<font color=\"gray\">Desconhecido</font>"; break;
+		}
+		$("#vmstablerows").append('\
+			<tr>\
+				<th>'+d.guestos+'</th>\
+				<th>'+d.name+'</th>\
+				<th>'+d.memory+'</th>\
+				<th>'+d.cpus+'</th>\
+				<th>'+d.type+'</th>\
+				<th>'+status+'</th>\
+			</tr>\
+		');
+	}
+	if(data.length == 0)
+		$("#vmstablerows").html('<td colspan=6>Nenhuma máquina virtual</td>');
+}
+
+function labelFormatter(label, series) {
+	return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;background-color:rgba(0,0,0,0.5);'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
 }
