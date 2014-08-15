@@ -1,3 +1,2 @@
 
-exports.ServerURL	=	"http://localhost:82/";
-exports.Key			=	"";
+exports.ServerURL	=	"http://localhost:82";
