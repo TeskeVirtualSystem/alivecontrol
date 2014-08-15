@@ -389,36 +389,32 @@ database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 	//	Add Devices
 	if(data.hasOwnProperty("devices"))
 		for(var i in data.devices)	
-			if(data.devices.hasOwnProperty(i))
-				this.AddDevice(uuid, data.devices[i].name, data.devices[i].type);
+			this.AddDevice(uuid, data.devices[i].name, data.devices[i].type);
 	//	Add Ethernets
 	if(data.hasOwnProperty("ethernets"))
 		for(var i in data.ethernets)	
-			if(data.ethernets.hasOwnProperty(i))
-				this.AddEthernet(uuid,  data.ethernets[i].iface,  data.ethernets[i].address,  data.ethernets[i].broadcast,  data.ethernets[i].netmask,  data.ethernets[i].rxbytes,  data.ethernets[i].txbytes);
+			this.AddEthernet(uuid,  data.ethernets[i].iface,  data.ethernets[i].address,  data.ethernets[i].broadcast,  data.ethernets[i].netmask,  data.ethernets[i].rxbytes,  data.ethernets[i].txbytes);
 	//	Add Disks
 	if(data.hasOwnProperty("disks"))
 		for(var i in data.disks)	
-			if(data.disks.hasOwnProperty(i))
-				this.AddDisk(uuid, data.disks[i].family, data.disks[i].capacity, data.disks[i].ontime, data.disks[i].powercycles, data.disks[i].readerrors, data.disks[i].realocatedsectors, data.disks[i].diskstatus, data.disks[i].device);
+			this.AddDisk(uuid, data.disks[i].family, data.disks[i].capacity, data.disks[i].ontime, data.disks[i].powercycles, data.disks[i].readerrors, data.disks[i].realocatedsectors, data.disks[i].diskstatus, data.disks[i].device);
 	//	Add Mounts
 	if(data.hasOwnProperty("mounts"))
 		for(var i in data.mounts)	
-			if(data.mounts.hasOwnProperty(i))
-				this.AddMount(uuid, data.mounts[i].mountpoint, data.mounts[i].device, data.mounts[i].used, data.mounts[i].free, data.mounts[i].size);
+			this.AddMount(uuid, data.mounts[i].mountpoint, data.mounts[i].device, data.mounts[i].used, data.mounts[i].free, data.mounts[i].size);
+		
 	//	Add DRBDs
 	if(data.hasOwnProperty("drbds"))
 		for(var i in data.drbds)	
-			if(data.drbds.hasOwnProperty(i))
-				this.AddDRBD(uuid, data.drbds[i].version, data.drbds[i].connections, function(drbd, msg, err)	{
-					if(drbd != null)	{
-						if(data.drbds[i].hasOwnProperty("connections"))
-							for(var z in data.drbds[i].connections)
-								if(data.drbds[i].connections.hasOwnProperty(z))
-									dbthis.AddDRBDCONN(drbd.uuid, data.drbds[i].connections[z].cs, data.drbds[i].connections[z].ro, data.drbds[i].connections[z].ds, data.drbds[i].connections[z].ns);
-						
-					}
-				});
+			this.AddDRBD(uuid, data.drbds[i].version, data.drbds[i].connections, function(drbd, msg, err)	{
+				if(drbd != null)	{
+					if(data.drbds[i].hasOwnProperty("connections"))
+						for(var z in data.drbds[i].connections)
+							if(data.drbds[i].connections.hasOwnProperty(z))
+								dbthis.AddDRBDCONN(drbd.uuid, data.drbds[i].connections[z].cs, data.drbds[i].connections[z].ro, data.drbds[i].connections[z].ds, data.drbds[i].connections[z].ns);
+					
+				}
+			});
 	//	Add MySQLs
 	if(data.hasOwnProperty("mysqls"))
 		for(var i in data.mysqls)	

@@ -205,7 +205,7 @@ exports.Get3WareSmartData	=	function()	{
  **/
 exports.GetDiskUsage	=	function()	{
 	var disks = [];
-	var data = cleanArray(ExecuteShell('df -h |grep "/dev/sd\\|/dev/xvd\\|/dev/mapper/\\|/dev/drbd"').split("\n"));
+	var data = cleanArray(ExecuteShell('df |grep "/dev/sd\\|/dev/xvd\\|/dev/mapper/\\|/dev/drbd"').split("\n"));
 	for(var i in data)	{
 		var dsk = cleanArray(data[i].split(" "));
 		disks.push({ 
