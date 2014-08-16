@@ -1,14 +1,14 @@
 var uuid          = require('node-uuid');
 
-var Timings	=	{
-	"CheckSession"	: 10 * 60 * 1000,			//	10 minutes interval per session check 
-	"CheckDisk"		: 24 * 60 * 60 * 1000,   	//  1 day interval per disk checks
-}
+var Timings	=	{}
 
 var control = function(database, app, config)	{
 	this.db 	= 	database;
 	this.app 	= 	app;
 	this.config	=	config;
+	Timings 	=	config.internals.timings;
+	
+	console.log("Initializing Control Manager");
 
 	this._CheckSystemUser();
 	this._CheckSessionAction();

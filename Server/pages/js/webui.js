@@ -4,7 +4,7 @@ var WebUI_Parameters	=	{
 	diskPercentCritical		: 5,
 	diskPercentWarning 		: 20,
 	diskSmartOK				: ["PASSED"],
-	diskSmartProblem		: ["FAIL"],
+	diskSmartProblem		: ["FAIL"]
 };
 
 function secondsToTime(secs)	{
@@ -112,16 +112,68 @@ function HidePages()	{
 	$("#dashboard").hide();
 	$("#machines").hide();
 	$("#machine").hide();
+	$("#twp_list").hide();
+
+	$("#machines_li").removeClass("active");
+	$("#dashboard_li").removeClass("active");
+	$("#configuration_li").removeClass("active");
+	$("#problems_li").removeClass("active");
+	$("#warnings_li").removeClass("active");
+	$("#tasks_li").removeClass("active");
 }
 
 
 function Page(page, data)	{
 	HidePages();
 	switch(page)	{
-		case "dashboard"	: 	$("#dashboard").fadeIn(); 		break; 
-		case "machines"		:  	$("#machines").fadeIn(); 		break;
-		case "machine" 		:   LoadMachine(data);				break; 
-		default 			:	$("#dashboard").fadeIn(); 		break; 
+		case "dashboard"	: 	$("#dashboard").fadeIn(); 	$("#dashboard_li").addClass("active"); 	break; 
+		case "machines"		:  	$("#machines").fadeIn();  	$("#machines_li").addClass("active"); 	break;
+		case "machine" 		:   LoadMachine(data);		 	$("#machines_li").addClass("active"); 	break; 
+		case "tasks"		:
+		case "warnings"		:
+		case "problems"		: 	TWPLoad(page);				$("#"+page+"_li").addClass("active");		break; 	
+
+		default 			:	$("#dashboard").fadeIn(); 	$("#dashboard_li").addClass("active"); 	break; 
+	}
+}
+
+
+function TWPLoad(page)	{
+	var data = null;
+	$("#twptablerows").html("");
+	switch(page)	{
+		case "tasks":
+			data = GetT("tasks");
+			$("#twp_title").html('<i class="fa fa-tasks"></i> Tarefas <small>Visão Geral</small>');
+			break;
+		case "warnings":
+			data = GetT("warnings");
+			$("#twp_title").html('<i class="fa fa-exclamation"></i> Avisos <small>Visão Geral</small>');
+			break;
+		case "problems":
+			data = GetT("problems");
+			$("#twp_title").html('<i class="fa fa-support"></i> Problemas <small>Visão Geral</small>');
+			break;
+	}
+	if(data != null)	{
+		for(var i in data)	{
+			$("#twptablerows").append('<tr>\
+				<td id="twp_user_'+data[i].uuid+'">'+data[i].from+'</td>\
+				<td>'+data[i].title+'</td>\
+				<td>'+data[i].subtitle+'</td>\
+				<td>'+(new Date(data[i].target)).toLocaleString()+'</td>\
+			</tr>');
+			GetUserName(data[i].from, data[i].uuid, function(name,extra)	{
+				$("#twp_user_"+extra).html(name);
+				console.log(extra, name);
+			});
+		}
+		if(data.length == 0)
+			$("#twptablerows").html("<tr><td colspan=3>Nenhum item</td></tr>");
+		$("#twp_list").fadeIn();
+	}else{
+		HidePages();
+		ShowError("Pagina inválida","Certifique-se de que está tentando acessar uma página válida.");
 	}
 }
 

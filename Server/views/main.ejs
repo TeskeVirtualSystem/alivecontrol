@@ -135,14 +135,26 @@
 			    <!-- Sidebar Menu Items -->
 			    <div class="collapse navbar-collapse navbar-ex1-collapse" >
 			        <ul id="menu" class="nav navbar-nav side-nav" style="display: none">
-			            <li class="active">
+			            <li class="active" id="dashboard_li">
 			                <a href="#" onClick="Page('dashboard')"><i class="fa fa-fw fa-dashboard"></i> Painel</a>
 			            </li>
-			            <li>
+			            <li id="machines_li">
 			                <a href="#" onClick="Page('machines')"><i class="fa fa-fw fa-desktop"></i> Máquinas</a>
 			            </li>
-			            <li>
+			            <li id="tasks_li">
+			                <a href="#" onClick="Page('tasks')"><i class="fa fa-fw fa-tasks"></i> Tarefas</a>
+			            </li>
+			            <li id="warnings_li">
+			                <a href="#" onClick="Page('warnings')"><i class="fa fa-fw fa-exclamation"></i> Avisos</a>
+			            </li>
+			            <li id="problems_li">
+			                <a href="#" onClick="Page('problems')"><i class="fa fa-fw fa-support"></i> Problemas</a>
+			            </li>
+			            <li id="configuration_li">
 			                <a href="#"><i class="fa fa-fw fa-wrench"></i> Configurações</a>
+			            </li>
+			            <li id="exit_li">
+			                <a href="#" onClick="DoLogout();"><i class="fa fa-fw fa-power-off"></i> Sair</a>
 			            </li>
 			        </ul>
 			    </div>
@@ -435,6 +447,7 @@
 	                <!-- /.row -->
 
         		</div>
+        		<!-- /.page -->
 
         		<div id="machines" class="container-fluid" style="display: none">
 	                <!-- Page Heading -->
@@ -468,6 +481,40 @@
 		                </div>
 	                </div>
         		</div>
+        		<!-- /.page -->
+
+        		<div id="twp_list" class="container-fluid" style="display: none">
+	                <!-- Page Heading -->
+	                <div class="row">
+	                    <div class="col-lg-12">
+	                        <h1 class="page-header" id="twp_title">
+	                        	<i class="fa fa-desktop"></i> Tarefas <small>Visão Geral</small>
+	                        </h1>
+	                    </div>
+	                </div>
+	                <!-- /.row -->
+
+	                <div class="row">
+	                    <div class="col-md-12">
+		                    <div class="table-responsive">
+		                        <table class="table table-hover table-striped">
+		                            <thead>
+		                                <tr>
+		                                    <th>De</th>
+		                                    <th>Título</th>
+		                                    <th>Sub-Título</th>
+		                                    <th>Data</th>
+		                                </tr>
+		                            </thead>
+		                            <tbody id="twptablerows">
+
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                </div>
+	                </div>
+        		</div>
+        		<!-- /.page -->
 
          		<div id="dashboard" class="container-fluid" style="display: none" >
 	                <!-- Page Heading -->
@@ -496,7 +543,7 @@
 	                            </div>
 	                            <a href="#">
 	                                <div class="panel-footer">
-	                                    <span class="pull-left">Ver detalhes</span>
+	                                    <span class="pull-left" onClick="Page('machines')">Ver detalhes</span>
 	                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 	                                    <div class="clearfix"></div>
 	                                </div>
@@ -518,7 +565,7 @@
 	                            </div>
 	                            <a href="#">
 	                                <div class="panel-footer">
-	                                    <span class="pull-left">Ver detalhes</span>
+	                                    <span class="pull-left" onClick="Page('tasks')">Ver detalhes</span>
 	                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 	                                    <div class="clearfix"></div>
 	                                </div>
@@ -540,7 +587,7 @@
 	                            </div>
 	                            <a href="#">
 	                                <div class="panel-footer">
-	                                    <span class="pull-left">Ver detalhes</span>
+	                                    <span class="pull-left" onClick="Page('warnings')">Ver detalhes</span>
 	                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 	                                    <div class="clearfix"></div>
 	                                </div>
@@ -562,7 +609,7 @@
 	                            </div>
 	                            <a href="#">
 	                                <div class="panel-footer">
-	                                    <span class="pull-left">Ver detalhes</span>
+	                                    <span class="pull-left" onClick="Page('problems')">Ver detalhes</span>
 	                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 	                                    <div class="clearfix"></div>
 	                                </div>

@@ -1,14 +1,18 @@
 
 
-var apimanager = function(database, app)	{
-	console.log("Initializing API Manager")
+var apimanager = function(database, app, config)	{
+	console.log("Initializing API Manager");
+
 	this.db 	= database;
 	this.app 	= app;
-	var _this = this;
+	this.config	= config;
+	var _this 	= this;
+
 	app.get("/api/"					,	function(r, q) { _this.apibase(r,q); 		});
 	app.post("/api/"				,	function(r, q) { _this.apibase(r,q); 		});
 	app.post("/api/login"			, 	function(r, q) { _this.login(r,q); 			});
 	app.post("/api/logout"			, 	function(r, q) { _this.logout(r,q); 		});
+	app.post("/api/getconfig"		,	function(r, q) { _this.getconfig(r,q);      });
 
 	app.post("/api/updatemachine"	, 	function(r, q) { _this.updatemachine(r,q);	});
 
@@ -21,6 +25,7 @@ var apimanager = function(database, app)	{
 	app.post("/api/updatevms"		,	function(r, q) { _this.updatevms(r,q);  	});
 
 	app.post("/api/adduser"			,	function(r, q) { _this.adduser(r,q); 		});
+	app.post("/api/getusername"		,	function(r, q) { _this.getusername(r,q);    });
 
 	app.post("/api/loadalerts"		,	function(r, q) { _this.loadalerts(r,q);		});
 	app.post("/api/loadtasks"		,	function(r, q) { _this.loadtasks(r,q);		});
@@ -41,6 +46,30 @@ var apimanager = function(database, app)	{
 apimanager.prototype.apibase		=	function(req, res)	{
 	res.json({"status":"NOK","code":"NO_COMMAND","error":"No Command"});
 };
+
+apimanager.prototype.getconfig		=	function(req, res)	{
+	var uconfig = {
+		"company_title"		: this.config.company_title,
+		"page_logo"			: this.config.page_logo,
+		"WebUI_Parameters"	: this.config.WebUI_Parameters,
+		"internals"			:  {
+			"max_twp_results"	: this.config.internals.max_twp_results, 
+			"timings" 		: {
+				"refreshdata"	: this.config.internals.timings.RefreshData
+			}
+		},
+	};
+	res.json({"status":"OK","data":uconfig});
+}
+
+apimanager.prototype.getusername	=	function(req, res)	{
+	this.db.CheckUserUUID(req.body.uuid, function(ok, data)	{
+		if(ok)	
+			res.json({"status":"OK","name":data.name})
+		else
+			res.json({"status":"OK","name":"Desconhecido"});
+	});
+}
 
 apimanager.prototype.updatedevices	=	function(req, res)	{
 	var db = this.db;

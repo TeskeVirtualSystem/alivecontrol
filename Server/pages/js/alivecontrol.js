@@ -14,7 +14,7 @@ if(!String.prototype.replaceAll)	{
 }
 String.prototype.isEmpty	=	function()	{	return this.toString().trim() == "";	};
 
-
+$(function() {	LoadConfig(); });
 
 function DoLogin()			{	
 	var username	=	$("#loginuser").val();
@@ -238,6 +238,38 @@ function LoadMachineDevices(uuid)		{
 				console.error("Não foi possível carregar as maquinas!");
 		}
 	);
+}
+
+function LoadConfig()	{
+	ShowLoadingBar();
+	console.log("Carregando configurações.");
+	APIRequest("getconfig", {}, function(data)	{
+		HideLoadingBar();	
+		if(data.status == "OK")	{
+			console.log("Configurações carregadas");
+			SetT("config", data.data);
+			WebUI_Parameters = data.data.WebUI_Parameters;
+		}
+	});
+}
+
+function GetUserName(uuid, extra, cb)	{
+	ShowLoadingBar();
+	console.log("Carregando nome para UUID: "+uuid);
+	APIRequest("getusername", {"uuid":uuid}, function(data)	{
+		HideLoadingBar();
+		if(data.status == "OK")	{
+			console.log("Nome de "+uuid+" é "+data.name);
+			if(cb !== undefined)
+				cb(data.name, extra);
+		}else if(data.status == "NOT_AUTHORIZED")
+			NotAuthorizedFallback();
+		else{
+			console.error("Não foi possível carregar o nome do usuário!");
+			if(cb !== undefined, extra)
+				cb("Desconhecido");
+		}
+	});
 }
 
 function LoadMachineEthernets(uuid)		{

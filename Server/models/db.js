@@ -2,9 +2,12 @@ var machine 		= require("./machine.js");
 var user 			= require("./user.js");
 var info			= require("./info.js");
 
-var database = function(url)	{
+var database = function(url, config)	{
 	if(url == undefined)	
 		url = "mongodb://localhost/test";
+
+	console.log("Initializing database");
+	this.config 	=	config;
 
 	this._mg 		= 	require('mongoose');
 	this._mg.connect(url);
@@ -47,19 +50,19 @@ database.prototype.CheckSessions	=	function(cb)	{
 };
 
 database.prototype.GetUnsolvedTasks	=	function(uuid, cb)	{
-	return this.Tasks.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).exec(cb);
+	return this.Tasks.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).sort({target: -1}).limit(this.config.internals.max_twp_results).exec(cb);
 }
 
 database.prototype.GetUnsolvedProblems	=	function(uuid, cb)	{
-	return this.Problems.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).exec(cb);
+	return this.Problems.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).sort({target: -1}).limit(this.config.internals.max_twp_results).exec(cb);
 }
 
 database.prototype.GetUnsolvedWarnings	=	function(uuid, cb)	{
-	return this.Warnings.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).exec(cb);
+	return this.Warnings.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).sort({target: -1}).limit(this.config.internals.max_twp_results).exec(cb);
 }
 
 database.prototype.GetAlerts		=	function(uuid, cb)	{
-	return this.Alerts.find({}).or([{"to":uuid},{"to":"ALL"}]).exec(cb);
+	return this.Alerts.find({}).or([{"to":uuid},{"to":"ALL"}]).sort({when: -1}).exec(cb);
 }
 
 database.prototype.GetMachines	=	function(cb)	{
@@ -76,7 +79,7 @@ database.prototype.GetMachine 		=	function(uuid, cb)	{
 
 database.prototype.CheckUserUUID	=	function(uuid, cb)	{
 	this.Users.find({"uuid":uuid}, function(err, data)	{
-		if(cb !== undefined) cb(data != null && data.length > 0);
+		if(cb !== undefined) cb(data != null && data.length > 0, data[0]);
 	});
 };	
 
