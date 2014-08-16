@@ -413,6 +413,54 @@ function APIRequest(cmd,data,callback,error_callback)		{
 	});
 }
 
-function LoadPage(page, cb)	{
+var OSNames	=	[
+	{"name":"archlinux","image":"archlinux"},
+	{"name":"debian","image":"debian"},
+	{"name":"fedora","image":"fedora"},
+	{"name":"freebsd","image":"freebsd"},
+	{"name":"gentoo","image":"gentoo"},
+	{"name":"macosx","image":"macosx"},
+	{"name":"mandriva","image":"ubuntu"},
+	{"name":"netbsd","image":"netbsd"},
+	{"name":"openbsd","image":"openbsd"},
+	{"name":"opensuse","image":"opensuse"},
+	{"name":"oracle","image":"oracle"},
+	{"name":"solaris","image":"solaris"},
+	{"name":"redhat","image":"redhat"},
+	{"name":"turbolinux","image":"turbolinux"},
+	{"name":"ubuntu","image":"ubuntu"},
+	{"name":"windows 2003","image":"win2k3"},
+	{"name":"windows 2000","image":"win2k"},
+	{"name":"windows 2008","image":"win2k8"},
+	{"name":"windows 2012","image":"win2k12"},
+	{"name":"windows 7","image":"win7"},
+	{"name":"windows 8","image":"win8"},
+	{"name":"windows vista","image":"winvista"},
+	{"name":"windows xp","image":"winxp"},
+	{"name":"windows","image":"win_other"},
+	{"name":"xandros","image":"xandros"},
+	{"name":"linux","image":"linux"}
+];
 
+function GetOSImageName(os)	{
+	if(os == undefined || os == null)
+		return "os_other.png";
+	var image 	= 	"os_";
+	os 			=	os.toLowerCase();
+	var	OK 		=	false;
+	for(var i in OSNames)	{
+		if(os.indexOf(OSNames[i].name) > -1)	{
+			image += OSNames[i].image;
+			OK = true;
+			break;
+		}
+	}
+	if(!OK)	
+		image += "other";
+	
+	if(os.indexOf("x86_64") > -1 || os.indexOf("amd64") > -1)
+		image += "_64";
+	image += ".png";
+
+	return image;
 }

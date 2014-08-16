@@ -2,9 +2,10 @@
  *	This is an port of Python version of TVS Tools from SM Monitor
  **/
 
-var sys = require('sys')
-var exec = require('child_process').exec;
-var execSync = require('exec-sync');
+var sys 		= 	require('sys')
+var exec 		= 	require('child_process').exec;
+var execSync 	= 	require('exec-sync');
+var fs 			= 	require('fs');
 
 console.warn("Warning: TVS Tools uses syncronous calls. This should be ONLY used for scripts and local applications.");
 console.warn("Keep in mind that syncronous calls blocks the program until it finished.");
@@ -382,4 +383,34 @@ exports.GetDRBDInfo			=	function()	{
 exports.GetMySQLSlave	=	function(hostname, username, password, cb)	{
 	// TODO
 	cb();
+}
+
+/**
+ *	Get Linux Version
+ **/
+
+exports.GetOSVersion	=	function()	{
+	var OS 		=	ExecuteShell('uname -s');
+	var REV 	= 	ExecuteShell('uname -r');
+	var MACH 	=	ExecuteShell('uname -m');
+	var output  =   "Unknown";
+	if(OS == "SunOS")	
+		output = "Sun OS ("+MACH+")";
+	else if(OS == "Linux")	{
+		if(fs.existsSync("/etc/redhat-release"))	{
+			output = "RedHat "+ExecuteShell('cat /etc/redhat-release | sed s/.*\\(// | sed s/\\)//') + " ("+MACH+")";
+		}else if(fs.existsSync("/etc/SUSE-release"))	{
+			output = ExecuteShell('cat /etc/SUSE-release | tr "\\n" \' \'| sed s/VERSION.*//') + " ("+MACH+")";
+		}else if(fs.existsSync("/etc/mandrake-release"))	{
+			output = "Mandrake "+ExecuteShell('cat /etc/mandrake-release | sed s/.*\\(// | sed s/\\)//') + " ("+MACH+")";
+		}else if(fs.existsSync("/etc/debian-version"))	{
+			output = "Debian "+ExecuteShell('cat /etc/debian_version')+" ("+MACH+")";
+		}else if(fs.existsSync("/etc/lsb-release"))	{
+			output = ExecuteShell('cat /etc/lsb-release |grep DESCRIPTION | cut -d= -f2').replace(/\"/g,"") + " ("+MACH+")";
+		}else
+			output = "Linux ("+MACH+")";	
+	}else
+		output = OS + " ("+MACH+")";
+	
+	return output;
 }

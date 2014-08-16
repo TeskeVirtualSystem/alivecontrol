@@ -171,7 +171,7 @@ database.prototype.CreateSession=	function(useruuid, level, maxdays, cb)	{
 	});
 };
 
-database.prototype.AddMachine	=	function(owneruuid, name, processor, total_memory, free_memory, total_swap, free_swap, current_status, uptime, cb)	{
+database.prototype.AddMachine	=	function(owneruuid, name, processor, total_memory, free_memory, total_swap, free_swap, current_status, uptime, os, cb)	{
 	var _this = this;
 	this.CheckUserUUID(owneruuid, function(ok)	{
 		if(ok)	{
@@ -185,6 +185,7 @@ database.prototype.AddMachine	=	function(owneruuid, name, processor, total_memor
 			  free_swap 	    :   free_swap, 
 			  current_status    :   current_status,
 			  uptime 	        :   uptime,
+			  os				:   os,
 			  lastupdate		:   Date.now()
 			});
 			machine.GenUUID();
@@ -349,7 +350,7 @@ database.prototype.AddMYSQL	=	function(machineuuid, masterhost, masteruser, slav
 database.prototype.UpdateMachine	=	function(uuid, data, cb)	{
 	var dbthis = this;
 	if(uuid == null)	{
-		dbthis.AddMachine(data.owneruuid, data.name, data.processor, data.total_memory, data.free_memory, data.total_swap, data.free_swap, 1, data.uptime, function(machine, error, err)	{
+		dbthis.AddMachine(data.owneruuid, data.name, data.processor, data.total_memory, data.free_memory, data.total_swap, data.free_swap, 1, data.uptime, data.os, function(machine, error, err)	{
 			if(err)	{
 				console.log("Error: ",err);
 			}
@@ -376,7 +377,7 @@ database.prototype.UpdateMachine	=	function(uuid, data, cb)	{
 					});
 				});
 			}else{
-				dbthis.AddMachine(data.owneruuid, data.name, data.processor, data.total_memory, data.free_memory, data.total_swap, data.free_swap, 1, data.uptime, function(machine)	{
+				dbthis.AddMachine(data.owneruuid, data.name, data.processor, data.total_memory, data.free_memory, data.total_swap, data.free_swap, 1, data.uptime, data.os, function(machine)	{
 					data.uuid = machine.uuid;
 					dbthis._AddMachineData(machine.uuid, data, cb);
 				});
@@ -402,7 +403,7 @@ database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 	if(data.hasOwnProperty("mounts"))
 		for(var i in data.mounts)	
 			this.AddMount(uuid, data.mounts[i].mountpoint, data.mounts[i].device, data.mounts[i].used, data.mounts[i].free, data.mounts[i].size);
-		
+
 	//	Add DRBDs
 	if(data.hasOwnProperty("drbds"))
 		for(var i in data.drbds)	

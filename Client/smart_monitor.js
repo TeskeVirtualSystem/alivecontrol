@@ -39,6 +39,8 @@ function DoUpdate()	{
 		console.log("Good! We already sent this once :D");
 		machinedata.machineuuid = dataConfig.MachineUUID;
 	}
+	console.log("Getting OS Version");
+	var os 						=	tvs.GetOSVersion();
 	console.log("Getting CPU Info");
 	var cpu 					= 	tvs.GetCPUInfo();
 	console.log("Getting Memory Info");
@@ -73,7 +75,8 @@ function DoUpdate()	{
 	machinedata.total_swap		=	mem.swaptotal;
 	machinedata.free_swap		=	mem.swapfree;
 	machinedata.uptime			=	uptime;
-
+	machinedata.os 				=	os;
+	
 	machinedata.devices 		=	[];
 	for(var i in devs)	{
 		machinedata.devices.push({

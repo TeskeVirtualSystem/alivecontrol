@@ -219,7 +219,7 @@ function BuildMachineLine(machine)	{
 	else
 		output	 = "<tr class=\"danger\">\n";
 
-	var osimage = "os_other";
+	var osimage = GetOSImageName(machine.os);
 	var lastupdate = secondsToTime( (Date.now() - machine.lastupdate)/1000);
 	var lastupdate = (lastupdate.d > 0)	?	
 	lastupdate.d+" dias atrás."	: 
@@ -236,7 +236,7 @@ function BuildMachineLine(machine)	{
 	var memory = toNotationUnit(machine.total_memory, 2);
 	var memory10 = toNotationUnit(machine.total_memory, 10);
 
-	output +=  '	<td><img src="img/os/'+osimage+'.png" width=32 height=32 id="os_image_'+machine.uuid+'"/></td>\n';
+	output +=  '	<td><img src="img/os/'+osimage+'" width=32 height=32 id="os_image_'+machine.uuid+'"/></td>\n';
 	output +=  '	<td><a href="#" onClick="UILoadMachine(\''+machine.uuid+'\')">'+machine.name+'</a></td>\n';
 	output +=  '	<td>'+machine.processor+'</td>\n';
 	output +=  '	<td>'+memory[0].toFixed(2)+' '+memory[1]+'iB ('+memory10[0].toFixed(0)+' '+memory10[1]+'B)</td>\n';

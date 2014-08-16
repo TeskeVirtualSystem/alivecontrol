@@ -58,7 +58,7 @@ exports.Schemas = function(mg)	{
 		this.GetDisks(function(err, data)	{
 			if(data.length > 0)		{
 					data[0].remove(function (err, product) {
-						thisschema.CleanDevices(cb);
+						thisschema.CleanDisks(cb);
 					});
 			}else
 				cb();
