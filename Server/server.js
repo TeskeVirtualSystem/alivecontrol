@@ -21,6 +21,6 @@ app.set('view engine', 'ejs');
 
 var api             =   new apiman.api(db,app);
 var page            =   new _page_.page(db,app,config);
-var control         =   new _control_.control(db,app);
+var control         =   new _control_.control(db,app,config);
 
 httpserver.listen(82);

@@ -212,9 +212,9 @@ exports.GetDiskUsage	=	function()	{
 		var dsk = cleanArray(data[i].split(" "));
 		disks.push({ 
 			'Device' 		: dsk[0], 
-			'Size' 			: dsk[1], 
-			'Used' 			: dsk[2], 
-			'Free' 			: dsk[3], 
+			'Size' 			: parseInt(dsk[1])*1000, 
+			'Used' 			: parseInt(dsk[2])*1000, 
+			'Free' 			: parseInt(dsk[3])*1000, 
 			'UsedPercent' 	: dsk[4], 
 			'MountPoint' 	: dsk[5] 
 		});

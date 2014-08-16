@@ -9,7 +9,7 @@ exports.Schemas = function(mg) {
   var Schema        = mg.Schema;
   var userSchema = new Schema({
     uuid      :   { type: String, unique: true }, 
-    username  :   { type: String, index: true },
+    username  :   { type: String, index: true, unique: true },
     password  :   String,
     name      :   String,
     level     :   Number 
