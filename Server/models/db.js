@@ -33,7 +33,7 @@ var database = function(url)	{
 	//return this;
 };
 
-database.prototype.CheckSessions	=	function()	{
+database.prototype.CheckSessions	=	function(cb)	{
 	this.Sessions.find({}, function(err, data)	{
 		for(var i in data)	{
 			if(data.hasOwnProperty(i))	{
@@ -41,6 +41,8 @@ database.prototype.CheckSessions	=	function()	{
 					data[i].remove();
 			}
 		}
+		if(cb !== undefined)
+			cb();
 	});
 };
 
