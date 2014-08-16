@@ -42,6 +42,7 @@ function DoLogin()			{
 				ShowError("Usuário ou senha inválidos!","Por favor, confira seu usuário e senha, eles parecem inválidos.");
 		}
 	);
+	LoadConfig();
 };
 
 function LoadAlerts()		{

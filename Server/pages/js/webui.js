@@ -180,7 +180,10 @@ function TWPLoad(page)	{
 function RefreshWarnings()	{
 	var warnings = GetT("warnings");
 	if(Array.isArray(warnings) && warnings.length > 0)	{
-		$("#dashboardwarnings").html(warnings.length);
+		if(GetT("config").internals.max_twp_results <= warnings.length)
+			$("#dashboardwarnings").html(warnings.length+"+");
+		else
+			$("#dashboardwarnings").html(warnings.length);
 	}else
 		$("#dashboardwarnings").html("0");
 	
@@ -189,7 +192,10 @@ function RefreshWarnings()	{
 function RefreshProblems()	{
 	var problems = GetT("problems");
 	if(Array.isArray(problems) && problems.length > 0)	{
-		$("#dashboardproblems").html(problems.length);
+		if(GetT("config").internals.max_twp_results <= problems.length)
+			$("#dashboardproblems").html(problems.length+"+");
+		else
+			$("#dashboardproblems").html(problems.length);
 	}else
 		$("#dashboardproblems").html("0");
 	
@@ -198,7 +204,10 @@ function RefreshProblems()	{
 function RefreshTasks()		{
 	var tasks = GetT("tasks");
 	if(Array.isArray(tasks) && tasks.length > 0)	{
-		$("#dashboardtasks").html(tasks.length);
+		if(GetT("config").internals.max_twp_results <= tasks.length)
+			$("#dashboardtasks").html(tasks.length+"+");
+		else
+			$("#dashboardtasks").html(tasks.length);
 	}else
 		$("#dashboardtasks").html("0");
 	
