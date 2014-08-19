@@ -14,7 +14,7 @@ if(!String.prototype.replaceAll)	{
 }
 String.prototype.isEmpty	=	function()	{	return this.toString().trim() == "";	};
 
-$(function() {	LoadConfig(); });
+$(function() {	RefreshAll(); });
 
 function DoLogin()			{	
 	var username	=	$("#loginuser").val();
@@ -531,4 +531,21 @@ function SetResolved()	{
 			$("#twp_mark_solved").removeAttr("disabled"); 
 		});
 	}
+}
+
+function RefreshAll()	{
+	console.log("Refreshing data");
+	LoadConfig();
+	if(GetT("userdata") !== undefined)	{
+	    LoadAlerts();
+	    LoadTasks();
+	    LoadWarnings();
+	    LoadProblems();
+	    LoadMachines();
+	}
+	var delay = 5000;
+	if(GetT("config") !== undefined)
+		delay = GetT("config").internals.timings.refreshdata;
+	console.log("Next refresh in "+(delay/1000)+" s");
+	setTimeout(RefreshAll, delay);
 }
