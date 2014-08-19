@@ -8,44 +8,144 @@ var apimanager = function(database, app, config)	{
 	this.config	= config;
 	var _this 	= this;
 
-	app.get("/api/"					,	function(r, q) { _this.apibase(r,q); 		});
-	app.post("/api/"				,	function(r, q) { _this.apibase(r,q); 		});
-	app.post("/api/login"			, 	function(r, q) { _this.login(r,q); 			});
-	app.post("/api/logout"			, 	function(r, q) { _this.logout(r,q); 		});
-	app.post("/api/getconfig"		,	function(r, q) { _this.getconfig(r,q);      });
+	app.get("/api/"						,	function(r, q) { _this.apibase(r,q); 			});
+	app.post("/api/"					,	function(r, q) { _this.apibase(r,q); 			});
+	app.post("/api/login"				, 	function(r, q) { _this.login(r,q); 				});
+	app.post("/api/logout"				, 	function(r, q) { _this.logout(r,q); 			});
+	app.post("/api/getconfig"			,	function(r, q) { _this.getconfig(r,q);     	 	});
 
-	app.post("/api/updatemachine"	, 	function(r, q) { _this.updatemachine(r,q);	});
+	app.post("/api/updatemachine"		, 	function(r, q) { _this.updatemachine(r,q);		});
 
-	app.post("/api/updatedevices"	,	function(r, q) { _this.updatedevices(r,q);  });
-	app.post("/api/updateethernets"	,	function(r, q) { _this.updateethernets(r,q);});
-	app.post("/api/updatedisks"		,	function(r, q) { _this.updatedisks(r,q);  	});
-	app.post("/api/updatemounts"	,	function(r, q) { _this.updatemounts(r,q);  	});
-	app.post("/api/updatemysqls"	,	function(r, q) { _this.updatemysqls(r,q);  	});
-	app.post("/api/updatedrbds"		,	function(r, q) { _this.updatedrbds(r,q);  	});
-	app.post("/api/updatevms"		,	function(r, q) { _this.updatevms(r,q);  	});
+	app.post("/api/updatedevices"		,	function(r, q) { _this.updatedevices(r,q);  	});
+	app.post("/api/updateethernets"		,	function(r, q) { _this.updateethernets(r,q);	});
+	app.post("/api/updatedisks"			,	function(r, q) { _this.updatedisks(r,q);  		});
+	app.post("/api/updatemounts"		,	function(r, q) { _this.updatemounts(r,q);  		});
+	app.post("/api/updatemysqls"		,	function(r, q) { _this.updatemysqls(r,q);  		});
+	app.post("/api/updatedrbds"			,	function(r, q) { _this.updatedrbds(r,q);  		});
+	app.post("/api/updatevms"			,	function(r, q) { _this.updatevms(r,q);  		});
 
-	app.post("/api/adduser"			,	function(r, q) { _this.adduser(r,q); 		});
-	app.post("/api/getusername"		,	function(r, q) { _this.getusername(r,q);    });
+	app.post("/api/marksolvedtask"		,	function(r, q) { _this.marksolvedtask(r,q); 	});
+	app.post("/api/marksolvedwarning"	,	function(r, q) { _this.marksolvedwarning(r,q); 	});
+	app.post("/api/marksolvedproblem"	,	function(r, q) { _this.marksolvedproblem(r,q); 	});
 
-	app.post("/api/loadalerts"		,	function(r, q) { _this.loadalerts(r,q);		});
-	app.post("/api/loadtasks"		,	function(r, q) { _this.loadtasks(r,q);		});
-	app.post("/api/loadwarnings"	,	function(r, q) { _this.loadwarnings(r,q);	});
-	app.post("/api/loadproblems"	,	function(r, q) { _this.loadproblems(r,q);	});
-	app.post("/api/loadmachines"	,	function(r, q) { _this.loadmachines(r,q);	});
+	app.post("/api/adduser"				,	function(r, q) { _this.adduser(r,q); 			});
+	app.post("/api/getusername"			,	function(r, q) { _this.getusername(r,q);    	});
 
-	app.post("/api/loadmachine"		,	function(r, q) { _this.loadmachine(r,q);	});
-	app.post("/api/loadmdevices"	,	function(r, q) { _this.loadmdevices(r,q);	});
-	app.post("/api/loadmethernets"	,	function(r, q) { _this.loadmethernets(r,q);	});
-	app.post("/api/loadmdisks"		,	function(r, q) { _this.loadmdisks(r,q);		});
-	app.post("/api/loadmmounts"		,	function(r, q) { _this.loadmmounts(r,q);	});
-	app.post("/api/loadmdrbds"		,	function(r, q) { _this.loadmdrbds(r,q);		});
-	app.post("/api/loadmmysqls"		,	function(r, q) { _this.loadmmysqls(r,q);	});
-	app.post("/api/loadmvms"		,	function(r, q) { _this.loadmvms(r,q);		});
+	app.post("/api/loadalerts"			,	function(r, q) { _this.loadalerts(r,q);			});
+	app.post("/api/loadtasks"			,	function(r, q) { _this.loadtasks(r,q);			});
+	app.post("/api/loadwarnings"		,	function(r, q) { _this.loadwarnings(r,q);		});
+	app.post("/api/loadproblems"		,	function(r, q) { _this.loadproblems(r,q);		});
+	app.post("/api/loadmachines"		,	function(r, q) { _this.loadmachines(r,q);		});
+
+	app.post("/api/loadmachine"			,	function(r, q) { _this.loadmachine(r,q);		});
+	app.post("/api/loadmdevices"		,	function(r, q) { _this.loadmdevices(r,q);		});
+	app.post("/api/loadmethernets"		,	function(r, q) { _this.loadmethernets(r,q);		});
+	app.post("/api/loadmdisks"			,	function(r, q) { _this.loadmdisks(r,q);			});
+	app.post("/api/loadmmounts"			,	function(r, q) { _this.loadmmounts(r,q);		});
+	app.post("/api/loadmdrbds"			,	function(r, q) { _this.loadmdrbds(r,q);			});
+	app.post("/api/loadmmysqls"			,	function(r, q) { _this.loadmmysqls(r,q);		});
+	app.post("/api/loadmvms"			,	function(r, q) { _this.loadmvms(r,q);			});
 };
 
 apimanager.prototype.apibase		=	function(req, res)	{
 	res.json({"status":"NOK","code":"NO_COMMAND","error":"No Command"});
 };
+
+apimanager.prototype.marksolvedtask	=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, sdata)	{
+		if(ok)	{
+			sdata.GetUser(function(err, udata)	{
+				if(err)	{
+					console.log("Error getting session user: "+err);
+					res.json({"status":"NOK","code":"INTERNAL_ERROR"});
+				}else{
+					if(udata[0].level > 1)	{
+						db.MarkSolvedTask(req.body.taskuuid, null, function(ok)	{
+							if(ok)
+								res.json({"status":"OK"});
+							else
+								res.json({"status":"NOK","code":"NOT_TO_YOU"})
+						});
+					}else{
+						db.MarkSolvedTask(req.body.taskuuid, udata[0].uuid, function(ok)	{
+							if(ok)
+								res.json({"status":"OK"});
+							else
+								res.json({"status":"NOK","code":"NOT_TO_YOU"})
+						});						
+					}
+				}
+			});
+		}else{
+			res.json({"status":"NOK","code":"INVALID_SESSION"});
+		}
+	});
+}
+
+apimanager.prototype.marksolvedwarning	=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, sdata)	{
+		if(ok)	{
+			sdata.GetUser(function(err, udata)	{
+				if(err)	{
+					console.log("Error getting session user: "+err);
+					res.json({"status":"NOK","code":"INTERNAL_ERROR"});
+				}else{
+					if(udata[0].level > 1)	{
+						db.MarkSolvedWarning(req.body.taskuuid, null, function(ok)	{
+							if(ok)
+								res.json({"status":"OK"});
+							else
+								res.json({"status":"NOK","code":"NOT_TO_YOU"})
+						});
+					}else{
+						db.MarkSolvedWarning(req.body.taskuuid, udata[0].uuid, function(ok)	{
+							if(ok)
+								res.json({"status":"OK"});
+							else
+								res.json({"status":"NOK","code":"NOT_TO_YOU"})
+						});						
+					}
+				}
+			});
+		}else{
+			res.json({"status":"NOK","code":"INVALID_SESSION"});
+		}
+	});
+}
+
+apimanager.prototype.marksolvedproblem	=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, sdata)	{
+		if(ok)	{
+			sdata.GetUser(function(err, udata)	{
+				if(err)	{
+					console.log("Error getting session user: "+err);
+					res.json({"status":"NOK","code":"INTERNAL_ERROR"});
+				}else{
+					if(udata[0].level > 1)	{
+						db.MarkSolvedProblem(req.body.taskuuid, null, function(ok)	{
+							if(ok)
+								res.json({"status":"OK"});
+							else
+								res.json({"status":"NOK","code":"NOT_TO_YOU"})
+						});
+					}else{
+						db.MarkSolvedProblem(req.body.taskuuid, udata[0].uuid, function(ok)	{
+							if(ok)
+								res.json({"status":"OK"});
+							else
+								res.json({"status":"NOK","code":"NOT_TO_YOU"})
+						});						
+					}
+				}
+			});
+		}else{
+			res.json({"status":"NOK","code":"INVALID_SESSION"});
+		}
+	});
+}
 
 apimanager.prototype.getconfig		=	function(req, res)	{
 	var uconfig = {
@@ -296,7 +396,7 @@ apimanager.prototype._loadmachine		=	function(req, res, cb)	{
 						else if(mdata.owneruuid == sdata.useruuid)
 							cb(err,mdata);
 						else{
-							res.json({"status":"NOK","status":"NOT_OWNER","data":{}});
+							res.json({"status":"NOK","code":"NOT_OWNER","data":{}});
 							cb("NOT_OWNER",mdata);
 						}
 					});
@@ -328,7 +428,7 @@ apimanager.prototype.loadmachine 		=	function(req, res)	{
 						else if(mdata.owneruuid == sdata.useruuid)
 							res.json({"status":"OK","data":mdata});
 						else
-							res.json({"status":"NOK","status":"NOT_OWNER","data":{}});
+							res.json({"status":"NOK","code":"NOT_OWNER","data":{}});
 					});
 				}
 			});

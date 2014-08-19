@@ -129,7 +129,7 @@ database.prototype.AddUser		=	function(username, password, name, level, cb)	{
 	});
 };
 
-database.prototype.TestLogin	=	function(username, password, cb)	{
+database.prototype.TestLogin		=	function(username, password, cb)	{
 	this.Users.find({"username":username}, function(err, data) {
 		if(data.length > 0)	{
 			if(data[0].ComparePassword(password))	{
@@ -142,7 +142,7 @@ database.prototype.TestLogin	=	function(username, password, cb)	{
 	});
 };
 
-database.prototype.CheckSession =	function(sessionkey, cb)	{
+database.prototype.CheckSession 	=	function(sessionkey, cb)	{
 	this.Sessions.find({"sessionkey":sessionkey}, function(err, data)	{
 		if(data.length > 0)	{
 			if(data[0].IsValid())	{
@@ -156,7 +156,85 @@ database.prototype.CheckSession =	function(sessionkey, cb)	{
 	});
 };
 
-database.prototype.CreateSession=	function(useruuid, level, maxdays, cb)	{
+database.prototype.MarkSolvedTask	=	function(twpuuid, useruuid, cb)	{
+	this.Tasks.findOne({"uuid":twpuuid}, function(err, data)	{
+		if(err)	{
+			console.log("Error: "+err);
+			if(cb != null)
+				cb(false);	
+		}else{
+			if(data.to == useruuid || useruuid == undefined || useruuid == null)	{
+				data.solved = true;
+				data.save(function(err)	{
+					if(err) {
+						console.log("Error Saving: "+err);
+						cb(false);
+					}else{
+						if(cb != null)	
+							cb(true);
+						
+					}
+				});
+			}else
+				if(cb != null)
+					cb(false);
+		}
+	});
+}
+
+database.prototype.MarkSolvedWarning	=	function(twpuuid, useruuid, cb)	{
+	this.Warnings.findOne({"uuid":twpuuid}, function(err, data)	{
+		if(err)	{
+			console.log("Error: "+err);
+			if(cb != null)
+				cb(false);	
+		}else{
+			if(data.to == useruuid || useruuid == undefined || useruuid == null)	{
+				data.solved = true;
+				data.save(function(err)	{
+					if(err) {
+						console.log("Error Saving: "+err);
+						cb(false);
+					}else{
+						if(cb != null)	
+							cb(true);
+						
+					}
+				});
+			}else
+				if(cb != null)
+					cb(false);
+		}
+	});
+}
+
+database.prototype.MarkSolvedProblem	=	function(twpuuid, useruuid, cb)	{
+	this.Problems.findOne({"uuid":twpuuid}, function(err, data)	{
+		if(err)	{
+			console.log("Error: "+err);
+			if(cb != null)
+				cb(false);	
+		}else{
+			if(data.to == useruuid || useruuid == undefined || useruuid == null)	{
+				data.solved = true;
+				data.save(function(err)	{
+					if(err) {
+						console.log("Error Saving: "+err);
+						cb(false);
+					}else{
+						if(cb != null)	
+							cb(true);
+						
+					}
+				});
+			}else
+				if(cb != null)
+					cb(false);
+		}
+	});
+}
+
+database.prototype.CreateSession	=	function(useruuid, level, maxdays, cb)	{
 	var _this = this;
 	this.CheckUserUUID(useruuid, function(ok)	{
 		if(ok)	{
