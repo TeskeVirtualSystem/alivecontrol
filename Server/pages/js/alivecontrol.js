@@ -497,3 +497,8 @@ function GetOSImageName(os)	{
 
 	return image;
 }
+
+function SetResolved()	{
+	var type 		= 	$("#twp_type").val(),
+		twp_uuid	=	$("#twp_uuid").val();
+}

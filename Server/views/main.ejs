@@ -487,7 +487,7 @@
 	                <!-- Page Heading -->
 	                <div class="row">
 	                    <div class="col-lg-12">
-	                        <h1 class="page-header" id="twp_title">
+	                        <h1 class="page-header" id="twp_list_title">
 	                        	<i class="fa fa-desktop"></i> Tarefas <small>Visão Geral</small>
 	                        </h1>
 	                    </div>
@@ -511,6 +511,34 @@
 		                            </tbody>
 		                        </table>
 		                    </div>
+		                </div>
+	                </div>
+        		</div>
+        		<!-- /.page -->
+
+        		<div id="twp" class="container-fluid" style="display: none">
+	                <!-- Page Heading -->
+	                <div class="row">
+	                    <div class="col-lg-12">
+	                        <h1 class="page-header" id="twp_title">
+	                        	<i class="fa fa-desktop"></i> Espaço em disco insuficiente em / <small id="twp_from">(SYSTEM_USER)</small>
+	                        </h1>
+	                    </div>
+	                </div>
+	                <!-- /.row -->
+
+	                <div class="row">
+	                    <div class="col-md-12">
+	                    	<div class="well well-lg" id="twp_message">
+	                    		Seu disco / em NBLUCAS está com a capacidade abaixo de 5%<BR> Você está com 8723944000 bytes livres diante de 192804404000 bytes de espaço.
+	                    	</div>
+		                </div>
+	                </div>
+	                <BR>
+	                <div class="row">
+	                	<div class="col-md-12 text-center">
+	                		<input type="hidden" id="twp_uuid" value="ID"><input type="hidden" id="twp_type" value="TYPE">
+		                	<button id="twp_mark_solved"  type="button" class="btn btn-success btn-lg" onClick="SetResolved()"><span class="glyphicon glyphicon-ok"></span> Marcar como resolvido</button>
 		                </div>
 	                </div>
         		</div>

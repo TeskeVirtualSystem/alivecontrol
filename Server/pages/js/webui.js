@@ -113,6 +113,7 @@ function HidePages()	{
 	$("#machines").hide();
 	$("#machine").hide();
 	$("#twp_list").hide();
+	$("#twp").hide();
 
 	$("#machines_li").removeClass("active");
 	$("#dashboard_li").removeClass("active");
@@ -144,22 +145,22 @@ function TWPLoad(page)	{
 	switch(page)	{
 		case "tasks":
 			data = GetT("tasks");
-			$("#twp_title").html('<i class="fa fa-tasks"></i> Tarefas <small>Visão Geral</small>');
+			$("#twp_list_title").html('<i class="fa fa-tasks"></i> Tarefas <small>Visão Geral</small>');
 			break;
 		case "warnings":
 			data = GetT("warnings");
-			$("#twp_title").html('<i class="fa fa-exclamation"></i> Avisos <small>Visão Geral</small>');
+			$("#twp_list_title").html('<i class="fa fa-exclamation"></i> Avisos <small>Visão Geral</small>');
 			break;
 		case "problems":
 			data = GetT("problems");
-			$("#twp_title").html('<i class="fa fa-support"></i> Problemas <small>Visão Geral</small>');
+			$("#twp_list_title").html('<i class="fa fa-support"></i> Problemas <small>Visão Geral</small>');
 			break;
 	}
 	if(data != null)	{
 		for(var i in data)	{
 			$("#twptablerows").append('<tr>\
 				<td id="twp_user_'+data[i].uuid+'">'+data[i].from+'</td>\
-				<td>'+data[i].title+'</td>\
+				<td><a href="#" onClick="ShowTWP(\''+page+'\', \''+data[i].uuid+'\')">'+data[i].title+'</a></td>\
 				<td>'+data[i].subtitle+'</td>\
 				<td>'+(new Date(data[i].target)).toLocaleString()+'</td>\
 			</tr>');
@@ -174,6 +175,71 @@ function TWPLoad(page)	{
 	}else{
 		HidePages();
 		ShowError("Pagina inválida","Certifique-se de que está tentando acessar uma página válida.");
+	}
+}
+
+function ShowTWP(type, uuid)	{
+	var twpdata;
+	HidePages();
+	switch(type)	{
+		case "tasks":
+			var tasks = GetT("tasks");
+			for(var i in tasks)	{
+				if(tasks[i].uuid == uuid)	{
+					$("#twp_title").html('<i class="fa fa-tasks"></i> '+tasks[i].subtitle+' <small id="twp_from">(Enviado por '+tasks[i].from+')</small>');
+					GetUserName(tasks[i].from, null, function(name,extra)	{
+						$("#twp_from").html('(Enviado por '+name+')');
+					});
+					$("#twp_message").html(tasks[i].message);
+					$("#twp_type").val("Task");
+					$("#twp_uuid").val(tasks[i].uuid);
+					$("#twp").fadeIn();
+					twpdata = tasks[i];
+					break;
+				}
+			}
+			if(twpdata == undefined)
+				LoadPage("dashboard");
+		break;
+		case "warnings":
+			var warnings = GetT("warnings");
+			for(var i in warnings)	{
+				if(warnings[i].uuid == uuid)	{
+					$("#twp_title").html('<i class="fa fa-exclamation"></i> '+warnings[i].subtitle+' <small id="twp_from">(Enviado por '+warnings[i].from+')</small>');
+					GetUserName(warnings[i].from, null, function(name,extra)	{
+						$("#twp_from").html('(Enviado por '+name+')');
+					});
+					$("#twp_message").html(warnings[i].message);
+					$("#twp_type").val("Warning");
+					$("#twp_uuid").val(warnings[i].uuid);
+					$("#twp").fadeIn();
+					twpdata = warnings[i];
+					break;
+				}
+			}
+			if(twpdata == undefined)
+				LoadPage("dashboard");
+		break;
+		case "problems":
+			var problems = GetT("problems");
+			for(var i in problems)	{
+				if(problems[i].uuid == uuid)	{
+					$("#twp_title").html('<i class="fa fa-support"></i> '+problems[i].subtitle+' <small id="twp_from">(Enviado por '+problems[i].from+')</small>');
+					GetUserName(problems[i].from, null, function(name,extra)	{
+						$("#twp_from").html('(Enviado por '+name+')');
+					});
+					$("#twp_message").html(problems[i].message);
+					$("#twp_type").val("Problem");
+					$("#twp_uuid").val(problems[i].uuid);
+					$("#twp").fadeIn();
+					twpdata = problems[i];
+					break;
+				}
+			}
+			if(twpdata == undefined)
+				LoadPage("dashboard");
+		break;
+		default: LoadPage("dashboard");
 	}
 }
 
