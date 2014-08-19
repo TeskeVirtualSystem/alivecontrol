@@ -61,14 +61,14 @@ apimanager.prototype.marksolvedtask	=	function(req, res)	{
 					res.json({"status":"NOK","code":"INTERNAL_ERROR"});
 				}else{
 					if(udata[0].level > 1)	{
-						db.MarkSolvedTask(req.body.taskuuid, null, function(ok)	{
+						db.MarkSolvedTask(req.body.twpuuid, null, function(ok)	{
 							if(ok)
 								res.json({"status":"OK"});
 							else
 								res.json({"status":"NOK","code":"NOT_TO_YOU"})
 						});
 					}else{
-						db.MarkSolvedTask(req.body.taskuuid, udata[0].uuid, function(ok)	{
+						db.MarkSolvedTask(req.body.twpuuid, udata[0].uuid, function(ok)	{
 							if(ok)
 								res.json({"status":"OK"});
 							else
@@ -93,14 +93,14 @@ apimanager.prototype.marksolvedwarning	=	function(req, res)	{
 					res.json({"status":"NOK","code":"INTERNAL_ERROR"});
 				}else{
 					if(udata[0].level > 1)	{
-						db.MarkSolvedWarning(req.body.taskuuid, null, function(ok)	{
+						db.MarkSolvedWarning(req.body.twpuuid, null, function(ok)	{
 							if(ok)
 								res.json({"status":"OK"});
 							else
 								res.json({"status":"NOK","code":"NOT_TO_YOU"})
 						});
 					}else{
-						db.MarkSolvedWarning(req.body.taskuuid, udata[0].uuid, function(ok)	{
+						db.MarkSolvedWarning(req.body.twpuuid, udata[0].uuid, function(ok)	{
 							if(ok)
 								res.json({"status":"OK"});
 							else
@@ -125,14 +125,14 @@ apimanager.prototype.marksolvedproblem	=	function(req, res)	{
 					res.json({"status":"NOK","code":"INTERNAL_ERROR"});
 				}else{
 					if(udata[0].level > 1)	{
-						db.MarkSolvedProblem(req.body.taskuuid, null, function(ok)	{
+						db.MarkSolvedProblem(req.body.twpuuid, null, function(ok)	{
 							if(ok)
 								res.json({"status":"OK"});
 							else
 								res.json({"status":"NOK","code":"NOT_TO_YOU"})
 						});
 					}else{
-						db.MarkSolvedProblem(req.body.taskuuid, udata[0].uuid, function(ok)	{
+						db.MarkSolvedProblem(req.body.twpuuid, udata[0].uuid, function(ok)	{
 							if(ok)
 								res.json({"status":"OK"});
 							else

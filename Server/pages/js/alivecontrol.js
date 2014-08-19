@@ -500,5 +500,35 @@ function GetOSImageName(os)	{
 
 function SetResolved()	{
 	var type 		= 	$("#twp_type").val(),
-		twp_uuid	=	$("#twp_uuid").val();
+		twpuuid		=	$("#twp_uuid").val();
+	var cmd;
+
+	$("#twp_mark_solved").attr("disabled", "disabled");
+	switch(type)	{
+		case "Task"		: cmd = "marksolvedtask"; 		break;
+		case "Warning"	: cmd = "marksolvedwarning";	break;
+		case "Problem"	: cmd = "marksolvedproblem";	break;
+		default:	ShowError("Tipo inválido!","Você está tentando marcar como resolvido um tipo inválido de mensagem!");
+	}
+	if(cmd != undefined)	{
+		ShowLoadingBar();
+		APIRequest(cmd,{"twpuuid":twpuuid},function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				switch(type)	{
+					case "Task"		: LoadTasks(); break;
+					case "Warning"	: LoadWarnings(); break;
+					case "Problem"  : LoadProblems(); break;
+				}
+				Page("dashboard");
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_TO_YOU")	{
+				console.error("Esta mensagem não é para você!");
+				ShowError("Esta mensagem não é para você!","Certifique-se de que a mensagem esteja destinada a você.");
+				Page("dashboard");
+			}
+			$("#twp_mark_solved").removeAttr("disabled"); 
+		});
+	}
 }
