@@ -58,8 +58,18 @@ function toNotationUnit(value, base)	{
 	return [ ( value > 0 ? val : -val) , units[counter]]   
 }
 
-function ShowLoadingBar()					{	LoadingBarStack++; $("#loadingdiv").fadeIn();							};
-function HideLoadingBar()					{	LoadingBarStack--; if(LoadingBarStack==0)$("#loadingdiv").fadeOut();	};
+function ShowLoadingBar()					{	
+	LoadingBarStack++; 
+	$("#loadingdiv").fadeIn();
+	$("#refresh-icon").addClass("icon-refresh-animate");
+};
+function HideLoadingBar()					{	
+	LoadingBarStack--; 
+	if(LoadingBarStack==0)	{
+		$("#loadingdiv").fadeOut();	
+		setTimeout(function(){$("#refresh-icon").removeClass("icon-refresh-animate")},200);
+	}
+};
 function ShowError(title,content,buttons)	{	ShowMessage(title,content,buttons,"btn-danger");		};
 function ShowMessage(title,content,buttons,modalclass)	{	
 	var btnhtml = "";
