@@ -1,20 +1,40 @@
-var uuid          = require('node-uuid');
-
+var uuid          	= 	require('node-uuid');
+var ejs 			= 	require('ejs');
+var fs 				= 	require('fs')
 var Timings	=	{}
+
+var TemplateList	=	[
+	"diskspacemessage",
+	"lowmemory"
+];
 
 var control = function(database, app, config)	{
 	this.db 	= 	database;
 	this.app 	= 	app;
 	this.config	=	config;
+	this.tpl    = 	{};
 	Timings 	=	config.internals.timings;
 	
 	console.log("Initializing Control Manager");
 
+	this._LoadTemplates();
 	this._CheckSystemUser();
 	this._CheckSessionAction();
 	this._CheckDiskSpaces();
 }
 
+control.prototype._LoadTemplates		=	function()	{
+	console.log(TemplateList.length+" templates to load.");
+	for(var i in TemplateList)	{
+		var tplname = TemplateList[i];
+		try	{
+			var tpl = fs.readFileSync(__dirname + '/views/'+tplname+'.ejs', 'utf8');
+			TemplateList[tplname] = tpl;
+		}catch(e)	{
+			console.log("Cannot load "+tplname+": "+e);
+		}
+	}
+}
 
 control.prototype._CheckSessionAction	=	function()	{
 	console.log("Session Check Schedule Start");
@@ -75,12 +95,13 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 			if(level == 0)			{	//	Reserved for future use
 				// TODO: Nothing for now, we wont use it for now.
 			}else if(level == 1)	{	//	Warning
+				var message = ejs.render(TemplateList["diskspacemessage"], {"mdata":mdata,"data":data,"config":_this.config,"diskminpercent":_this.config.diskspace.warning});
 				var report = new _this.db.Warnings({
 				    target    : Date.now(),
 				    title     : "Espaço insuficiente",
 				    subtitle  : "Espaço em disco insuficiente em "+data.mountpoint,
 				    level     : 1,
-				    message   : "Seu disco "+data.mountpoint+" em "+mdata.name+" está com a capacidade abaixo de "+_this.config.diskspace.warning+"%",
+				    message   : message,
 				    from      : "SYSTEM_USER",
 				    to        : mdata.owneruuid,
 				    solved    : false
@@ -93,13 +114,13 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 						console.log("Report added.");
 				});
 			}else if(level == 2)	{	//	Problem
+				var message = ejs.render(TemplateList["diskspacemessage"], {"mdata":mdata,"data":data,"config":_this.config,"diskminpercent":_this.config.diskspace.critical});
 				var report = new _this.db.Problems({
 				    target    : Date.now(),
 				    title     : "Espaço insuficiente",
 				    subtitle  : "Espaço em disco insuficiente em "+data.mountpoint,
 				    level     : 2,
-				    message   : "Seu disco "+data.mountpoint+" em "+mdata.name+" está com a capacidade abaixo de "+_this.config.diskspace.critical+"%" +
-				    			"<BR> Você está com "+data.free+" bytes livres diante de "+data.size+" bytes de espaço.",
+				    message   : message,
 				    from      : "SYSTEM_USER",
 				    to        : mdata.owneruuid,
 				    solved    : false
