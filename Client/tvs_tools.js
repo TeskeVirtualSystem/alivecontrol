@@ -135,7 +135,7 @@ exports.GetSmartData		=	function(disk)	{
 	if(data.indexOf("START OF INFORMATION SECTION") > -1 )	{
             ModelFamily          =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "Model Family" | cut -d: -f2').trim()
             DeviceModel          =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "Device Model" | cut -d: -f2').trim()
-            UserCapacity         =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "User Capacity" | cut -d: -f2' ).trim().split("bytes")[0].trim().replace(/\./g,"")
+            UserCapacity         =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "User Capacity" | cut -d: -f2' ).trim().split("bytes")[0].trim().replace(/\./g,"").replace(/,/g,"")
             DiskHealth           =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "SMART overall-health" | cut -d: -f2').trim()
             PowerOnHours         =    ExecuteShell('smartctl -d sat -a /dev/'+disk+' | grep "Power_On_Hours"').trim().split(' ')
             PowerOnHours         =    PowerOnHours[PowerOnHours.length-1]
@@ -176,7 +176,7 @@ exports.Get3WareSmartData	=	function()	{
 		if(data.indexOf("START OF INFORMATION SECTION") > -1)	{
 	            ModelFamily          =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "Model Family" | cut -d: -f2').trim()
 	            DeviceModel          =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "Device Model" | cut -d: -f2').trim()
-	            UserCapacity         =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "User Capacity" | cut -d: -f2' ).trim().split("bytes")[0].trim().replace(/\./g,"")
+	            UserCapacity         =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "User Capacity" | cut -d: -f2' ).trim().split("bytes")[0].trim().replace(/\./g,"").replace(/,/g,"")
 	            DiskHealth           =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "SMART overall-health" | cut -d: -f2').trim()
 	            PowerOnHours         =    ExecuteShell('smartctl -a -d 3ware,'+i+' /dev/twa0 | grep "Power_On_Hours"').trim().split(' ')
 	            PowerOnHours         =    PowerOnHours[PowerOnHours.length-1]
