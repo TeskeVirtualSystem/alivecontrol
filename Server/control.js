@@ -79,7 +79,7 @@ control.prototype._CheckDiskSpaces		=	function()	{
 				if(percentFree <= _this.config.diskspace.critical)
 					_this._DoDiskSpaceReport(data[i], 2);
 				else if(percentFree <= _this.config.diskspace.warning)
-					_this.DoDiskSpaceReport(data[i], 1);
+					_this._DoDiskSpaceReport(data[i], 1);
 			}
 		}
 		setTimeout(function()	{
