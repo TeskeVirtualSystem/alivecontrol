@@ -1,4 +1,5 @@
-var apiurl	=	"http://localhost:82/api";
+var apiurl	=	window.location.origin+"/api";
+console.log("API URL: "+apiurl);
 var defaultMaxDays	=	1;
 
 if (!String.prototype.trim) {

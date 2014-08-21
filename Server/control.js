@@ -21,6 +21,7 @@ var control = function(database, app, config)	{
 	this._CheckSystemUser();
 	this._CheckSessionAction();
 	this._CheckDiskSpaces();
+	this._CheckAlive();
 }
 
 control.prototype._LoadTemplates		=	function()	{
@@ -34,6 +35,27 @@ control.prototype._LoadTemplates		=	function()	{
 			console.log("Cannot load "+tplname+": "+e);
 		}
 	}
+}
+
+control.prototype._CheckAlive			=	function()	{
+	console.log("Machine Alive Check Started");
+	this.db.GetMachines(function(err, data)	{
+		if(err)	{
+			console.log("Error on CheckAlive: ",err);
+		}else{
+			var mc = 0;
+			for(var i in data)	{
+				if(Date.now() - data[i].lastupdate > Timings.MachineDead)	{
+					data[i].current_status = 0;
+					data[i].save();
+					mc++;
+				}
+			}
+			console.log(mc+" machines are dead.");
+		}
+		console.log("Machine Alive Check Ended");
+		setTimeout(this._CheckAlive, Timings.CheckAlive);
+	});
 }
 
 control.prototype._CheckSessionAction	=	function()	{
