@@ -340,8 +340,8 @@ exports.GetDRBDInfo			=	function()	{
 	try	{
 		var f = fs.readFileSync("/proc/drbd",{"encoding":"utf8"});
 		drbdinfo.has = true;
+		drbdinfo.conn = [];
 		drbdinfo.drbdfile = f;
-		drbdinfo.
 		f = cleanArray(f.split("\n"));
 		var lastdigit = null;
 		for(var l in f)	{
