@@ -339,11 +339,12 @@ apimanager.prototype.loadmdrbds		=	function(req, res)	{
 				else{
 					if(mdata.length >0)	{
 						mdata[0].GetConnections(function(err, ddata)	{
+							var output = JSON.parse(JSON.stringify(mdata[0]));
 							if(err)	
-								mdata[0].conns = [];
+								output.conns = [];
 							else
-								mdata[0].conns = ddata;
-							res.json({"status":"OK","data":mdata[0]});
+								output.conns = ddata;
+							res.json({"status":"OK","data":output});
 						});
 					}else{
 						res.json({"status":"OK","data":{"version":"0.00","conns":[]}});
