@@ -416,4 +416,3 @@ exports.GetOSVersion	=	function()	{
 	
 	return output;
 }
-This looks like a JavaScript file. Click this bar to format it.No 4
