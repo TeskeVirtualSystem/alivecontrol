@@ -338,21 +338,22 @@ exports.GetCPUInfo			=	function()	{
 exports.GetDRBDInfo			=	function()	{
 	var drbdinfo = {"conn" : {}}
 	try	{
-		var f = fs.readFileSync("/proc/drbd");
+		var f = fs.readFileSync("/proc/drbd",{"encoding":"utf8"});
 		drbdinfo.has = true;
 		drbdinfo.drbdfile = f;
-		drbdinfo.conn = [];
+		drbdinfo.
 		f = cleanArray(f.split("\n"));
 		var lastdigit = null;
 		for(var l in f)	{
 			var line = f[l];
 			block = line.split(":",1);
+			block[1] = line.substr(block[0].length+1)
 			block[0] = block[0].trim();
 			block[1] = block[1].trim();
-			if("srcversion" in block[0])
-				drbd.srcversion = block[1];
-			else if("version" in block[0])
-				drbd.version = block[1];
+			if(block[0].indexOf("srcversion") > -1 )
+				drbdinfo.srcversion = block[1];
+			else if(block[0].indexOf("version") > -1)
+				drbdinfo.version = block[1];
 			else if(isNumber(block[0]))	{
 				lastdigit = parseInt(block[0]);
 				drbdinfo.conn[lastdigit] = {};
@@ -415,3 +416,4 @@ exports.GetOSVersion	=	function()	{
 	
 	return output;
 }
+This looks like a JavaScript file. Click this bar to format it.No 4
