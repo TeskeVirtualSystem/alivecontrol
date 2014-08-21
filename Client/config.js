@@ -1,2 +1,2 @@
 
-exports.ServerURL	=	"http://localhost:82";
+exports.ServerURL	=	"https://localhost";

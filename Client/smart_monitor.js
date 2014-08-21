@@ -5,6 +5,10 @@ var config 	=	require("./config.js");
 var prompt 	= 	require('prompt');
 var fs 		= 	require('fs');
 
+//TODO: IMPORTANT! SOLVE THIS!!!
+//I'm getting UNABLE_TO_VERIFY_LEAF_SIGNATURE error!
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+
 console.log("Initializing API");
 console.log("API in "+config.ServerURL);
 var api 	= 	new av.alivecontrol(config.ServerURL);
