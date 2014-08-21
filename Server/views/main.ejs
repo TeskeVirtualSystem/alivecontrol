@@ -141,6 +141,9 @@
 			            <li class="active" id="dashboard_li">
 			                <a href="#" onClick="Page('dashboard')"><i class="fa fa-fw fa-dashboard"></i> Painel</a>
 			            </li>
+			            <li id="admin_li" style="display: none">
+			                <a href="#" onClick="Page('admin')"><i class="fa fa-fw fa-wrench"></i> Administração</a>
+			            </li>
 			            <li id="machines_li">
 			                <a href="#" onClick="Page('machines')"><i class="fa fa-fw fa-desktop"></i> Máquinas</a>
 			            </li>
@@ -163,7 +166,60 @@
 			    </div>
 			</nav>
 
-        	<div id="page-wrapper"  style="display: none">
+        	<div id="page-wrapper"  style="display: none"  style="display: none">
+        		<div id="admin" class="container-fluid">
+	                <!-- Page Heading -->
+	                <div class="row">
+	                    <div class="col-lg-12">
+	                        <h1 class="page-header" id="adminhead">
+	                        	<i class="fa fa-desktop"></i> Administração <small>Visão Geral</small>
+	                        </h1>
+	                    </div>
+	                </div>
+
+	                <div class="row">
+						<div class="panel panel-primary">
+							<div class="panel-heading">Adicionar Usuário</div>
+							<div class="panel-body">
+								<div class="input-group" style="width: 100%">
+									<span class="input-group-addon" style="width: 20%; text-align: left">Nome</span>
+									<input type="text" class="form-control" id="admin_adduser_name" placeholder="Nome do Usuário" style="width: 80%" >
+								</div>	
+								<BR>
+								<div class="input-group" style="width: 100%">
+									<span class="input-group-addon" style="width: 20%; text-align: left">Usuário</span>
+									<input type="text" class="form-control" id="admin_adduser_username" placeholder="Usuário" style="width: 80%" >
+								</div>	
+								<BR>
+								<div class="input-group" style="width: 100%">
+									<span class="input-group-addon" style="width: 20%; text-align: left">Senha</span>
+									<input type="password" class="form-control" id="admin_adduser_password1" placeholder="Senha" style="width: 80%" >
+								</div>	
+								<BR>
+								<div class="input-group" style="width: 100%">
+									<span class="input-group-addon" style="width: 20%; text-align: left">Repetir Senha</span>
+									<input type="password" class="form-control" id="admin_adduser_password2" placeholder="Repita a Senha" style="width: 80%" >
+								</div>	
+								<BR>
+								<div class="input-group" style="width: 100%">
+									<span class="input-group-addon" style="width: 20%; text-align: left">Nível</span>
+									<select class="form-control" style="width: 80%" id="admin_adduser_userlevel">
+										<option value="0">Usuário Comum</option>
+										<option value="2">Administrador</option>
+										<option value="3">Super-Administrador</option>
+									</select>
+								</div>		
+								<BR>	
+				                <div class="row">
+				                	<div class="col-md-12 text-center">
+					                	<button id="admin_adduser_save"  type="button" class="btn btn-success btn-lg" onClick="AddUser()"><span class="glyphicon glyphicon-saved"></span> Adicionar Usuário</button>
+					                </div>
+				                </div>			
+							</div>
+						</div>        	
+					</div>			
+        		</div>
+        		<!-- /.page -->
 
         		<div id="machine" class="container-fluid" style="display: none">
 	                <!-- Page Heading -->

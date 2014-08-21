@@ -522,8 +522,8 @@ apimanager.prototype.adduser		=	function(req, res)	{
 	var db = this.db;
 	db.CheckSession(req.body.sessionkey, function(ok, data)	{
 		if(ok)	{
-			data.GetUser(function(data)	{
-				if(data.length > 0)	{
+			data.GetUser(function(err, data)	{
+				if(data != null)	{
 					if(data[0].level > 1)	{
 						db.AddUser(req.body.add_username,req.body.add_password,req.body.add_name,req.body.add_level, function(data,msg,err)	{
 							if(data != null)	

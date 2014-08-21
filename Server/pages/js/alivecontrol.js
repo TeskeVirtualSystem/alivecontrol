@@ -412,6 +412,7 @@ function DoLogout()			{
 			console.log("Logged out");
 			ClearT();
 			SetLoggedUser();
+			CleanAddUser();
 		}
 	);
 };
@@ -436,10 +437,11 @@ function APIRequest(cmd,data,callback,error_callback)		{
 		url: apiurl+"/"+cmd,
 		data: data,
 		success: function(data)	{	
-		  if(data.hasOwnProperty("code") && data.code == "NOT_AUTHORIZED")
-			 ShowError("Você não está autorizado a executar essa ação!","Desculpe, mas você não está autorizado a executar essa ação. Verifique se sua sessão não expirou. Atualize a pagina.");
-		  else if(callback != undefined)
-			  callback(data);
+			if(data.hasOwnProperty("code") && data.code == "NOT_AUTHORIZED")	{
+				HideLoadingBar();
+				ShowError("Você não está autorizado a executar essa ação!","Desculpe, mas você não está autorizado a executar essa ação. Verifique se sua sessão não expirou. Atualize a pagina.");
+			}else if(callback != undefined)
+				callback(data);
 		},
 		error: error_callback,
 		dataType: "json"
@@ -548,4 +550,28 @@ function RefreshAll()	{
 		delay = GetT("config").internals.timings.refreshdata;
 	console.log("Next refresh in "+(delay/1000)+" s");
 	setTimeout(RefreshAll, delay);
+}
+
+function APIAddUser(username,name,password,userlevel)	{
+	ShowLoadingBar();
+	$("#admin_adduser_save").attr("disabled", "disabled");
+	APIRequest("adduser", 
+		{
+			"add_username"		: username,
+			"add_password"		: password,
+			"add_name"			: name,
+			"add_level"			: userlevel
+		}, function(data)	{
+			HideLoadingBar();
+			$("#admin_adduser_save").removeAttr("disabled"); 
+			console.log("HUE");
+			if(data.status == "OK")	{
+				Page("dashboard");
+				CleanAddUser();
+			}else{
+				ShowError("Erro",data.error);
+				console.error("Error adding user: ",data.error);
+			}
+		}
+	);
 }

@@ -114,15 +114,17 @@ database.prototype.CheckDRBDUUID	=	function(uuid, cb)	{
 };
 
 database.prototype.AddUser		=	function(username, password, name, level, cb)	{
+	var _this = this;
 	this.CheckUsername(username, function(exists)	{
-		if(exists)	
-			if(cb !== undefined) cb(null, "Already exists");
-		else{
+		if(exists)	{	
+			if(cb !== undefined) 
+				cb(null, "Already exists");
+		}else{
 			var user = new _this.Users({"username":username,"name":name, "level":level});
 			user.GenUUID();
 			user.SetPassword(password);
 			user.save(function(err)	{
-				if(err)	if(cb !== undefined) cb(null,"Save error", err);
+				if(err && cb !== undefined)	 cb(null,"Save error", err);
 				if(cb !== undefined) cb(user);
 			});
 		}

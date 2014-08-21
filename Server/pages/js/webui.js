@@ -7,6 +7,10 @@ var WebUI_Parameters	=	{
 	diskSmartProblem		: ["FAIL"]
 };
 
+function isEmpty(str)	{
+	return (!str || str.trim().length === 0)
+}
+
 function secondsToTime(secs)	{
     secs = Math.round(secs);
     var hours = Math.floor(secs / (60 * 60));
@@ -107,6 +111,10 @@ function SetLoggedUser()	{
 		    LoadWarnings();
 		    LoadProblems();
 		    LoadMachines();
+		    if(GetT("userdata").level > 1)	
+		    	$("#admin_li").fadeIn();
+		    else
+		    	$("#admin_li").hide();
 	}else{
 		    $("#page-wrapper").fadeOut();
 		    $("#menu").fadeOut();
@@ -124,6 +132,7 @@ function HidePages()	{
 	$("#machine").hide();
 	$("#twp_list").hide();
 	$("#twp").hide();
+	$("#admin").hide();
 
 	$("#machines_li").removeClass("active");
 	$("#dashboard_li").removeClass("active");
@@ -131,6 +140,7 @@ function HidePages()	{
 	$("#problems_li").removeClass("active");
 	$("#warnings_li").removeClass("active");
 	$("#tasks_li").removeClass("active");
+	$("#admin_li").removeClass("active");
 }
 
 
@@ -143,7 +153,12 @@ function Page(page, data)	{
 		case "tasks"		:
 		case "warnings"		:
 		case "problems"		: 	TWPLoad(page);				$("#"+page+"_li").addClass("active");		break; 	
-
+		case "admin"		:   if(GetT("userdata").level > 1)	{
+			$("#admin").fadeIn();
+			$("#admin_li").addClass("active");
+		}else
+			ShowError("Você não tem autorização para isso!","Você não tem autorização para acessar esta página");
+		break;
 		default 			:	$("#dashboard").fadeIn(); 	$("#dashboard_li").addClass("active"); 	break; 
 	}
 }
@@ -545,4 +560,65 @@ function RefreshMachineVMs(data)	{
 
 function labelFormatter(label, series) {
 	return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;background-color:rgba(0,0,0,0.5);'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
+}
+
+function AddUser()	{
+	var 	name 		= 	$("#admin_adduser_name").val(),
+	 		username 	=	$("#admin_adduser_username").val(),
+	 		password	=	$("#admin_adduser_password1").val(),
+	 		passconf	=	$("#admin_adduser_password2").val(),
+	 		userlevel	=	$("#admin_adduser_userlevel").val();
+	
+	var ok = !isEmpty(name) && !isEmpty(username) && !isEmpty(password) && !isEmpty(passconf) && (passconf == password) && !isEmpty(userlevel) ;
+	
+	console.log(ok);
+
+	if(isEmpty(name))	
+		$("#admin_adduser_name").addClass("label-danger");
+	else
+		$("#admin_adduser_name").removeClass("label-danger");
+
+	if(isEmpty(username))	
+		$("#admin_adduser_username").addClass("label-danger");
+	else
+		$("#admin_adduser_username").removeClass("label-danger");
+
+	if(isEmpty(password))	
+		$("#admin_adduser_password1").addClass("label-danger");
+	else
+		$("#admin_adduser_password1").removeClass("label-danger");
+
+	if(isEmpty(passconf))	
+		$("#admin_adduser_password2").addClass("label-danger");
+	else
+		$("#admin_adduser_password2").removeClass("label-danger");
+
+	if(password != passconf)	{
+		$("#admin_adduser_password1").addClass("label-danger");
+		$("#admin_adduser_password2").addClass("label-danger");
+	}
+
+	if(isEmpty(userlevel))
+		$("#admin_adduser_userlevel").addClass("label-danger");
+	else
+		$("#admin_adduser_userlevel").removeClass("label-danger");
+
+	if(ok)	
+		APIAddUser(username,name,password,userlevel);
+}
+
+function CleanAddUser()	{
+	$("#admin_adduser_name").val("");
+	$("#admin_adduser_username").val("");
+	$("#admin_adduser_password1").val("");
+	$("#admin_adduser_password2").val("");
+	$("#admin_adduser_userlevel").val("");
+
+	$("#admin_adduser_name").removeClass("label-danger");
+	$("#admin_adduser_username").removeClass("label-danger");
+	$("#admin_adduser_password1").removeClass("label-danger");
+	$("#admin_adduser_password2").removeClass("label-danger");
+	$("#admin_adduser_userlevel").removeClass("label-danger");
+
+	$("#admin_adduser_save").removeAttr("disabled"); 
 }
