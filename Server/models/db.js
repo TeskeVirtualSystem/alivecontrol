@@ -494,8 +494,7 @@ database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 			this.AddDRBD(uuid, data.drbds.version, data.drbds.conn.length, function(drbd, msg, err)	{
 				if(drbd != null)	{
 					for(var z in data.drbds.conn)
-						if(data.drbds.conn.hasOwnProperty(z))
-							dbthis.AddDRBDCONN(drbd.uuid, data.drbds.conn[z].cs, data.drbds.conn[z].ro, data.drbds.conn[z].ds, data.drbds.conn[z].ns);
+						dbthis.AddDRBDCONN(drbd.uuid, z, data.drbds.conn[z].cs, data.drbds.conn[z].ro, data.drbds.conn[z].ds, data.drbds.conn[z].ns);
 					
 				}
 			});
