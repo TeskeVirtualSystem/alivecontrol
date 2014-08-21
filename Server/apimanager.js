@@ -338,7 +338,7 @@ apimanager.prototype.loadmdrbds		=	function(req, res)	{
 				if(err) res.json({"status":"OK","data":{"version":"0.00","conns":[]}});
 				else{
 					if(mdata.length >0)	{
-						mdata.GetConnections(function(err, ddata)	{
+						mdata[0].GetConnections(function(err, ddata)	{
 							if(err)	
 								mdata[0].conns = [];
 							else

@@ -80,6 +80,7 @@ function DoUpdate()	{
 	machinedata.free_swap		=	mem.swapfree;
 	machinedata.uptime			=	uptime;
 	machinedata.os 				=	os;
+	machinedata.drbds 			=	drbd;
 	
 	machinedata.devices 		=	[];
 	for(var i in devs)	{
