@@ -514,8 +514,8 @@ function RefreshMachineMYSQLs(data)	{
 function RefreshMachineDRBDs(data)	{
 	$("#drbdtablerows").html("");
 	$("#drbdinfo").html("Versão: "+data.version);
-	for(var i in data.conn)	{
-		var d 			= data.conn[i];
+	for(var i in data.conns)	{
+		var d 			= data.conns[i];
 		$("#drbdtablerows").append('\
 			<tr>\
 				<th>'+d.connid+'</th>\
@@ -526,7 +526,7 @@ function RefreshMachineDRBDs(data)	{
 			</tr>\
 		');
 	}
-	if(data.conn.length == 0)
+	if(data.conns.length == 0)
 		$("#drbdtablerows").html('<td colspan=5>Nenhum DRBD</td>');
 }
 
