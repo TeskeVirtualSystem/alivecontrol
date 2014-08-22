@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AliveControl", "AliveControl.csproj", "{9B28E0E5-6D70-44E4-974F-B13349452042}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AliveControlService", "..\AliveControlService\AliveControlService.csproj", "{3682CBD2-6AD3-47E4-86DE-8C87724CA355}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBench", "..\TestBench\TestBench.csproj", "{F7923C3E-D886-4D4C-96BB-331BCA4A7D0E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B28E0E5-6D70-44E4-974F-B13349452042}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B28E0E5-6D70-44E4-974F-B13349452042}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B28E0E5-6D70-44E4-974F-B13349452042}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B28E0E5-6D70-44E4-974F-B13349452042}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3682CBD2-6AD3-47E4-86DE-8C87724CA355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3682CBD2-6AD3-47E4-86DE-8C87724CA355}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3682CBD2-6AD3-47E4-86DE-8C87724CA355}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3682CBD2-6AD3-47E4-86DE-8C87724CA355}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7923C3E-D886-4D4C-96BB-331BCA4A7D0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7923C3E-D886-4D4C-96BB-331BCA4A7D0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7923C3E-D886-4D4C-96BB-331BCA4A7D0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7923C3E-D886-4D4C-96BB-331BCA4A7D0E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

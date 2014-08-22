@@ -1,0 +1,10 @@
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\bin\Debug\TestBench.exe
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\bin\Debug\TestBench.pdb
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\obj\Debug\TestBench.csprojResolveAssemblyReference.cache
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\obj\Debug\TestBench.Form1.resources
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\obj\Debug\TestBench.Properties.Resources.resources
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\obj\Debug\TestBench.csproj.GenerateResource.Cache
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\obj\Debug\TestBench.exe
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\obj\Debug\TestBench.pdb
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\bin\Debug\AliveControl.dll
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\bin\Debug\AliveControl.pdb

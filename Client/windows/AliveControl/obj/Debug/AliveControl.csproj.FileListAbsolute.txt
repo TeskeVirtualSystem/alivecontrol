@@ -1,0 +1,5 @@
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControl\bin\Debug\AliveControl.dll
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControl\bin\Debug\AliveControl.pdb
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControl\obj\Debug\AliveControl.csprojResolveAssemblyReference.cache
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControl\obj\Debug\AliveControl.dll
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControl\obj\Debug\AliveControl.pdb
