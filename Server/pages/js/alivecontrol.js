@@ -344,7 +344,7 @@ function LoadMachineDRBDs(uuid)		{
 		function(data)	{
 			HideLoadingBar();
 			if(data.status == "OK")	{
-				console.log(data.data.length+" dispositivos DRBD carregados.");
+				console.log(data.data.conns.length+" dispositivos DRBD carregados.");
 				RefreshMachineDRBDs(data.data);
 			}else if(data.status == "NOT_AUTHORIZED")
 				NotAuthorizedFallback();
