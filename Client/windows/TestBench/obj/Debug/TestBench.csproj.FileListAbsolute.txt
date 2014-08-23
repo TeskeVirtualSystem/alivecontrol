@@ -8,3 +8,4 @@ C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\obj\Debug\
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\obj\Debug\TestBench.pdb
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\bin\Debug\AliveControl.dll
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\bin\Debug\AliveControl.pdb
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\TestBench\bin\Debug\Newtonsoft.Json.dll
