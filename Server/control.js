@@ -5,7 +5,7 @@ var Timings	=	{}
 
 var TemplateList	=	[
 	"diskspacemessage",
-	"lowmemory"
+	"smartmessage"
 ];
 
 var control = function(database, app, config)	{
@@ -22,6 +22,7 @@ var control = function(database, app, config)	{
 	this._CheckSessionAction();
 	this._CheckDiskSpaces();
 	this._CheckAlive();
+	this._CheckSMART();
 }
 
 control.prototype._LoadTemplates		=	function()	{
@@ -38,6 +39,7 @@ control.prototype._LoadTemplates		=	function()	{
 }
 
 control.prototype._CheckAlive			=	function()	{
+	var _this = this;
 	console.log("Machine Alive Check Started");
 	this.db.GetMachines(function(err, data)	{
 		if(err)	{
@@ -54,15 +56,36 @@ control.prototype._CheckAlive			=	function()	{
 			console.log(mc+" machines are dead.");
 		}
 		console.log("Machine Alive Check Ended");
-		setTimeout(this._CheckAlive, Timings.CheckAlive);
+		setTimeout(_this._CheckAlive, Timings.CheckAlive);
+	});
+}
+
+control.prototype._CheckSMART			=	function()	{
+	var db = this.db;
+	var _this = this;
+	console.log("SMART Check Started");
+	db.Disks.find({"diskstatus":"FAILED"}, function(err, sdata) {
+		if(err) console.log("Error finding SMARTs: ",err);
+		else{
+			for(var i in sdata)	{
+				var disk = sdata[i];
+				db.GetMachine(disk.machineuuid, function(err, data) {
+					if(err) console.log("Error finding machine: ",err);
+					else	_this._DoSMARTReport(disk, data);
+				});
+			}
+			console.log("SMART Check Ended");
+		}
+		setTimeout(_this._CheckSMART, Timings.SMARTCheck);
 	});
 }
 
 control.prototype._CheckSessionAction	=	function()	{
+	var _this = this;
 	console.log("Session Check Schedule Start");
 	this.db.CheckSessions(function()	{
 		console.log("Session Check Schedule End");
-		setTimeout(this._CheckSessionAction, Timings.CheckSession);
+		setTimeout(_this._CheckSessionAction, Timings.CheckSession);
 	});
 }
 
@@ -162,6 +185,29 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 			data.remove();
 		}
 	});
+}
+
+control.prototype._DoSMARTReport	=	function(sdata, mdata)	{
+	var _this = this;
+	var message = ejs.render(TemplateList["smartmessage"], {"mdata":mdata,"data":sdata,"config":_this.config});
+	var report = new _this.db.Problems({
+	    target    : Date.now(),
+	    title     : "Um disco está falhando!",
+	    subtitle  : "Seu disco "+sdata.device+" está falhando!",
+	    level     : 2,
+	    message   : message,
+	    from      : "SYSTEM_USER",
+	    to        : mdata.owneruuid,
+	    solved    : false
+	});
+	report.GenUUID();
+	report.save(function(err)	{
+		if(err)	
+			console.log("Save error for smart report: "+err);
+		else
+			console.log("Report added.");
+	});
+	_this._SendToAdmins(report, _this.db.Problems);
 }
 
 control.prototype._SendToAdmins	=	function(rdata, type)	{

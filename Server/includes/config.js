@@ -13,7 +13,8 @@ var config = {
 			"CheckDisk"		: 24 * 60 * 60 * 1000,   	//  1 day interval per disk checks  							(server-side)
 			"RefreshData"	: 5 * 60 * 1000, 			//	5 minute interval per page data refreshes 					(client-side)
 			"CheckAlive"	: 5 * 60 * 1000,			//	5 minute interval per machine alive check   				(server-side)
-			"MachineDead"	: 12 * 60 * 60 * 1000,		//	12 hour is the time server will consider a machine dead 	(server-side)	
+			"MachineDead"	: 12 * 60 * 60 * 1000,		//	12 hour is the time server will consider a machine dead 	(server-side)
+			"SMARTCheck"	: 24 * 60 * 60 * 1000,		//	24 hour interval between Smart Checks 						(server-side)	
 		}
 	},
 	"WebUI_Parameters"	:	{
