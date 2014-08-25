@@ -56,7 +56,7 @@ control.prototype._CheckAlive			=	function()	{
 			console.log(mc+" machines are dead.");
 		}
 		console.log("Machine Alive Check Ended");
-		setTimeout(_this._CheckAlive, Timings.CheckAlive);
+		setTimeout(function() {_this._CheckAlive()}, Timings.CheckAlive);
 	});
 }
 
@@ -76,7 +76,7 @@ control.prototype._CheckSMART			=	function()	{
 			}
 			console.log("SMART Check Ended");
 		}
-		setTimeout(_this._CheckSMART, Timings.SMARTCheck);
+		setTimeout(function() {_this._CheckSMART();}, Timings.SMARTCheck);
 	});
 }
 
@@ -85,7 +85,7 @@ control.prototype._CheckSessionAction	=	function()	{
 	console.log("Session Check Schedule Start");
 	this.db.CheckSessions(function()	{
 		console.log("Session Check Schedule End");
-		setTimeout(_this._CheckSessionAction, Timings.CheckSession);
+		setTimeout(function() {_this._CheckSessionAction();}, Timings.CheckSession);
 	});
 }
 
