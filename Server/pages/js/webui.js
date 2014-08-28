@@ -577,9 +577,10 @@ function RefreshMachineVMs(data)	{
 			default: status = "<font color=\"gray\">Desconhecido</font>"; 	vmclass = "";			break;
 		}
 		var memory	= toNotationUnit(d.memory, 2);
+		var osimage = GetOSImageName(d.guestos);
 		$("#vmstablerows").append('\
 			<tr class="'+vmclass+'">\
-				<td>'+d.guestos+'</td>\
+				<td><img src="img/os/'+osimage+'" width=32 height=32 title="'+d.guestos+'"/></td>\
 				<td>'+d.name+'</td>\
 				<td>'+memory[0].toFixed(0)+' '+memory[1]+'iB</td>\
 				<td>'+d.cpus+'</td>\

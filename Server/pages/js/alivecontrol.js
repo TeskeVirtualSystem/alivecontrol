@@ -494,7 +494,7 @@ function GetOSImageName(os)	{
 	if(!OK)	
 		image += "other";
 	
-	if(os.indexOf("x86_64") > -1 || os.indexOf("amd64") > -1)
+	if(os.indexOf("x86_64") > -1 || os.indexOf("amd64") > -1 || os.indexOf("64 bit") > -1)
 		image += "_64";
 	image += ".png";
 
