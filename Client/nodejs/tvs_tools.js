@@ -65,7 +65,7 @@ function secondsToTime(secs)	{
 function toNotationUnit(value, base)	{
  	if(base == null || base == undefined)
  		base = 10;
-    var units = [ 'y','z','a','f','p','n','u','m',' ', 'k','M','G','T','P','E','Z','Y'] ;
+    var units = [ 'y','z','a','f','p','n','u','m',' ', 'K','M','G','T','P','E','Z','Y'] ;
     var counter = 8;
     var div = 1.0;
     if(base == 10)	
@@ -94,10 +94,11 @@ function toNotationUnit(value, base)	{
 }
 
 function fromNotationUnit(value, base, trail)	{
-    var units = [ 'y','z','a','f','p','n','u','m',' ', 'k','M','G','T','P','E','Z','Y'] ;
+    var units = [ 'y','z','a','f','p','n','u','m',' ', 'K','M','G','T','P','E','Z','Y'] ;
     if(trail == undefined) 	trail = 0;
  	if(base == null || base == undefined)	base = 10;
  	if(value.substr(-1,1) == "B")		trail = 1;
+ 	if(value.substr(-2,2) == "iB")		trail = 2;
     var unit 	= 	value.substr(-1-trail,1);
     var value 	= 	parseFloat(value);
     var exp 	=	3*(units.indexOf(unit)-8);
@@ -546,3 +547,68 @@ exports.GetVBoxVMInfo = function(vm)   {
  	}
  	return data;
  }
+
+exports.GetKVMNodeArch	=	function()	{
+	return ExecuteShell("virsh nodeinfo | grep \"CPU model\"|cut -d: -f2").trim();
+}
+
+exports.GetKVMVms	=	function()	{
+	try{
+		var data = ExecuteShell("virsh list --all | tail -n +3 | awk '{print $2}'").split("\n");
+		var vms = [];
+		for(var i in data)	{
+			if(data[i].trim() != "")	{
+				vms.push(this.GetKVMVMInfo(data[i].trim()));
+			}
+		}
+		return vms;
+	}catch(e)	{
+		console.log("Error getting KVM VMs: ",e);
+		return [];
+	}
+}
+
+exports.GetKVMVMInfo	=	function(vmname)	{
+	var data = ExecuteShell("virsh dominfo \""+vmname+"\"").split("\n");	
+	var mdata = {};
+	var arch = this.GetKVMNodeArch();
+	for(var i in data)	{
+	    var item = list[i].split(":", 1)[0].trim();
+	    var item2 = list[i].replace(item+":","").replace(/\"/g,"").trim();
+	    mdata[item] = item2;
+	    if(item == "OS Type")
+	    	mdata[item] += " ("+arch+")";
+	}
+	return mdata;
+}
+
+exports.GetKVMACList	=	function()	{
+ 	var machines = this.GetKVMVms();
+ 	var data = [];
+ 	for(var i in machines)	{
+ 		var mdata = machines[i];
+ 		var status = -1;
+ 		if(mdata["State"].indexOf("stopped") > -1 || mdata["State"].indexOf("defined") > -1)
+ 			status = 0;
+ 		else	if(mdata["State"].indexOf("running") > -1)
+ 			status = 1;
+ 		else	if(mdata["State"].indexOf("saving") > -1)
+ 			status = 2;
+ 		else	if(mdata["State"].indexOf("saved") > -1)
+ 			status = 3;
+ 		else	if(mdata["State"].indexOf("aborted") > -1)
+ 			status = 4;
+ 		else	if(mdata["State"].indexOf("restoring") > -1)
+ 			status = 5;
+
+ 		data.push({
+			name				: mdata.Name,
+			guestos				: mdata["OS Type"],
+			memory 				: fromNotationUnit(mdata["Max memory"],2,2),
+			cpus				: parseInt(mdata["CPU(s)"]),
+			type				: "KVM",
+			status 				: status
+ 		});
+ 	}
+ 	return data;
+}

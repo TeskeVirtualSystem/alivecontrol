@@ -72,8 +72,17 @@ function DoUpdate()	{
 	for(var i in sm3ware)
 		smart.push(sm3ware[i]);
 
+	var vms = [];
 	console.log("Getting VirtualBox Virtual Machines");
-	var vms						=	tvs.GetVBoxACList();
+	var vboxvms						=	tvs.GetVBoxACList();
+	for(var i in vboxvms)	
+		vms.push(vboxvms[i]);
+	
+	console.log("Getting KVM Virtual Machines");
+	var kvms					=	tvs.GetKVMACList();
+	for(var i in kvms)	
+		vms.push(kvms[i]);
+	
 
 	machinedata.processor 		= 	cpu.cpu_model_name;
 	machinedata.total_memory	=	mem.total;
