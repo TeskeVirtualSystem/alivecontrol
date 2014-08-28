@@ -1,4 +1,3 @@
-var vbox	= 	require("./vbox.js");
 var tvs		=	require("./tvs_tools.js");
 var av 		= 	require("./alivecontrol.js");
 var config 	=	require("./config.js");
@@ -73,6 +72,9 @@ function DoUpdate()	{
 	for(var i in sm3ware)
 		smart.push(sm3ware[i]);
 
+	console.log("Getting VirtualBox Virtual Machines");
+	var vms						=	tvs.GetVBoxACList();
+
 	machinedata.processor 		= 	cpu.cpu_model_name;
 	machinedata.total_memory	=	mem.total;
 	machinedata.free_memory		=	mem.free;
@@ -81,6 +83,7 @@ function DoUpdate()	{
 	machinedata.uptime			=	uptime;
 	machinedata.os 				=	os;
 	machinedata.drbds 			=	drbd;
+	machinedata.vms				=	vms;
 	
 	machinedata.devices 		=	[];
 	for(var i in devs)	{

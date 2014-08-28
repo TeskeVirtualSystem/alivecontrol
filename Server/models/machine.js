@@ -197,7 +197,7 @@ exports.Schemas = function(mg)	{
 	drbdSchema.methods.GetConnections		=	function(cb)	{	return this.model("DRBDCONN")		.find({"drbduuid":this.uuid}, cb); };
 	drbdSchema.methods.CleanConnections		=	function(cb)	{
 		var thisschema = this;
-		this.GetConnections(function(data)	{
+		this.GetConnections(function(err, data)	{
 			if(data.length > 0)		{
 				data[0].remove(function (err, product) {
 					thisschema.CleanConnections(cb);

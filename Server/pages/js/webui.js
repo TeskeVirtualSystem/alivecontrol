@@ -541,6 +541,7 @@ function RefreshMachineVMs(data)	{
 			case 2: status = "<font color=\"green\">SALVANDO</font>"; break;
 			case 3: status = "<font color=\"yellow\">SALVA</font>"; break;
 			case 4: status = "<font color=\"red\">ABORTADA</font>"; break;
+			case 5: status = "<font color=\"green\">RESTAURANDO</font>"; break;
 			default: status = "<font color=\"gray\">Desconhecido</font>"; break;
 		}
 		$("#vmstablerows").append('\

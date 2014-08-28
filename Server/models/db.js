@@ -429,8 +429,27 @@ database.prototype.AddMYSQL	=	function(machineuuid, masterhost, masteruser, slav
 	});
 };
 
-
-/*	TODO: AddVMS	*/	
+database.prototype.AddVM	=	function(machineuuid, name, guestos, memory, cpus, type, status, cb)	{
+	var _this = this;
+	this.CheckMachineUUID(machineuuid, function(ok)	{
+		if(ok)	{
+			var vm = new _this.VMS({
+				machineuuid			: machineuuid,
+				name				: name,
+				guestos				: guestos,
+				memory 				: memory,
+				cpus				: cpus,
+				type				: type,
+				status 				: status
+			});
+			vm.save(function(err)	{
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(vm);
+			});	
+		}else
+			if(cb !== undefined) cb(null,"Machine ("+machineuuid+" does not exists.");
+	});
+};
 
 database.prototype.UpdateMachine	=	function(uuid, data, cb)	{
 	var dbthis = this;
@@ -504,7 +523,9 @@ database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 			this.AddMYSQL(uuid, data.mysqls[i].masterhost, data.mysqls[i].masteruser, data.mysqls[i].slavestate, data.mysqls[i].slaveiorunning, data.mysqls[i].slavesqlrunning);
 	
 	//	Add VMS
-	/*	TODO	*/
+	if(data.hasOwnProperty("vms"))
+		for(var i in data.vms)
+			this.AddVM(uuid, data.vms[i].name, data.vms[i].guestos, data.vms[i].memory, data.vms[i].cpus, data.vms[i].type, data.vms[i].status)
 
 	if(cb !== undefined) cb(uuid, data);
 }

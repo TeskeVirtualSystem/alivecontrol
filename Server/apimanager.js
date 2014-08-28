@@ -274,7 +274,8 @@ apimanager.prototype.updatevms	=	function(req, res)	{
 		if(!err)	{
 			if(req.body.hasOwnProperty("vms"))	{
 				data.CleanVMs(function()	{
-					//TODO
+					for(var i in req.body.vms)
+						this.AddVM(uuid, req.body.vms[i].name, req.body.vms[i].guestos, req.body.vms[i].memory, req.body.vms[i].cpus, req.body.vms[i].type, req.body.vms[i].status);
 					res.json({"status":"OK"});
 				});
 			}

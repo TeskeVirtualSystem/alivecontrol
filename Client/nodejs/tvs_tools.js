@@ -93,6 +93,22 @@ function toNotationUnit(value, base)	{
 	return [ ( value > 0 ? val : -val) , units[counter]]   
 }
 
+function fromNotationUnit(value, base, trail)	{
+    var units = [ 'y','z','a','f','p','n','u','m',' ', 'k','M','G','T','P','E','Z','Y'] ;
+    if(trail == undefined) 	trail = 0;
+ 	if(base == null || base == undefined)	base = 10;
+ 	if(value.substr(-1,1) == "B")		trail = 1;
+    var unit 	= 	value.substr(-1-trail,1);
+    var value 	= 	parseFloat(value);
+    var exp 	=	3*(units.indexOf(unit)-8);
+    if(exp == -27)	//	not found
+    	return value;
+    else{
+    	if(base == 2) { base = 1024; exp /= 3; }
+    	return value * Math.pow(base,exp);
+    }
+}
+
 exports.toNotationUnit = toNotationUnit;
 
 /**
@@ -416,3 +432,117 @@ exports.GetOSVersion	=	function()	{
 	
 	return output;
 }
+
+
+
+/**
+ *  Gets the Virtualbox WEB User
+ **/
+exports.GetVBoxUser = function()    {
+	try{
+	    return ExecuteShell("cat /etc/default/virtualbox |grep VBOXWEB_USER|cut -d= -f2").replace("\n","").trim();
+	}catch(e){
+		console.log("Error Getting Vbox user: "+e);
+		return undefined;
+	}	
+};
+
+/**
+ *  Gets the Virtualbox Virtual Machines
+ **/
+exports.GetVBoxMachines  =   function()  {
+    var regexname 	= /(?=([^\"]*\"[^\"]*\")*[^\"]*$)/;
+    var regexuuid 	= /\{(.*?)\}/;
+    var machines 	= [];
+    var user = this.GetVBoxUser();
+    if(user !== undefined)	{
+	    var list = ExecuteShell("sudo su "+user+" -c \"VBoxManage list vms\"").split("\n");
+	    for(var i in list)	{
+	        if(list[i].trim() != "")   {
+	            var machinename =   regexname.exec(list[i])[1].replace("\"","").replace("\"","").trim();
+	            var uuid        =   regexuuid.exec(list[i])[1].trim();
+	            //console.log("Machine: "+machinename+" - UUID: "+uuid);
+	            machines.push({"uuid":uuid,"name":machinename});
+	        }    	
+	    }
+	}
+    return machines;
+};
+
+
+/**
+ *  Gets the Virtualbox Virtual Running Machines
+ **/
+exports.GetVBoxRunningMachines  =   function()  {
+    var regexname 	= /(?=([^\"]*\"[^\"]*\")*[^\"]*$)/;
+    var regexuuid 	= /\{(.*?)\}/;
+    var user 		= this.GetVBoxUser();
+    var machines 	= [];
+    if(user !== undefined)	{
+	    var list = ExecuteShell("sudo su "+user+" -c \"VBoxManage list runningvms\"").split("\n");
+	    for(var i in list)  {
+	        if(list[i] != "")   {
+	            var machinename =   regexname.exec(list[i])[1].replace("\"","").replace("\"","").trim();
+	            var uuid        =   regexuuid.exec(list[i])[1].trim();
+	            //console.log("Machine: "+machinename+" - UUID: "+uuid);
+	            machines.push({"uuid":uuid,"name":machinename});
+	        }
+	    }
+	}
+    return machines;
+};
+
+
+/**
+ *  Gets the Virtualbox VM Info
+ **/
+exports.GetVBoxVMInfo = function(vm)   {
+    var user = this.GetVBoxUser();
+	var data = {};
+	if(user != undefined)	{
+		var list = ExecuteShell("sudo su "+user+" -c 'VBoxManage showvminfo \""+vm+"\" --machinereadable'").split("\n");
+		for(var i in list)  {
+			if(list[i] != "")   {
+			    var item = list[i].split("=", 1)[0].trim();
+			    var item2 = list[i].replace(item+"=","").replace(/\"/g,"").trim();
+			    data[item] = item2;
+			}
+		}
+	}
+	return data;
+};
+
+/**
+ * Gets the AC Virtual Machine list
+ **/
+
+ exports.GetVBoxACList = function()	{
+ 	var machines = this.GetVBoxMachines();
+ 	var data = [];
+ 	for(var i in machines)	{
+ 		var mdata = this.GetVBoxVMInfo(machines[i].uuid);
+ 		var status = -1;
+ 		if(mdata["VMState"].indexOf("poweroff") > -1)
+ 			status = 0;
+ 		else	if(mdata["VMState"].indexOf("running") > -1)
+ 			status = 1;
+ 		else	if(mdata["VMState"].indexOf("saving") > -1)
+ 			status = 2;
+ 		else	if(mdata["VMState"].indexOf("saved") > -1)
+ 			status = 3;
+ 		else	if(mdata["VMState"].indexOf("aborted") > -1)
+ 			status = 4;
+ 		else	if(mdata["VMState"].indexOf("restoring") > -1)
+ 			status = 5;
+
+ 		data.push({
+			name				: mdata.name,
+			guestos				: mdata["ostype"],
+			memory 				: parseInt(mdata["memory"])*1024*1024,
+			cpus				: parseInt(mdata["cpus"]),
+			type				: "Virtualbox",
+			status 				: status
+ 		});
+ 	}
+ 	return data;
+ }
