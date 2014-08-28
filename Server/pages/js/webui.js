@@ -576,11 +576,12 @@ function RefreshMachineVMs(data)	{
 			case 5: status = "<font color=\"green\">RESTAURANDO</font>"; 	vmclass = "success";	break;
 			default: status = "<font color=\"gray\">Desconhecido</font>"; 	vmclass = "";			break;
 		}
+		var memory	= toNotationUnit(d.memory, 2);
 		$("#vmstablerows").append('\
 			<tr class="'+vmclass+'">\
 				<td>'+d.guestos+'</td>\
 				<td>'+d.name+'</td>\
-				<td>'+d.memory+'</td>\
+				<td>'+memory[0].toFixed(0)+' '+memory[1]+'iB</td>\
 				<td>'+d.cpus+'</td>\
 				<td>'+d.type+'</td>\
 				<td>'+status+'</td>\
