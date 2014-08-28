@@ -120,7 +120,7 @@ function DoUpdate()	{
 	for(var i in smart)	{
 		var sm = smart[i];
 		machinedata.disks.push({
-			"family"			: sm.ModelFamily,
+			"family"			: (sm.ModelFamily.trim()=="")?sm.DeviceModel:sm.ModelFamily,
 			"capacity"  		: sm.UserCapacity,
 			"ontime"			: sm.PowerOnHours,
 			"powercycles"		: sm.PowerCycleCount,

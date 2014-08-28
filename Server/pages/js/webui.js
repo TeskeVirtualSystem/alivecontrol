@@ -274,11 +274,17 @@ function RefreshWarnings()	{
 		if(GetT("config").internals.max_twp_results <= warnings.length)
 			$("#dashboardwarnings").html(warnings.length+"+");
 		else
-			$("#dashboardwarnings").html(warnings.length);
-	}else
+			$("#dashboardwarnings").html(warnings.length);		
+
+		$("#warnings_li_badge").html($("#dashboardwarnings").html());
+		$("#warnings_li_badge").show();
+	}else{
 		$("#dashboardwarnings").html("0");
-	
+		$("#warnings_li_badge").html("0");
+		$("#warnings_li_badge").hide();
+	}
 	$("#dashboardwarningbox").fadeIn();
+	RefreshMessages();
 }
 function RefreshProblems()	{
 	var problems = GetT("problems");
@@ -286,11 +292,18 @@ function RefreshProblems()	{
 		if(GetT("config").internals.max_twp_results <= problems.length)
 			$("#dashboardproblems").html(problems.length+"+");
 		else
-			$("#dashboardproblems").html(problems.length);
-	}else
+			$("#dashboardproblems").html(problems.length);		
+
+		$("#problems_li_badge").html($("#dashboardproblems").html());
+		$("#problems_li_badge").show();
+	}else{
 		$("#dashboardproblems").html("0");
+		$("#problems_li_badge").html("0");
+		$("#problems_li_badge").hide();
+	}
 	
 	$("#dashboardproblembox").fadeIn();
+	RefreshMessages();
 }
 function RefreshTasks()		{
 	var tasks = GetT("tasks");
@@ -299,10 +312,28 @@ function RefreshTasks()		{
 			$("#dashboardtasks").html(tasks.length+"+");
 		else
 			$("#dashboardtasks").html(tasks.length);
-	}else
+
+		$("#tasks_li_badge").html($("#dashboardtasks").html());
+		$("#tasks_li_badge").show();
+	}else{
 		$("#dashboardtasks").html("0");
-	
+		$("#tasks_li_badge").html("0");
+		$("#tasks_li_badge").hide();
+	}
 	$("#dashboardtaskbox").fadeIn();
+	RefreshMessages();
+}
+
+function RefreshMessages()	{
+	var sum = parseInt($("#tasks_li_badge").html()) + parseInt($("#warnings_li_badge").html()) + parseInt($("#problems_li_badge").html());
+	if(sum >= GetT("config").internals.max_twp_results)
+		sum = "10+";
+	$("#msgs_li_badge").html(sum);
+	if(sum > 0 || sum == "10+")
+		$("#msgs_li_badge").show();
+	else
+		$("#msgs_li_badge").hide();
+	
 }
 
 function RefreshAlerts()	{
@@ -535,23 +566,24 @@ function RefreshMachineVMs(data)	{
 	for(var i in data)	{
 		var d 			= data[i];
 		var status = "<font color=\"red\">PARADA</font>";
+		var vmclass = "";
 		switch(d.status)	{
-			case 0: status = "<font color=\"red\">PARADA</font>"; break;
-			case 1: status = "<font color=\"green\">RODANDO</font>"; break; 
-			case 2: status = "<font color=\"green\">SALVANDO</font>"; break;
-			case 3: status = "<font color=\"yellow\">SALVA</font>"; break;
-			case 4: status = "<font color=\"red\">ABORTADA</font>"; break;
-			case 5: status = "<font color=\"green\">RESTAURANDO</font>"; break;
-			default: status = "<font color=\"gray\">Desconhecido</font>"; break;
+			case 0: status = "<font color=\"#6699CC\">PARADA</font>"; 		vmclass = "info"; 		break;
+			case 1: status = "<font color=\"green\">RODANDO</font>"; 		vmclass = "success";	break; 
+			case 2: status = "<font color=\"green\">SALVANDO</font>"; 		vmclass = "success";	break;
+			case 3: status = "<font color=\"#CC9900\">SALVA</font>"; 		vmclass = "warning"; 	break;
+			case 4: status = "<font color=\"red\">ABORTADA</font>";			vmclass = "danger"; 	break;
+			case 5: status = "<font color=\"green\">RESTAURANDO</font>"; 	vmclass = "success";	break;
+			default: status = "<font color=\"gray\">Desconhecido</font>"; 	vmclass = "";			break;
 		}
 		$("#vmstablerows").append('\
-			<tr>\
-				<th>'+d.guestos+'</th>\
-				<th>'+d.name+'</th>\
-				<th>'+d.memory+'</th>\
-				<th>'+d.cpus+'</th>\
-				<th>'+d.type+'</th>\
-				<th>'+status+'</th>\
+			<tr class="'+vmclass+'">\
+				<td>'+d.guestos+'</td>\
+				<td>'+d.name+'</td>\
+				<td>'+d.memory+'</td>\
+				<td>'+d.cpus+'</td>\
+				<td>'+d.type+'</td>\
+				<td>'+status+'</td>\
 			</tr>\
 		');
 	}
