@@ -36,10 +36,8 @@ namespace TestBench
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ComputerInfo x = new ComputerInfo();
-            textBox1.Text += "\r\n" + x.OSFullName;
-            textBox1.Text += "\r\n" + x.TotalPhysicalMemory;
-            textBox1.Text += "\r\n" + tvstools.GetProcessorName();
+            API.SessionKey = "f42a8580-24b7-11e4-b30f-3b79ab91660d";
+            textBox1.Text += "\r\n" + API._CallAPI("loadmachines", null);
             //Smart[] smarts = tvstools.ReadSmart();
             //foreach (Smart smart in smarts)
             //{
