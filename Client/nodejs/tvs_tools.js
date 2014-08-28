@@ -455,7 +455,7 @@ exports.GetVBoxMachines  =   function()  {
     var regexuuid 	= /\{(.*?)\}/;
     var machines 	= [];
     var user = this.GetVBoxUser();
-    if(user !== undefined)	{
+    if(user !== undefined && user !== "")	{
 	    var list = ExecuteShell("sudo su "+user+" -c \"VBoxManage list vms\"").split("\n");
 	    for(var i in list)	{
 	        if(list[i].trim() != "")   {
@@ -478,7 +478,7 @@ exports.GetVBoxRunningMachines  =   function()  {
     var regexuuid 	= /\{(.*?)\}/;
     var user 		= this.GetVBoxUser();
     var machines 	= [];
-    if(user !== undefined)	{
+    if(user !== undefined && user !== "")	{
 	    var list = ExecuteShell("sudo su "+user+" -c \"VBoxManage list runningvms\"").split("\n");
 	    for(var i in list)  {
 	        if(list[i] != "")   {
@@ -499,7 +499,7 @@ exports.GetVBoxRunningMachines  =   function()  {
 exports.GetVBoxVMInfo = function(vm)   {
     var user = this.GetVBoxUser();
 	var data = {};
-	if(user != undefined)	{
+	if(user != undefined && user !== "")	{
 		var list = ExecuteShell("sudo su "+user+" -c 'VBoxManage showvminfo \""+vm+"\" --machinereadable'").split("\n");
 		for(var i in list)  {
 			if(list[i] != "")   {
