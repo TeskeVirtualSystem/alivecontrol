@@ -525,7 +525,7 @@ database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 	//	Add VMS
 	if(data.hasOwnProperty("vms"))
 		for(var i in data.vms)
-			this.AddVM(uuid, data.vms[i].name, data.vms[i].guestos, data.vms[i].memory, data.vms[i].cpus, data.vms[i].type, data.vms[i].status)
+			this.AddVM(uuid, data.vms[i].name, data.vms[i].guestos, data.vms[i].memory, data.vms[i].cpus, data.vms[i].type, data.vms[i].status);
 
 	if(cb !== undefined) cb(uuid, data);
 }

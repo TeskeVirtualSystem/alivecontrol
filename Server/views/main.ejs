@@ -291,7 +291,7 @@
 	                <div class="row">
 	                    <div class="col-md-12">
 							<div class="panel-group" id="devicesaccordion">
-								<div class="panel panel-default">
+								<div class="panel panel-info">
 									<div class="panel-heading">
 							    		<h4 class="panel-title">	
 							    			<a data-toggle="collapse" data-parent="#devicesaccordion" href="#devicescollapse">Dispositivos PCI/PCI-e</a>
@@ -313,7 +313,7 @@
 	                <div class="row">
 	                    <div class="col-md-12">
 							<div class="panel-group" id="ethernetsaccordion">
-								<div class="panel panel-default">
+								<div class="panel panel-info">
 									<div class="panel-heading">
 							    		<h4 class="panel-title">	
 							    			<a data-toggle="collapse" data-parent="#ethernetsaccordion" href="#ethernetscollapse">Dispositivos de Rede</a>
@@ -346,7 +346,7 @@
 	                <div class="row">
 	                    <div class="col-md-12">
 							<div class="panel-group" id="disksaccordion">
-								<div class="panel panel-default">
+								<div class="panel panel-success" id="diskaccordiontitle">
 									<div class="panel-heading">
 							    		<h4 class="panel-title">	
 							    			<a data-toggle="collapse" data-parent="#disksaccordion" href="#diskscollapse">Discos</a>
@@ -381,7 +381,7 @@
 	                <div class="row">
 	                    <div class="col-md-12">
 							<div class="panel-group" id="mountsaccordion">
-								<div class="panel panel-default">
+								<div class="panel panel-success" id="mountsaccordiontitle">
 									<div class="panel-heading">
 							    		<h4 class="panel-title">	
 							    			<a data-toggle="collapse" data-parent="#mountsaccordion" href="#mountscollapse">Pontos de montagem</a>
@@ -413,7 +413,7 @@
 	                <div class="row">
 	                    <div class="col-md-12">
 							<div class="panel-group" id="mysqlsaccordion">
-								<div class="panel panel-default">
+								<div class="panel panel-success" id="mysqlaccordiontitle">
 									<div class="panel-heading">
 							    		<h4 class="panel-title">	
 							    			<a data-toggle="collapse" data-parent="#mysqlsaccordion" href="#mysqlcollapse">MySQL</a>
@@ -445,7 +445,7 @@
 	                <div class="row">
 	                    <div class="col-md-12">
 							<div class="panel-group" id="drbdaccordion">
-								<div class="panel panel-default">
+								<div class="panel panel-success" id="drbdaccordiontitle">
 									<div class="panel-heading">
 							    		<h4 class="panel-title">	
 							    			<a data-toggle="collapse" data-parent="#drbdaccordion" href="#drbdcollapse">Conexões DRBD</a>
@@ -480,7 +480,7 @@
 	                <div class="row">
 	                    <div class="col-md-12">
 							<div class="panel-group" id="vmsaccordion">
-								<div class="panel panel-default">
+								<div class="panel panel-success" id="vmsaccordiontitle">
 									<div class="panel-heading">
 							    		<h4 class="panel-title">	
 							    			<a data-toggle="collapse" data-parent="#vmsaccordion" href="#vmscollapse">Máquinas Virtuais</a>
@@ -525,25 +525,8 @@
 	                </div>
 	                <!-- /.row -->
 
-	                <div class="row">
-	                    <div class="col-md-12">
-		                    <div class="table-responsive">
-		                        <table class="table table-hover table-striped">
-		                            <thead>
-		                                <tr>
-		                                    <th>OS</th>
-		                                    <th>Nome</th>
-		                                    <th>Processador</th>
-		                                    <th>Memoria Total</th>
-		                                    <th>Ultima atualização</th>
-		                                </tr>
-		                            </thead>
-		                            <tbody id="machinetablerows">
+	                <div class="row" id="machineslist">
 
-		                            </tbody>
-		                        </table>
-		                    </div>
-		                </div>
 	                </div>
         		</div>
         		<!-- /.page -->

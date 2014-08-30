@@ -573,7 +573,7 @@ exports.GetKVMVMInfo	=	function(vmname)	{
 	var mdata = {};
 	var arch = this.GetKVMNodeArch();
 	for(var i in data)	{
-	    var item = data[i].split(":", 1)[0].trim();
+	    var item = datesa[i].split(":", 1)[0].trim();
 	    var item2 = data[i].replace(item+":","").replace(/\"/g,"").trim();
 	    mdata[item] = item2;
 	    if(item == "OS Type")

@@ -366,18 +366,88 @@ function RefreshMachines()	{
 "uptime" : "1 days 0 hours 20 minutes 35 seconds", 
 "lastupdate" : 1407782280601, 
 	**/
+
+/**
+<div class="col-md-12">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>OS</th>
+                    <th>Nome</th>
+                    <th>Processador</th>
+                    <th>Memoria Total</th>
+                    <th>Ultima atualização</th>
+                </tr>
+            </thead>
+            <tbody id="machinetablerows">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+**/
+
 	var machines = GetT("machines");
-	$("#machinetablerows").html("");
+	$("#machineslist").html("");
 	if(Array.isArray(machines) && machines.length > 0)	{
 		$("#dashboardmachines").html(machines.length);
 		for(var i in machines)	{
-			$("#machinetablerows").append(BuildMachineLine(machines[i]));
+			if(!$("#mlist_accordion_"+machines[i].owneruuid).length)	
+				AddMListAccordion(machines[i].owneruuid);
+			$("#mlist_tablerows_"+machines[i].owneruuid).append(BuildMachineLine(machines[i]));
 		}
 	}else
 		$("#dashboardmachines").html("0");
 	
 	$("#dashboardmachinebox").fadeIn();
 };
+
+function AddMListAccordion(uuid)	{
+/**
+<div class="panel-group" id="mlist_accordion_UUID">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+    		<h4 class="panel-title">	
+    			<a data-toggle="collapse" data-parent="#mlist_accordion_UUID" href="#mlist_collapse_UUID">NAME</a>
+			</h4>
+		</div>
+		<div id="mlist_collapse_UUID" class="panel-collapse collapse">
+			CONTENT
+		</div>
+	</div>
+</div>
+**/
+	$("#machineslist").append('<div class="panel-group" id="mlist_accordion_'+uuid+'">\
+		<div class="panel panel-success" id="mlist_accordion_title_'+uuid+'">\
+			<div class="panel-heading">\
+	    		<h4 class="panel-title">	\
+	    			<a data-toggle="collapse" data-parent="#mlist_accordion_'+uuid+'" id="mlist_name_'+uuid+'" href="#mlist_collapse_'+uuid+'">NAME</a>\
+				</h4>\
+			</div>\
+			<div id="mlist_collapse_'+uuid+'" class="panel-collapse collapse">\
+			    <div class="table-responsive">\
+			        <table class="table table-hover table-striped">\
+			            <thead>\
+			                <tr>\
+			                    <th>OS</th>\
+			                    <th>Nome</th>\
+			                    <th>Processador</th>\
+			                    <th>Memoria Total</th>\
+			                    <th>Ultima atualização</th>\
+			                </tr>\
+			            </thead>\
+			            <tbody id="mlist_tablerows_'+uuid+'">\
+			            </tbody>\
+			        </table>\
+				</div>\
+			</div>\
+		</div>\
+	</div>');
+	GetUserName(uuid, uuid, function(name,extra)	{
+		$("#mlist_name_"+extra).html(name);
+	});
+}
 
 function UILoadMachine(uuid)	{
 	var machines = GetT("machines");
@@ -397,11 +467,12 @@ function UILoadMachine(uuid)	{
 function BuildMachineLine(machine)	{
 	// A table line with following columns: OS Image (32x32) - Name - Processor - Total Memory - Last update
 	var output;
-	if(machine.current_status == 1)
+	if(machine.current_status == 1)	
 		output	 = "<tr class=\"success\">\n";
-	else
+	else{
 		output	 = "<tr class=\"danger\">\n";
-
+		$("#mlist_accordion_title_"+machine.owneruuid).removeClass("panel-success").addClass("panel-danger");
+	}
 	var osimage = GetOSImageName(machine.os);
 	var lastupdate = secondsToTime( (Date.now() - machine.lastupdate)/1000);
 	var lastupdate = (lastupdate.d > 0)	?	
@@ -476,8 +547,11 @@ function RefreshMachineDisks(data)	{
 
 		if(WebUI_Parameters.diskSmartOK.indexOf(d.diskstatus) > -1)
 			diskclass = "success";
-		else if(WebUI_Parameters.diskSmartProblem.indexOf(d.diskstatus) > -1)
+		else if(WebUI_Parameters.diskSmartProblem.indexOf(d.diskstatus) > -1)	{
 			diskclass = "danger";
+			$("#diskaccordiontitle").removeClass("panel-success").addClass("panel-danger");
+		}
+
 
 		$("#diskstablerows").append('\
 			<tr class="'+diskclass+'">\
@@ -505,10 +579,14 @@ function RefreshMachineMounts(data)	{
 		var size	= toNotationUnit(d.size, 10);
 		var percent = 100*(d.free/d.size);
 		var mountclass = "success";
-		if(percent < WebUI_Parameters.diskPercentCritical)
+		if(percent < WebUI_Parameters.diskPercentCritical)	{
 			mountclass = "danger";
-		else if(percent < WebUI_Parameters.diskPercentWarning)
+			$("#mountsaccordiontitle").removeClass("panel-success").removeClass("panel-warning").addClass("panel-danger");
+		}else if(percent < WebUI_Parameters.diskPercentWarning)	{
 			mountclass = "warning";
+			if(!$("#mountsaccordiontitle").hasClass("panel-danger"))
+				$("#mountsaccordiontitle").removeClass("panel-success").addClass("panel-warning");
+		}
 
 		$("#mountstablerows").append('\
 			<tr class="'+mountclass+'">\
@@ -571,8 +649,13 @@ function RefreshMachineVMs(data)	{
 			case 0: status = "<font color=\"#6699CC\">PARADA</font>"; 		vmclass = "info"; 		break;
 			case 1: status = "<font color=\"green\">RODANDO</font>"; 		vmclass = "success";	break; 
 			case 2: status = "<font color=\"green\">SALVANDO</font>"; 		vmclass = "success";	break;
-			case 3: status = "<font color=\"#CC9900\">SALVA</font>"; 		vmclass = "warning"; 	break;
-			case 4: status = "<font color=\"red\">ABORTADA</font>";			vmclass = "danger"; 	break;
+			case 3: status = "<font color=\"#CC9900\">SALVA</font>"; 		vmclass = "warning"; 	
+					if(!$("#vmssaccordiontitle").hasClass("panel-danger")) 
+						$("#vmssaccordiontitle").removeClass("panel-success").addClass("panel-warning");
+					break;
+			case 4: status = "<font color=\"red\">ABORTADA</font>";			vmclass = "danger"; 	
+					$("#vmsaccordiontitle").removeClass("panel-success").removeClass("panel-warning").addClass("panel-danger"); 
+					break;
 			case 5: status = "<font color=\"green\">RESTAURANDO</font>"; 	vmclass = "success";	break;
 			default: status = "<font color=\"gray\">Desconhecido</font>"; 	vmclass = "";			break;
 		}
