@@ -1,5 +1,4 @@
 var apiurl	=	window.location.origin+"/api";
-console.log("API URL: "+apiurl);
 var defaultMaxDays	=	1;
 
 if (!String.prototype.trim) {
@@ -15,7 +14,18 @@ if(!String.prototype.replaceAll)	{
 }
 String.prototype.isEmpty	=	function()	{	return this.toString().trim() == "";	};
 
-$(function() {	RefreshAll(); });
+$(function() {	
+	console.log("API URL: "+apiurl);
+	CheckSession(function(ok)	{
+		if(!ok)	{
+			ClearT();
+			CleanAddUser();
+		}
+		SetLoggedUser();
+		RefreshAll(); 
+	}); 
+
+});
 
 function DoLogin()			{	
 	var username	=	$("#loginuser").val();
@@ -45,6 +55,19 @@ function DoLogin()			{
 	);
 	LoadConfig();
 };
+
+function CheckSession(cb)	{
+	ShowLoadingBar();
+	APIRequest("checksession",{},
+		function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				cb(data.session);
+			}else
+				cb(false);
+		}
+	);
+}
 
 function LoadAlerts()		{
 	ShowLoadingBar();
@@ -256,22 +279,36 @@ function LoadConfig()	{
 }
 
 function GetUserName(uuid, extra, cb)	{
-	ShowLoadingBar();
-	console.log("Carregando nome para UUID: "+uuid);
-	APIRequest("getusername", {"uuid":uuid}, function(data)	{
-		HideLoadingBar();
-		if(data.status == "OK")	{
-			console.log("Nome de "+uuid+" é "+data.name);
-			if(cb !== undefined)
-				cb(data.name, extra);
-		}else if(data.status == "NOT_AUTHORIZED")
-			NotAuthorizedFallback();
-		else{
-			console.error("Não foi possível carregar o nome do usuário!");
-			if(cb !== undefined, extra)
-				cb("Desconhecido");
-		}
-	});
+	var NameDB = GetT("userdb");
+	var fetch = false;
+	if(NameDB != undefined)	{
+		if(NameDB.hasOwnProperty(uuid))	{
+			if(cb!==undefined)
+				cb(NameDB[uuid].name, extra);
+		}else
+			fetch = true;
+	}else
+		fetch = true;
+	if(fetch) {
+		ShowLoadingBar();
+		APIRequest("getusername", {"uuid":uuid}, function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				if(NameDB == undefined)
+					NameDB = {};
+				NameDB[uuid] = {"name":data.name,"timestamp":Date.now()};
+				SetT("userdb", NameDB);
+				if(cb !== undefined)
+					cb(data.name, extra);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else{
+				console.error("Não foi possível carregar o nome do usuário!");
+				if(cb !== undefined, extra)
+					cb("Desconhecido");
+			}
+		});
+	}
 }
 
 function LoadMachineEthernets(uuid)		{
@@ -410,7 +447,7 @@ function DoLogout()			{
 	APIRequest("logout",{},
 		function(data)	{
 			HideLoadingBar();
-			console.log("Logged out");
+			console.log("Deslogado");
 			ClearT();
 			SetLoggedUser();
 			CleanAddUser();
@@ -537,7 +574,7 @@ function SetResolved()	{
 }
 
 function RefreshAll()	{
-	console.log("Refreshing data");
+	console.log("Atualizando dados");
 	LoadConfig();
 	if(GetT("userdata") !== undefined)	{
 	    LoadAlerts();
@@ -549,7 +586,7 @@ function RefreshAll()	{
 	var delay = 5000;
 	if(GetT("config") !== undefined)
 		delay = GetT("config").internals.timings.refreshdata;
-	console.log("Next refresh in "+(delay/1000)+" s");
+	console.log("Próxima atualização em "+(delay/1000)+" s");
 	setTimeout(RefreshAll, delay);
 }
 
@@ -565,13 +602,12 @@ function APIAddUser(username,name,password,userlevel)	{
 		}, function(data)	{
 			HideLoadingBar();
 			$("#admin_adduser_save").removeAttr("disabled"); 
-			console.log("HUE");
 			if(data.status == "OK")	{
 				Page("dashboard");
 				CleanAddUser();
 			}else{
 				ShowError("Erro",data.error);
-				console.error("Error adding user: ",data.error);
+				console.error("Erro adicionando usuário: ",data.error);
 			}
 		}
 	);

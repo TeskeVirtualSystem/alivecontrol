@@ -191,7 +191,6 @@ function TWPLoad(page)	{
 			</tr>');
 			GetUserName(data[i].from, data[i].uuid, function(name,extra)	{
 				$("#twp_user_"+extra).html(name);
-				console.log(extra, name);
 			});
 		}
 		if(data.length == 0)
@@ -691,7 +690,6 @@ function AddUser()	{
 	
 	var ok = !isEmpty(name) && !isEmpty(username) && !isEmpty(password) && !isEmpty(passconf) && (passconf == password) && !isEmpty(userlevel) ;
 	
-	console.log(ok);
 
 	if(isEmpty(name))	
 		$("#admin_adduser_name").addClass("label-danger");

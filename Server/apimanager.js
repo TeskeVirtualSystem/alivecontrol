@@ -13,6 +13,7 @@ var apimanager = function(database, app, config)	{
 	app.post("/api/login"				, 	function(r, q) { _this.login(r,q); 				});
 	app.post("/api/logout"				, 	function(r, q) { _this.logout(r,q); 			});
 	app.post("/api/getconfig"			,	function(r, q) { _this.getconfig(r,q);     	 	});
+	app.post("/api/checksession"		,	function(r, q) { _this.checksession(r, q);      });
 
 	app.post("/api/updatemachine"		, 	function(r, q) { _this.updatemachine(r,q);		});
 
@@ -51,6 +52,13 @@ apimanager.prototype.apibase		=	function(req, res)	{
 	res.json({"status":"NOK","code":"NO_COMMAND","error":"No Command"});
 };
 
+apimanager.prototype.checksession 	=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, sdata)	{
+		res.json({"status":"OK","session":ok});
+	});
+
+}
 apimanager.prototype.marksolvedtask	=	function(req, res)	{
 	var db = this.db;
 	db.CheckSession(req.body.sessionkey, function(ok, sdata)	{
