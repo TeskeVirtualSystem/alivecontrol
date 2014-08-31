@@ -99,6 +99,40 @@ database.prototype.CheckUsername	=	function(username, cb)	{
 	});	
 };
 
+database.prototype.ChangePassword	=	function(uuid, password, cb)	{
+	this.Users.findOne({"uuid":uuid}, function(err, data)	{
+		if(err)	{
+			if(cb !== undefined) 
+				cb(false, err);
+		}else{
+			data.SetPassword(password);
+			data.save(function(err)	{
+				if(err)	
+					console.log("Error saving user password ("+uuid+"): ",err);
+				if(cb !== undefined)
+					cb(!err,err);
+			});
+		}
+	});
+}
+
+database.prototype.ChangeName	=	function(uuid, name, cb)	{
+	this.Users.findOne({"uuid":uuid}, function(err, data)	{
+		if(err)	{
+			if(cb !== undefined) 
+				cb(false, err);
+		}else{
+			data.name = name;
+			data.save(function(err)	{
+				if(err)	
+					console.log("Error saving user name ("+uuid+"): ",err);
+				if(cb !== undefined)
+					cb(!err,err);
+			});
+		}
+	});	
+}
+
 database.prototype.GetUser			=	function(uuid, cb)		{
 	this.Users.find({"uuid":uuid}, function(err, data)	{
 		if(cb !== undefined)	{

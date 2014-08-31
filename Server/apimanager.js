@@ -30,6 +30,8 @@ var apimanager = function(database, app, config)	{
 	app.post("/api/marksolvedproblem"	,	function(r, q) { _this.marksolvedproblem(r,q); 	});
 
 	app.post("/api/adduser"				,	function(r, q) { _this.adduser(r,q); 			});
+	app.post("/api/changename"			,	function(r, q) { _this.changename(r,q);			});
+	app.post("/api/changepassword"		,	function(r, q) { _this.changepassword(r,q);		});
 	app.post("/api/getusername"			,	function(r, q) { _this.getusername(r,q);    	});
 
 	app.post("/api/loadalerts"			,	function(r, q) { _this.loadalerts(r,q);			});
@@ -168,6 +170,74 @@ apimanager.prototype.getconfig		=	function(req, res)	{
 		},
 	};
 	res.json({"status":"OK","data":uconfig});
+}
+
+apimanager.prototype.changename		=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, sdata)	{
+		if(ok)	{
+			sdata.GetUser(function(err, udata)	{
+				if(err)
+					res.json({"status":"NOK","code":"INTERNAL_ERROR"});
+				else{
+					if(udata[0].level > 1)	{
+						db.ChangeName(req.body.uuid, req.body.name, function(ok, err)	{
+							if(ok)
+								res.json({"status":"OK"});
+							else
+								res.json({"status":"NOK","code":"INTERNAL_ERROR"});
+						});
+					}else{
+						if(req.body.uuid = sdata.useruuid)	{
+							db.ChangeName(req.body.uuid, req.body.name, function(ok, err)	{
+								if(ok)
+									res.json({"status":"OK"});
+								else
+									res.json({"status":"NOK","code":"INTERNAL_ERROR"});
+							});						
+						}else
+							res.json({"status":"NOK","code":"NOT_AUTHORIZED"});
+					}
+				}
+			});
+		}else{
+			res.json({"status":"NOK","code":"INVALID_SESSION"});
+		}
+	});
+}
+
+apimanager.prototype.changepassword	=	function(req, res)	{
+	var db = this.db;
+	db.CheckSession(req.body.sessionkey, function(ok, sdata)	{
+		if(ok)	{
+			sdata.GetUser(function(err, udata)	{
+				if(err)
+					res.json({"status":"NOK","code":"INTERNAL_ERROR"});
+				else{
+					if(udata[0].level > 1)	{
+						db.ChangePassword(req.body.uuid, req.body.password, function(ok, err)	{
+							if(ok)
+								res.json({"status":"OK"});
+							else
+								res.json({"status":"NOK","code":"INTERNAL_ERROR"});
+						});
+					}else{
+						if(req.body.uuid = sdata.useruuid)	{
+							db.ChangePassword(req.body.uuid, req.body.password, function(ok, err)	{
+								if(ok)
+									res.json({"status":"OK"});
+								else
+									res.json({"status":"NOK","code":"INTERNAL_ERROR"});
+							});						
+						}else
+							res.json({"status":"NOK","code":"NOT_AUTHORIZED"});
+					}
+				}
+			});
+		}else{
+			res.json({"status":"NOK","code":"INVALID_SESSION"});
+		}
+	});
 }
 
 apimanager.prototype.getusername	=	function(req, res)	{
