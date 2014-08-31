@@ -421,7 +421,7 @@ function AddMListAccordion(uuid)	{
 		<div class="panel panel-success" id="mlist_accordion_title_'+uuid+'">\
 			<div class="panel-heading">\
 	    		<h4 class="panel-title">	\
-	    			<a data-toggle="collapse" data-parent="#mlist_accordion_'+uuid+'" id="mlist_name_'+uuid+'" href="#mlist_collapse_'+uuid+'">NAME</a>\
+	    			<a data-toggle="collapse" data-parent="#mlist_accordion_'+uuid+'" id="mlist_name_'+uuid+'" href="#mlist_collapse_'+uuid+'">Máquinas de '+uuid+'</a>\
 				</h4>\
 			</div>\
 			<div id="mlist_collapse_'+uuid+'" class="panel-collapse collapse">\
@@ -444,7 +444,7 @@ function AddMListAccordion(uuid)	{
 		</div>\
 	</div>');
 	GetUserName(uuid, uuid, function(name,extra)	{
-		$("#mlist_name_"+extra).html(name);
+		$("#mlist_name_"+extra).html("Máquinas de "+name);
 	});
 }
 
