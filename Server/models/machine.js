@@ -115,20 +115,19 @@ exports.Schemas = function(mg)	{
 	machineSchema.methods.CleanMachineData	=	function(cb)	{
 		/** TODO: Better way to clean **/
 		var thisschema = this;
-		console.log("Cleaning Devices");
 		this.CleanDevices(function()	{
-			console.log("Cleaning Ethernets");
+			//console.log("Cleaning Ethernets");
 			thisschema.CleanEthernets(function()	{
-				console.log("Cleaning Disks");
+				//console.log("Cleaning Disks");
 				thisschema.CleanDisks(function()	{
-					console.log("Cleaning Mounts");
+					//console.log("Cleaning Mounts");
 					thisschema.CleanMounts(function()	{
 						thisschema.CleanDRBDs(function()	{
-							console.log("Cleaning MySQLs");
+							//console.log("Cleaning MySQLs");
 							thisschema.CleanMYSQLs(function()	{
-								console.log("Cleaning VMs");
+								//console.log("Cleaning VMs");
 								thisschema.CleanVMs(function()	{
-									console.log("Clean finish");
+									//console.log("Clean finish");
 									cb();
 								});
 							});
