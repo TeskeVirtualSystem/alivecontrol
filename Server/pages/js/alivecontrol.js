@@ -615,3 +615,43 @@ function APIAddUser(username,name,password,userlevel)	{
 		}
 	);
 }
+
+function APIChangePassword(uuid, password, cb)	{
+	ShowLoadingBar();
+	APIRequest("changepassword", 
+		{
+			"uuid"			: uuid,
+			"password"		: password
+		}, function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				if(cb!==undefined)
+					cb(true);
+			}else{
+				ShowError("Erro",data.code);
+				console.error("Erro alterando senha: ",data.code);
+				cb(false);
+			}
+		}
+	);
+}
+
+function APIChangeName(uuid, name, cb)	{
+	ShowLoadingBar();
+	APIRequest("changename", 
+		{
+			"uuid"		: uuid,
+			"name"		: name
+		}, function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				if(cb!==undefined)
+					cb(true);
+			}else{
+				ShowError("Erro",data.code);
+				console.error("Erro alterando nome: ",data.code);
+				cb(false);
+			}
+		}
+	);
+}

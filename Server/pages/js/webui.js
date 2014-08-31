@@ -109,6 +109,9 @@ function ShowMessage(title,content,buttons,modalclass)	{
 
 
 function SetLoggedUser()	{
+	$("#config_name").removeClass("label-success").removeClass("label-danger");
+	$("#config_password1").removeClass("label-success").removeClass("label-danger");
+	$("#config_password2").removeClass("label-success").removeClass("label-danger");
 	if(typeof(GetT("userdata")) == "object")	{
 		    $("#uname").html(GetT("userdata").name);
 		    $("#page-wrapper").fadeIn();
@@ -142,6 +145,7 @@ function HidePages()	{
 	$("#twp_list").hide();
 	$("#twp").hide();
 	$("#admin").hide();
+	$("#config").hide();
 
 	$("#machines_li").removeClass("active");
 	$("#dashboard_li").removeClass("active");
@@ -156,9 +160,9 @@ function HidePages()	{
 function Page(page, data)	{
 	HidePages();
 	switch(page)	{
-		case "dashboard"	: 	$("#dashboard").fadeIn(); 	$("#dashboard_li").addClass("active"); 	break; 
-		case "machines"		:  	$("#machines").fadeIn();  	$("#machines_li").addClass("active"); 	break;
-		case "machine" 		:   LoadMachine(data);		 	$("#machines_li").addClass("active"); 	break; 
+		case "dashboard"	: 	$("#dashboard").fadeIn(); 	$("#dashboard_li").addClass("active"); 		break; 
+		case "machines"		:  	$("#machines").fadeIn();  	$("#machines_li").addClass("active"); 		break;
+		case "machine" 		:   LoadMachine(data);		 	$("#machines_li").addClass("active"); 		break; 
 		case "tasks"		:
 		case "warnings"		:
 		case "problems"		: 	TWPLoad(page);				$("#"+page+"_li").addClass("active");		break; 	
@@ -168,7 +172,8 @@ function Page(page, data)	{
 		}else
 			ShowError("Você não tem autorização para isso!","Você não tem autorização para acessar esta página");
 		break;
-		default 			:	$("#dashboard").fadeIn(); 	$("#dashboard_li").addClass("active"); 	break; 
+		case "config"		:   $("#config").fadeIn();		$("#configuration_li").addClass("active"); 	break;	
+		default 			:	$("#dashboard").fadeIn(); 	$("#dashboard_li").addClass("active"); 		break; 
 	}
 }
 
@@ -739,7 +744,6 @@ function CleanAddUser()	{
 	$("#admin_adduser_username").val("");
 	$("#admin_adduser_password1").val("");
 	$("#admin_adduser_password2").val("");
-	$("#admin_adduser_userlevel").val("");
 
 	$("#admin_adduser_name").removeClass("label-danger");
 	$("#admin_adduser_username").removeClass("label-danger");
@@ -748,4 +752,57 @@ function CleanAddUser()	{
 	$("#admin_adduser_userlevel").removeClass("label-danger");
 
 	$("#admin_adduser_save").removeAttr("disabled"); 
+}
+
+function RefreshConfigScreen()	{
+
+}
+
+function ChangeName()	{
+	var name 	=	$("#config_name").val();
+	$("#config_name").removeClass("label-success").removeClass("label-danger");
+	if(isEmpty(name))
+		$("#config_name").addClass("label-danger");
+	else{
+		$("#config_name").removeClass("label-danger");
+		APIChangeName(GetT("userdata").uuid, name, function(ok)	{
+			if(ok)	{
+				$("#config_name").addClass("label-success");
+				var udata = GetT("userdata");
+				udata.name = name;
+				SetT("userdata", udata);
+		    	$("#uname").html(GetT("userdata").name);
+		    	var NameDB = GetT("userdb");
+		    	if(NameDB == undefined)
+		    		NameDB = {};
+		    	NameDB[GetT("userdata").uuid] = {"name":name,"timestamp":Date.now()};
+		    	SetT("userdb", NameDB);
+			}else
+				$("#config_name").addClass("label-danger");
+		});
+	}
+}
+
+function ChangePassword()	{
+	var password 	=	$("#config_password1").val();
+	var password2 	=	$("#config_password2").val();
+
+	$("#config_password1").removeClass("label-success").removeClass("label-danger");
+	$("#config_password2").removeClass("label-success").removeClass("label-danger");
+
+	if(isEmpty(password) || isEmpty(password2) || password != password2)	{
+		$("#config_password1").addClass("label-danger");
+		$("#config_password2").addClass("label-danger");
+	}else{
+		$("#config_name").removeClass("label-danger");
+		APIChangePassword(GetT("userdata").uuid, password, function(ok)	{
+			if(ok)	{
+				$("#config_password1").addClass("label-success");
+				$("#config_password2").addClass("label-success");
+			}else{
+				$("#config_password1").addClass("label-danger");
+				$("#config_password2").addClass("label-danger");
+			}
+		});
+	}
 }

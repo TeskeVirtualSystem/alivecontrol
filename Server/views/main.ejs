@@ -17,7 +17,7 @@
 	    <link href="css/alivecontrol.css" rel="stylesheet" type="text/css">	
 	</head>
 	<body>
-	    <div id="wrapper">
+	    <div id="wrapper" >
 			<!-- Navigation -->
 			<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 			    <div class="navbar-header">
@@ -163,7 +163,7 @@
 			            </li>
 
 			            <li id="configuration_li">
-			                <a href="#"><i class="fa fa-fw fa-wrench"></i> Configurações</a>
+			                <a href="#" onClick="Page('config')"><i class="fa fa-fw fa-wrench"></i> Configurações</a>
 			            </li>
 			            <li id="exit_li">
 			                <a href="#" onClick="DoLogout();"><i class="fa fa-fw fa-power-off"></i> Sair</a>
@@ -223,6 +223,60 @@
 				                </div>			
 							</div>
 						</div>        	
+					</div>			
+        		</div>
+        		<!-- /.page -->
+
+        		<div id="config" class="container-fluid" style="display: none">
+	                <!-- Page Heading -->
+	                <div class="row">
+	                    <div class="col-lg-12">
+	                        <h1 class="page-header" id="confighead">
+	                        	<i class="fa fa-desktop"></i> Configurações <small>Visão Geral</small>
+	                        </h1>
+	                    </div>
+	                </div>
+
+	                <div class="row">
+	                	<div class="col-md-6">
+							<div class="panel panel-primary">
+								<div class="panel-heading">Alterar Nome</div>
+								<div class="panel-body">
+									<div class="input-group" style="width: 100%">
+										<span class="input-group-addon" style="width: 20%; text-align: left">Nome</span>
+										<input type="text" class="form-control" id="config_name" placeholder="Nome do Usuário" style="width: 80%" >
+									</div>		
+									<BR>	
+					                <div class="row">
+					                	<div class="col-md-12 text-center">
+						                	<button id="config_name_save"  type="button" class="btn btn-success btn-lg" onClick="ChangeName()"><span class="glyphicon glyphicon-saved"></span> Alterar</button>
+						                </div>
+					                </div>			
+								</div>
+							</div>  
+						</div>
+						<div class="col-md-6">
+							<div class="panel panel-primary">
+								<div class="panel-heading">Alterar Senha</div>
+								<div class="panel-body">
+									<div class="input-group" style="width: 100%">
+										<span class="input-group-addon" style="width: 20%; text-align: left">Senha</span>
+										<input type="password" class="form-control" id="config_password1" placeholder="Senha" style="width: 80%" >
+									</div>	
+									<BR>
+									<div class="input-group" style="width: 100%">
+										<span class="input-group-addon" style="width: 20%; text-align: left">Repetir Senha</span>
+										<input type="password" class="form-control" id="config_password2" placeholder="Repita a Senha" style="width: 80%" >
+									</div>			
+									<BR>	
+					                <div class="row">
+					                	<div class="col-md-12 text-center">
+						                	<button id="config_password_save"  type="button" class="btn btn-success btn-lg" onClick="ChangePassword()"><span class="glyphicon glyphicon-saved"></span> Alterar</button>
+						                </div>
+					                </div>		
+								</div>
+							</div>    	
+						</div>
 					</div>			
         		</div>
         		<!-- /.page -->
