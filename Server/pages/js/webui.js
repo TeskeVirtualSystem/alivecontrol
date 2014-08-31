@@ -552,13 +552,13 @@ function RefreshMachineEthernets(data)	{
 
 function RefreshMachineDisks(data)	{
 	$("#diskstablerows").html("");
+	$("#diskaccordiontitle").addClass("panel-success").removeClass("panel-warning").removeClass("panel-danger");
 	for(var i in data)	{
 		var d 			= data[i];
 		var capacity 	= toNotationUnit(d.capacity, 2);
 		var capacity10 	= toNotationUnit(d.capacity, 10);
 		var diskclass	= "";
 
-		$("#diskaccordiontitle").addClass("panel-success").removeClass("panel-warning").removeClass("panel-danger");
 		if(WebUI_Parameters.diskSmartOK.indexOf(d.diskstatus) > -1)
 			diskclass = "success";
 		else if(WebUI_Parameters.diskSmartProblem.indexOf(d.diskstatus) > -1)	{

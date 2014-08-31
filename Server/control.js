@@ -144,7 +144,7 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 				var report = new _this.db.Warnings({
 				    target    : Date.now(),
 				    title     : "Espaço insuficiente",
-				    subtitle  : "Espaço em disco insuficiente em "+data.mountpoint,
+				    subtitle  : "Espaço em disco insuficiente de "+data.mountpoint+" em "+mdata.name,
 				    level     : 1,
 				    message   : message,
 				    from      : "SYSTEM_USER",
@@ -166,7 +166,7 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 				var report = new _this.db.Problems({
 				    target    : Date.now(),
 				    title     : "Espaço insuficiente",
-				    subtitle  : "Espaço em disco insuficiente em "+data.mountpoint,
+				    subtitle  : "Espaço em disco insuficiente de "+data.mountpoint+" em "+mdata.name,
 				    level     : 2,
 				    message   : message,
 				    from      : "SYSTEM_USER",
@@ -197,7 +197,7 @@ control.prototype._DoSMARTReport	=	function(sdata, mdata)	{
 	var report = new _this.db.Problems({
 	    target    : Date.now(),
 	    title     : "Um disco está falhando!",
-	    subtitle  : "Seu disco "+sdata.device+" está falhando!",
+	    subtitle  : "Seu disco "+sdata.device+" em "+mdata.name+" está falhando!",
 	    level     : 2,
 	    message   : message,
 	    from      : "SYSTEM_USER",
