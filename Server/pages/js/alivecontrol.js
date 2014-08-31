@@ -24,7 +24,10 @@ $(function() {
 		SetLoggedUser();
 		RefreshAll(); 
 	}); 
+});
 
+$(window).load(function() {
+	$("#loadingoverlay").fadeOut();
 });
 
 function DoLogin()			{	
