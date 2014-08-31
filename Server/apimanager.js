@@ -133,7 +133,7 @@ apimanager.prototype.marksolvedproblem	=	function(req, res)	{
 					res.json({"status":"NOK","code":"INTERNAL_ERROR"});
 				}else{
 					if(udata[0].level > 1)	{
-						db.MarkSolvedProblem(req.body.twpuuid, null, function(ok)	{
+						db.MarkSolvedProblem(req.body.twpuuid, udata[0].uuid, function(ok)	{
 							if(ok)
 								res.json({"status":"OK"});
 							else

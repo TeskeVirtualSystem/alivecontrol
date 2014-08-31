@@ -50,19 +50,19 @@ database.prototype.CheckSessions	=	function(cb)	{
 };
 
 database.prototype.GetUnsolvedTasks	=	function(uuid, cb)	{
-	return this.Tasks.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).sort({target: -1}).limit(this.config.internals.max_twp_results).exec(cb);
+	return this.Tasks.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"},{"cc":uuid}]).sort({target: -1}).limit(this.config.internals.max_twp_results).exec(cb);
 }
 
 database.prototype.GetUnsolvedProblems	=	function(uuid, cb)	{
-	return this.Problems.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).sort({target: -1}).limit(this.config.internals.max_twp_results).exec(cb);
+	return this.Problems.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"},{"cc":uuid}]).sort({target: -1}).limit(this.config.internals.max_twp_results).exec(cb);
 }
 
 database.prototype.GetUnsolvedWarnings	=	function(uuid, cb)	{
-	return this.Warnings.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"}]).sort({target: -1}).limit(this.config.internals.max_twp_results).exec(cb);
+	return this.Warnings.find({}).where('solved', false).or([{"to":uuid},{"to":"ALL"},{"cc":uuid}]).sort({target: -1}).limit(this.config.internals.max_twp_results).exec(cb);
 }
 
 database.prototype.GetAlerts		=	function(uuid, cb)	{
-	return this.Alerts.find({}).or([{"to":uuid},{"to":"ALL"}]).sort({when: -1}).exec(cb);
+	return this.Alerts.find({}).or([{"to":uuid},{"to":"ALL"},{"cc":uuid}]).sort({when: -1}).exec(cb);
 }
 
 database.prototype.GetMachines	=	function(cb)	{
@@ -175,8 +175,9 @@ database.prototype.MarkSolvedTask	=	function(twpuuid, useruuid, cb)	{
 			if(cb != null)
 				cb(false);	
 		}else{
-			if(data.to == useruuid || useruuid == undefined || useruuid == null)	{
+			if(data.to == useruuid || useruuid == undefined || useruuid == null|| data.cc.indexOf(useruuid) > -1)	{
 				data.solved = true;
+				data.solvedby = useruuid;
 				data.save(function(err)	{
 					if(err) {
 						console.log("Error Saving: "+err);
@@ -201,8 +202,9 @@ database.prototype.MarkSolvedWarning	=	function(twpuuid, useruuid, cb)	{
 			if(cb != null)
 				cb(false);	
 		}else{
-			if(data.to == useruuid || useruuid == undefined || useruuid == null)	{
+			if(data.to == useruuid || useruuid == undefined || useruuid == null|| data.cc.indexOf(useruuid) > -1)	{
 				data.solved = true;
+				data.solvedby = useruuid;
 				data.save(function(err)	{
 					if(err) {
 						console.log("Error Saving: "+err);
@@ -227,8 +229,9 @@ database.prototype.MarkSolvedProblem	=	function(twpuuid, useruuid, cb)	{
 			if(cb != null)
 				cb(false);	
 		}else{
-			if(data.to == useruuid || useruuid == undefined || useruuid == null)	{
+			if(data.to == useruuid || useruuid == undefined || useruuid == null || data.cc.indexOf(useruuid) > -1)	{
 				data.solved = true;
+				data.solvedby = useruuid;
 				data.save(function(err)	{
 					if(err) {
 						console.log("Error Saving: "+err);

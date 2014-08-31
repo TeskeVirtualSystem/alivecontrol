@@ -14,7 +14,9 @@ exports.Schemas = function(mg) {
     message   : String,
     from      : { type: String, index: true },
     to        : { type: String, index: true },
-    solved    : { type: Boolean, index: true, default: false}
+    cc        : [String],
+    solved    : { type: Boolean, index: true, default: false},
+    solvedby  : { type: String, index: true}
   });
 
   var alertSchema = new Schema({
@@ -23,6 +25,7 @@ exports.Schemas = function(mg) {
     name      : String,
     badge     : String,
     badgelabel: String,
+    cc        : [String],
     to        : { type: String, default: "ALL", index: true } 
   });
 
