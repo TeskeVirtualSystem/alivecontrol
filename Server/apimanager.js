@@ -461,7 +461,7 @@ apimanager.prototype.loadmachines		=	function(req, res)	{
 							res.json({"status":"OK","data":mdata});
 					});
 				}else{
-					db.GetUserMachines(udata.uuid, function(err, mdata)	{
+					db.GetUserMachines(udata[0].uuid, function(err, mdata)	{
 						if(err)
 							res.json({"status":"OK","data":[]});
 						else

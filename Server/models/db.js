@@ -66,11 +66,21 @@ database.prototype.GetAlerts		=	function(uuid, cb)	{
 }
 
 database.prototype.GetMachines	=	function(cb)	{
-	return this.Machines.find({}, cb);
+	return this.Machines.find({}).sort({name: 1}).exec(cb);
 };
 
 database.prototype.GetUserMachines	=	function(uuid, cb)	{
-	return this.Machines.find({"owneruuid":uuid}, cb);
+	var db = this;
+	return this.Users.findOne({"uuid":uuid}, function(err, data) {
+		var mf = db.Machines.find({});
+		var orquery = [{"owneruuid":uuid}];
+		if(data.extras !== undefined)	{
+			for(var i=0;i<data.extras.length;i++)	
+				orquery.push({"owneruuid":data.extras[i]});
+		}
+		mf.or(orquery);
+		mf.exec(cb);
+	}); 
 };
 
 database.prototype.GetMachine 		=	function(uuid, cb)	{

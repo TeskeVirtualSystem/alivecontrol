@@ -12,7 +12,8 @@ exports.Schemas = function(mg) {
     username  :   { type: String, index: true, unique: true },
     password  :   String,
     name      :   String,
-    level     :   Number 
+    level     :   Number,
+    extras    :   [String], 
   });
   userSchema.methods.GenUUID          = function()  {  this.uuid = uuid.v1();  };
   userSchema.methods.ComparePassword  = function(password)  {
