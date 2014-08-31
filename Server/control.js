@@ -151,6 +151,7 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 				    to        : mdata.owneruuid,
 				    solved    : false
 				});
+				/*
 				report.GenUUID();
 				report.save(function(err)	{
 					if(err)	
@@ -158,7 +159,8 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 					else
 						console.log("Report added.");
 				});
-				_this._SendToAdmins(report, _this.db.Warnings);
+				*/
+				_this._SendReport(report, _this.db.Warnings);
 			}else if(level == 2)	{	//	Problem
 				var message = ejs.render(TemplateList["diskspacemessage"], {"mdata":mdata,"data":data,"config":_this.config,"diskminpercent":_this.config.diskspace.critical});
 				var report = new _this.db.Problems({
@@ -171,6 +173,7 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 				    to        : mdata.owneruuid,
 				    solved    : false
 				});
+				/*
 				report.GenUUID();
 				report.save(function(err)	{
 					if(err)	
@@ -178,7 +181,8 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 					else
 						console.log("Report added.");
 				});
-				_this._SendToAdmins(report, _this.db.Problems);
+				*/
+				_this._SendReport(report, _this.db.Problems);
 			}
 		}else{
 			console.log("Error! Machine doesnt exists! Cleaning mount.");
@@ -200,35 +204,38 @@ control.prototype._DoSMARTReport	=	function(sdata, mdata)	{
 	    to        : mdata.owneruuid,
 	    solved    : false
 	});
+	/*
 	report.GenUUID();
 	report.save(function(err)	{
 		if(err)	
 			console.log("Save error for smart report: "+err);
 		else
 			console.log("Report added.");
-	});
-	_this._SendToAdmins(report, _this.db.Problems);
+	});*/
+
+	_this._SendReport(report, _this.db.Problems);
 }
 
-control.prototype._SendToAdmins	=	function(rdata, type)	{
+control.prototype._SendReport	=	function(rdata, type)	{
 	var db = this.db;
-	db.Users.find({}).where('level').gt(1).exec(function(err, data) {
+	db.Users.find({}).or([{"level":{ $gt: 1 }},{"extras":rdata.to}]).exec(function(err, data) {
 		if(err)	
-			console.log("Error sending to admins: "+err);
+			console.log("Error sending reports: "+err);
 		else{
+			var cc = [];
 			for(var i in data)	{
 				var user = data[i];
-				if(user.uuid != rdata.to && user.uuid != "SYSTEM_USER")	{
-					var repo = new type(rdata);
-					var uname = user.name;
-					repo._id = db._mg.Types.ObjectId();
-					repo.to = user.uuid;
-					repo.GenUUID();
-					repo.save(function(err)	{
-						if(err) console.log("Error saving report: ",err);
-					});
-				}
+				if(user.uuid != "SYSTEM_USER")	
+					cc.push(user.uuid);
 			}
+			var repo = new type(rdata);
+			var uname = user.name;
+			repo._id = db._mg.Types.ObjectId();
+			repo.cc = cc;
+			repo.GenUUID();
+			repo.save(function(err)	{
+				if(err) console.log("Error saving report: ",err);
+			});
 		}
 	});
 }
