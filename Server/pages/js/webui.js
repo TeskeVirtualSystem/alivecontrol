@@ -545,6 +545,7 @@ function RefreshMachineDisks(data)	{
 		var capacity10 	= toNotationUnit(d.capacity, 10);
 		var diskclass	= "";
 
+		$("#diskaccordiontitle").addClass("panel-success").removeClass("panel-warning").removeClass("panel-danger");
 		if(WebUI_Parameters.diskSmartOK.indexOf(d.diskstatus) > -1)
 			diskclass = "success";
 		else if(WebUI_Parameters.diskSmartProblem.indexOf(d.diskstatus) > -1)	{
@@ -579,6 +580,7 @@ function RefreshMachineMounts(data)	{
 		var size	= toNotationUnit(d.size, 10);
 		var percent = 100*(d.free/d.size);
 		var mountclass = "success";
+		$("#mountsaccordiontitle").addClass("panel-success").removeClass("panel-warning").removeClass("panel-danger");
 		if(percent < WebUI_Parameters.diskPercentCritical)	{
 			mountclass = "danger";
 			$("#mountsaccordiontitle").removeClass("panel-success").removeClass("panel-warning").addClass("panel-danger");
