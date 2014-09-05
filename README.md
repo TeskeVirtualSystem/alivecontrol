@@ -13,10 +13,10 @@ TODO README
 Screenshots:
 
 
-![Painel Principal](ScreenShots/Captura de tela de 2014-08-31 01:23:13.png)
+![Painel Principal](ScreenShots/Captura de tela de 2014-08-31 012313.png)
 
-![Máquinas](ScreenShots/Captura de tela de 2014-08-31 01:24:03.png)
+![Máquinas](ScreenShots/Captura de tela de 2014-08-31 012403.png)
 
-![Máquina](ScreenShots/Captura de tela de 2014-08-31 01:24:26.png)
+![Máquina](ScreenShots/Captura de tela de 2014-08-31 012426.png)
 
-![Maquinas Virtuais em uma máquina](ScreenShots/Captura de tela de 2014-08-31 01:24:53.png)
+![Maquinas Virtuais em uma máquina](ScreenShots/Captura de tela de 2014-08-31 012453.png)
