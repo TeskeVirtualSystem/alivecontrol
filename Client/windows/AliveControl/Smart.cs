@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AliveControl
 {
@@ -16,7 +18,7 @@ namespace AliveControl
         long RealocatedSectors;
         String Status;
 
-        public Smart(String Device, String Family, long Capacity, long PowerOnCycles, long ReadErrors, long RealocatedSectors, String Status)
+        public Smart(String Device, String Family, long Capacity, long PowerOnCycles, long ReadErrors, long RealocatedSectors, long TimeOn, String Status)
         {
             this.Device = Device;
             this.Family = Family;
@@ -25,6 +27,7 @@ namespace AliveControl
             this.ReadErrors = ReadErrors;
             this.RealocatedSectors = RealocatedSectors;
             this.Status = Status;
+            this.TimeOn = TimeOn;
         }
 
 
@@ -36,9 +39,24 @@ namespace AliveControl
             output += "\tCapacty: " + Capacity + "\r\n";
             output += "\tReadErrors: " + ReadErrors + "\r\n";
             output += "\tRealocated Sectors: " + RealocatedSectors + "\r\n";
+            output += "\tPower On Time (hours): " + TimeOn + "\r\n";
             output += "\tStatus: " + Status + "\r\n";
 
             return output;
+        }
+
+        public JObject GetACObj()
+        {
+            JObject obj = new JObject();
+            obj["Device"] = Device;
+            obj["ModelFamily"] = Family;
+            obj["DeviceModel"] = "";
+            obj["UserCapacity"] = Capacity;
+            obj["DiskHealth"] = Status;
+            obj["PowerOnHours"] = TimeOn;
+            obj["ReadErrorRate"] = ReadErrors;
+            obj["ReallocatedSector"] = RealocatedSectors;
+            return obj;
         }
     }
 }

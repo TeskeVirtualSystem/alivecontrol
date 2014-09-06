@@ -9,11 +9,28 @@ using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.IO;
 using Microsoft.VisualBasic.Devices;
+using System.Diagnostics;
 
 namespace AliveControl
 {
     public class tvstools
     {
+        public static TimeSpan UpTime
+        {
+            get
+            {
+                using (var uptime = new PerformanceCounter("System", "System Up Time"))
+                {
+                    uptime.NextValue();       //Call this an extra time before reading its value
+                    return TimeSpan.FromSeconds(uptime.NextValue());
+                }
+            }
+        }
+
+        public static String GetUpTime()
+        {
+            return UpTime.Days.ToString() + " days " + UpTime.Hours + " hours " + UpTime.Minutes + " minutes " + UpTime.Seconds + " seconds";
+        }
         public static String GetOSName()
         {
             /*
@@ -235,6 +252,7 @@ namespace AliveControl
                     int PowerCycleCount = 0;
                     int ReadErrorRate = 0;
                     int RealocatedSectors = 0;
+                    int PowerOnHours = 0;
 
                     pnpid = pnpid.Substring(0, pnpid.Length - 2);
 
@@ -247,13 +265,14 @@ namespace AliveControl
                     {
                         switch (b.AttributeType)
                         {
+                            case SmartAttributeType.PowerOnHoursPOH: PowerOnHours = BitConverter.ToInt32(b.VendorData, 0); break;
                             case SmartAttributeType.ReadErrorRate: ReadErrorRate = BitConverter.ToInt32(b.VendorData, 0); break;
                             case SmartAttributeType.PowerCycleCount: PowerCycleCount = BitConverter.ToInt32(b.VendorData, 0); break;
                             case SmartAttributeType.ReallocatedSectorsCount: RealocatedSectors = BitConverter.ToInt32(b.VendorData, 0); break;
                         }
                         diskOK &= !b.FailureImminent;
                     }
-                    smart[count] = new Smart(GetDevice(pnpid), tvstools.GetDeviceName(pnpid), GetDeviceCapacity(pnpid), PowerCycleCount, ReadErrorRate, RealocatedSectors, diskOK ? "PASSED" : "FAILED");
+                    smart[count] = new Smart(GetDevice(pnpid), tvstools.GetDeviceName(pnpid), GetDeviceCapacity(pnpid), PowerCycleCount, ReadErrorRate, RealocatedSectors, PowerOnHours, diskOK ? "PASSED" : "FAILED" );
                     count++;
                 }
             }

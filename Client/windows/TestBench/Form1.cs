@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -36,8 +37,12 @@ namespace TestBench
 
         private void button1_Click(object sender, EventArgs e)
         {
-            API.SessionKey = "f42a8580-24b7-11e4-b30f-3b79ab91660d";
-            textBox1.Text += "\r\n" + API._CallAPI("loadmachines", null);
+            MachineData  x= new MachineData();
+
+            //API.SessionKey = "f42a8580-24b7-11e4-b30f-3b79ab91660d";
+            //textBox1.Text += "\r\n" + API._CallAPI("loadmachines", null);
+
+            textBox1.Text += "\r\n" + x.ToJSON();
             //Smart[] smarts = tvstools.ReadSmart();
             //foreach (Smart smart in smarts)
             //{

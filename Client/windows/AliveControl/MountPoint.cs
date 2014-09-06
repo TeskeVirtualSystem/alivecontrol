@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AliveControl
 {
@@ -32,6 +34,17 @@ namespace AliveControl
             output += "\tFree: " + Free + "\r\n";
             output += "\tUsed: " + Used + "\r\n";
             return output;
+        }
+
+        public JObject GetACObj()
+        {
+            JObject obj = new JObject();
+            obj["mountpoint"] = Mount;
+            obj["device"] = Device;
+            obj["used"] = Used;
+            obj["free"] = Free;
+            obj["size"] = Size;
+            return obj;
         }
     }
 }

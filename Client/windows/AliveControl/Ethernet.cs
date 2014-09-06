@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AliveControl
 {
@@ -41,6 +43,18 @@ namespace AliveControl
             output += "\tRX Bytes: " + RXBytes + "\r\n";
             output += "\tTX Bytes: " + TXBytes + "\r\n";
             return output;
+        }
+
+        public JObject GetACObj()
+        {
+            JObject obj = new JObject();
+            obj["iface"] = Name;
+            obj["address"] = IP;
+            obj["broadcast"] = Broadcast;
+            obj["netmask"] = Mask;
+            obj["rxbytes"] = RXBytes;
+            obj["txbytes"] = TXBytes;
+            return obj;
         }
     }
 }
