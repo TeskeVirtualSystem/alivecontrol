@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AliveControlService", "..\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBench", "..\TestBench\TestBench.csproj", "{F7923C3E-D886-4D4C-96BB-331BCA4A7D0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACConfig", "..\ACConfig\ACConfig.csproj", "{089E69D2-FDDF-47D8-8822-69F0C5E0B7CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{F7923C3E-D886-4D4C-96BB-331BCA4A7D0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7923C3E-D886-4D4C-96BB-331BCA4A7D0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7923C3E-D886-4D4C-96BB-331BCA4A7D0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{089E69D2-FDDF-47D8-8822-69F0C5E0B7CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{089E69D2-FDDF-47D8-8822-69F0C5E0B7CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{089E69D2-FDDF-47D8-8822-69F0C5E0B7CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{089E69D2-FDDF-47D8-8822-69F0C5E0B7CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

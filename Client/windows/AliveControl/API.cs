@@ -15,6 +15,7 @@ namespace AliveControl
         
         public static String SessionKey = null;
         public static String UUID = null;
+        public static String MachineUUID = null;
 
         public static JObject _CallAPI(String method, NameValueCollection data) 
         {
@@ -34,13 +35,32 @@ namespace AliveControl
             }
             catch (Exception e)
             {
+                LogMan.AddDebug("Error on _CallAPI: " + e.Message);
                 result = "{\"status\":\"NOK\",\"error\":\"INTERNAL\"}";
                 output = JsonConvert.DeserializeObject<JObject>(result);
             }
             return output;
         }
 
-        public Boolean Login(String username, String password, int maxdays)
+        public static Boolean SendMachine(MachineData m)
+        {
+            JObject data = _CallAPI("updatemachine", new NameValueCollection()
+            {
+                {"machinedata",m.ToJSON()}
+            });
+            if (data["status"].ToString().Equals("OK"))
+            {
+                MachineUUID = data["machineuuid"].ToString();
+                return true;
+            }
+            else
+            {
+                LogMan.AddLog("Error: " + data.ToString());
+                return false;
+            }
+        }
+
+        public static Boolean Login(String username, String password, int maxdays)
         {
             JObject data = _CallAPI("login", new NameValueCollection()
             {
@@ -58,7 +78,7 @@ namespace AliveControl
                 return false;
         }
 
-        public Boolean Logout()
+        public static Boolean Logout()
         {
             if (SessionKey != null)
             {

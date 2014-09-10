@@ -76,24 +76,38 @@ namespace AliveControl
             return new ComputerInfo().AvailableVirtualMemory;
         }
 
+        public static string GetMachineName()
+        {
+            return Environment.MachineName;
+        }
+
         public static Ethernet[] GetNetworkDevices()
         {
             NetworkInterface[] ifaces = NetworkInterface.GetAllNetworkInterfaces();
             Ethernet[] ethernets = new Ethernet[ifaces.Length];
-            int count = 0;
-            foreach(NetworkInterface iface in ifaces) {
-                String ip = "0.0.0.0";
-                String mask = "255.255.255.255";
-                IPInterfaceProperties properties = iface.GetIPProperties();
-                foreach (UnicastIPAddressInformation unicast in properties.UnicastAddresses)
-                    if (unicast.Address.AddressFamily == AddressFamily.InterNetwork) {
-                        ip = unicast.Address.ToString();
-                        mask = unicast.IPv4Mask.ToString();
-                        break;
-                    }
+            try
+            {
+                int count = 0;
+                foreach (NetworkInterface iface in ifaces)
+                {
+                    String ip = "0.0.0.0";
+                    String mask = "255.255.255.255";
+                    IPInterfaceProperties properties = iface.GetIPProperties();
+                    foreach (UnicastIPAddressInformation unicast in properties.UnicastAddresses)
+                        if (unicast.Address.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            ip = unicast.Address.ToString();
+                            mask = unicast.IPv4Mask.ToString();
+                            break;
+                        }
 
-                count++;
-                ethernets[count] = new Ethernet(iface.Name, ip, mask, iface.GetIPv4Statistics().BytesReceived, iface.GetIPv4Statistics().BytesSent);
+                    ethernets[count] = new Ethernet(iface.Name, ip, mask, iface.GetIPv4Statistics().BytesReceived, iface.GetIPv4Statistics().BytesSent);
+                    count++;
+                }
+            }
+            catch (Exception e)
+            {
+                LogMan.AddLog("Error fetching Network Devices: " + e.Message);
             }
             return ethernets;
         }
@@ -112,7 +126,7 @@ namespace AliveControl
                         name = partition["Caption"].ToString();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -134,7 +148,7 @@ namespace AliveControl
                         Int64.TryParse(partition["Size"].ToString(), out size);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -155,7 +169,7 @@ namespace AliveControl
                         name = partition["Name"].ToString();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -178,7 +192,7 @@ namespace AliveControl
                         device = drive["PNPDeviceID"].ToString();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -201,7 +215,7 @@ namespace AliveControl
             {
                 if (drive.IsReady && drive.DriveType != DriveType.CDRom)
                 {
-                    mounts[count] = new MountPoint(drive.Name, GetMountDevice(drive.Name), GetMPUsed(drive), GetMPFree(drive), GetMPSize(drive));
+                    mounts[count] = new MountPoint(drive.Name, GetDevice(GetMountDevice(drive.Name)), GetMPUsed(drive), GetMPFree(drive), GetMPSize(drive));
                     count++;
                 }
             }
@@ -214,7 +228,7 @@ namespace AliveControl
             {
                 return di.TotalFreeSpace;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return 0;
             }
@@ -227,7 +241,7 @@ namespace AliveControl
             {
                 return di.TotalSize;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return 0;
             }
@@ -272,11 +286,11 @@ namespace AliveControl
                         }
                         diskOK &= !b.FailureImminent;
                     }
-                    smart[count] = new Smart(GetDevice(pnpid), tvstools.GetDeviceName(pnpid), GetDeviceCapacity(pnpid), PowerCycleCount, ReadErrorRate, RealocatedSectors, PowerOnHours, diskOK ? "PASSED" : "FAILED" );
+                    smart[count] = new Smart(GetDevice(pnpid), GetDeviceName(pnpid), GetDeviceCapacity(pnpid), PowerCycleCount, ReadErrorRate, RealocatedSectors, PowerOnHours, diskOK ? "PASSED" : "FAILED" );
                     count++;
                 }
             }
-            catch (Exception cn)
+            catch (Exception)
             {
 
             }

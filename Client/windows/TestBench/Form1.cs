@@ -37,12 +37,24 @@ namespace TestBench
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MachineData  x= new MachineData();
+            MachineData mdata = new MachineData(); 
+            Name = tvstools.GetMachineName();
+            mdata.disks = tvstools.ReadSmart();
+            mdata.ethernets = tvstools.GetNetworkDevices();
+            mdata.mounts = tvstools.GetMountPoints();
+            mdata.UpTime = tvstools.GetUpTime();
+            mdata.Processor = tvstools.GetProcessorName();
+            mdata.OS = tvstools.GetOSName();
+            mdata.FreeMemory = tvstools.GetFreeMemory();
+            mdata.FreeSwap = tvstools.GetFreeSwapMemory();
+            mdata.TotalMemory = tvstools.GetTotalMemory();
+            mdata.TotalSwap = tvstools.GetTotalSwapMemory();
+            mdata.Name = Name;
 
             //API.SessionKey = "f42a8580-24b7-11e4-b30f-3b79ab91660d";
             //textBox1.Text += "\r\n" + API._CallAPI("loadmachines", null);
 
-            textBox1.Text += "\r\n" + x.ToJSON();
+            textBox1.Text += "\r\n" + mdata.ToJSON();
             //Smart[] smarts = tvstools.ReadSmart();
             //foreach (Smart smart in smarts)
             //{

@@ -3,3 +3,6 @@ C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControlService\
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControlService\obj\Debug\AliveControlService.csprojResolveAssemblyReference.cache
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControlService\obj\Debug\AliveControlService.exe
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControlService\obj\Debug\AliveControlService.pdb
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControlService\bin\Debug\AliveControl.dll
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControlService\bin\Debug\Newtonsoft.Json.dll
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\AliveControlService\bin\Debug\AliveControl.pdb

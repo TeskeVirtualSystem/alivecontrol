@@ -1,6 +1,6 @@
 ﻿namespace AliveControlService
 {
-    partial class Service1
+    partial class AliveControlService
     {
         /// <summary> 
         /// Required designer variable.

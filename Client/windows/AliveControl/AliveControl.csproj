@@ -47,11 +47,13 @@
     <Compile Include="API.cs" />
     <Compile Include="DRBD.cs" />
     <Compile Include="DRBDConn.cs" />
+    <Compile Include="LogMan.cs" />
     <Compile Include="MachineData.cs" />
     <Compile Include="MountPoint.cs" />
     <Compile Include="Ethernet.cs" />
     <Compile Include="MySQL.cs" />
     <Compile Include="PCIDevice.cs" />
+    <Compile Include="RegMan.cs" />
     <Compile Include="Smart.cs" />
     <Compile Include="SmartData.cs" />
     <Compile Include="SmartReader.cs" />

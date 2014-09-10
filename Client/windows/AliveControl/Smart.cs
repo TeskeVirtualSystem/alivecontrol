@@ -48,14 +48,13 @@ namespace AliveControl
         public JObject GetACObj()
         {
             JObject obj = new JObject();
-            obj["Device"] = Device;
-            obj["ModelFamily"] = Family;
-            obj["DeviceModel"] = "";
-            obj["UserCapacity"] = Capacity;
-            obj["DiskHealth"] = Status;
-            obj["PowerOnHours"] = TimeOn;
-            obj["ReadErrorRate"] = ReadErrors;
-            obj["ReallocatedSector"] = RealocatedSectors;
+            obj["device"] = Device;
+            obj["family"] = Family;
+            obj["capacity"] = Capacity;
+            obj["diskstatus"] = Status;
+            obj["ontime"] = TimeOn;
+            obj["readerrors"] = ReadErrors;
+            obj["realocatedsectors"] = RealocatedSectors;
             return obj;
         }
     }

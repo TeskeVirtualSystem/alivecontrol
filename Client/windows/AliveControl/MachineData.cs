@@ -34,6 +34,7 @@ namespace AliveControl
 
             if (UUID != null)
                 data["machineuuid"] = UUID;
+            data["name"] = Name;
             data["processor"] = Processor;
             data["total_memory"] = TotalMemory;
             data["free_memory"] = FreeMemory;
@@ -48,22 +49,28 @@ namespace AliveControl
             data["mounts"] = new JArray();
             data["disks"] = new JArray();
 
-            data["drbds"] = drbd.GetACObj();
+            if(drbd != null)
+                data["drbds"] = drbd.GetACObj();
 
-            foreach (var i in ethernets)
-                ((JArray)data["ethernets"]).Add(i.GetACObj());
+            if(ethernets != null)
+                foreach (var i in ethernets)
+                    ((JArray)data["ethernets"]).Add(i.GetACObj());
 
-            foreach (var i in devices)
-                ((JArray)data["devices"]).Add(i.GetACObj());
+            if(devices != null)
+                foreach (var i in devices)
+                    ((JArray)data["devices"]).Add(i.GetACObj());
 
-            foreach (var i in vms)
-                ((JArray)data["vms"]).Add(i.GetACObj());
+            if(vms != null)
+                foreach (var i in vms)
+                    ((JArray)data["vms"]).Add(i.GetACObj());
+            
+            if(mounts != null)
+                foreach (var i in mounts)
+                    ((JArray)data["mounts"]).Add(i.GetACObj());
 
-            foreach (var i in mounts)
-                ((JArray)data["mounts"]).Add(i.GetACObj());
-
-            foreach (var i in disks)
-                ((JArray)data["disks"]).Add(i.GetACObj());
+            if(disks != null)
+                foreach (var i in disks)
+                    ((JArray)data["disks"]).Add(i.GetACObj());
 
             return data;
         }

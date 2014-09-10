@@ -9,14 +9,14 @@ namespace AliveControlService
     static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        /// Base service: Just get Machine info and send.
         /// </summary>
         static void Main()
         {
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[] 
             { 
-                new Service1() 
+                new AliveControlService() 
             };
             ServiceBase.Run(ServicesToRun);
         }
