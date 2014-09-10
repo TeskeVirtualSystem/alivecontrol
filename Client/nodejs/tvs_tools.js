@@ -522,28 +522,39 @@ exports.GetVBoxVMInfo = function(vm)   {
  	var data = [];
  	for(var i in machines)	{
  		var mdata = this.GetVBoxVMInfo(machines[i].uuid);
- 		var status = -1;
- 		if(mdata["VMState"].indexOf("poweroff") > -1)
- 			status = 0;
- 		else	if(mdata["VMState"].indexOf("running") > -1)
- 			status = 1;
- 		else	if(mdata["VMState"].indexOf("saving") > -1)
- 			status = 2;
- 		else	if(mdata["VMState"].indexOf("saved") > -1)
- 			status = 3;
- 		else	if(mdata["VMState"].indexOf("aborted") > -1)
- 			status = 4;
- 		else	if(mdata["VMState"].indexOf("restoring") > -1)
- 			status = 5;
+ 		if(mdata["name"].indexOf("inaccessible") > -1)  {
+      		data.push({
+			    name				: mdata.name,
+			    guestos				: "Unknown",
+			    memory 				: 0,
+			    cpus				: 0,
+			    type				: "Virtualbox",
+			    status 				: 4
+     		});		
+ 		}else{
+     		var status = -1;
+     		if(mdata["VMState"].indexOf("poweroff") > -1)
+     			status = 0;
+     		else	if(mdata["VMState"].indexOf("running") > -1)
+     			status = 1;
+     		else	if(mdata["VMState"].indexOf("saving") > -1)
+     			status = 2;
+     		else	if(mdata["VMState"].indexOf("saved") > -1)
+     			status = 3;
+     		else	if(mdata["VMState"].indexOf("aborted") > -1)
+     			status = 4;
+     		else	if(mdata["VMState"].indexOf("restoring") > -1)
+     			status = 5;
 
- 		data.push({
-			name				: mdata.name,
-			guestos				: mdata["ostype"],
-			memory 				: parseInt(mdata["memory"])*1024*1024,
-			cpus				: parseInt(mdata["cpus"]),
-			type				: "Virtualbox",
-			status 				: status
- 		});
+     		data.push({
+			    name				: mdata.name,
+			    guestos				: mdata["ostype"],
+			    memory 				: parseInt(mdata["memory"])*1024*1024,
+			    cpus				: parseInt(mdata["cpus"]),
+			    type				: "Virtualbox",
+			    status 				: status
+     		});
+ 		}
  	}
  	return data;
  }
