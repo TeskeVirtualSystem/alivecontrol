@@ -25,6 +25,10 @@ var apimanager = function(database, app, config)	{
 	app.post("/api/updatedrbds"			,	function(r, q) { _this.updatedrbds(r,q);  		});
 	app.post("/api/updatevms"			,	function(r, q) { _this.updatevms(r,q);  		});
 
+	app.post("/api/addmachineextra"		,	function(r, q) { _this.addmachineextra(r,q);  	});
+	app.post("/api/delmachineextra"		,	function(r, q) { _this.delmachineextra(r,q);  	});
+	app.post("/api/editmachineextra"	,	function(r, q) { _this.editmachineextra(r,q);  	});
+
 	app.post("/api/marksolvedtask"		,	function(r, q) { _this.marksolvedtask(r,q); 	});
 	app.post("/api/marksolvedwarning"	,	function(r, q) { _this.marksolvedwarning(r,q); 	});
 	app.post("/api/marksolvedproblem"	,	function(r, q) { _this.marksolvedproblem(r,q); 	});
@@ -248,6 +252,60 @@ apimanager.prototype.getusername	=	function(req, res)	{
 			res.json({"status":"OK","name":"Desconhecido"});
 	});
 }
+
+apimanager.prototype.addmachineextra	=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("name") && req.body.hasOwnProperty("value"))	{
+				data.AddExtra(req.body.name, req.body.value, function(ok, err)	{
+					if(!err)
+						res.json({"status":"OK"});
+					else
+						res.json({"status":"NOK","code":err});
+				});
+			}else{
+				res.json({"status":"NOK","code":"MISSING_FIELDS"});
+			}
+		}
+	});
+};
+
+apimanager.prototype.delmachineextra	=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("name"))	{
+				data.DelExtra(req.body.name, function(ok, err)	{
+					if(!err)
+						res.json({"status":"OK"});
+					else
+						res.json({"status":"NOK","code":err});
+				});
+			}else{
+				res.json({"status":"NOK","code":"MISSING_FIELDS"});
+			}
+		}
+	});
+};
+
+apimanager.prototype.editmachineextra	=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("name") && req.body.hasOwnProperty("value"))	{
+				data.UpdateExtra(req.body.name, req.body.value, function(ok, err)	{
+					if(!err)
+						res.json({"status":"OK"});
+					else
+						res.json({"status":"NOK","code":err});
+				});
+			}else{
+				res.json({"status":"NOK","code":"MISSING_FIELDS"});
+			}
+		}
+	});
+};
 
 apimanager.prototype.updatedevices	=	function(req, res)	{
 	var db = this.db;

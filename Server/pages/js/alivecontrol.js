@@ -239,6 +239,7 @@ function LoadMachine(data)	{
 	ResetMachineFields();
 	$("#machine").fadeIn();
 	$("#machines").hide();
+	UILoadMachineExtras(data.extras, data.uuid, data.name);
 	LoadMachineDevices(data.uuid);
 	LoadMachineEthernets(data.uuid);
 	LoadMachineDisks(data.uuid);
@@ -650,6 +651,69 @@ function APIChangeName(uuid, name, cb)	{
 			}else{
 				ShowError("Erro",data.code);
 				console.error("Erro alterando nome: ",data.code);
+				cb(false);
+			}
+		}
+	);
+}
+
+
+function APIAddMachineExtra(machineuuid, name, value, cb)	{
+	ShowLoadingBar();
+	APIRequest("addmachineextra", 
+		{
+			"machineuuid"		: machineuuid,
+			"name"				: name,
+			"value"				: value
+		}, function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				if(cb!==undefined)
+					cb(true);
+			}else{
+				ShowError("Erro",data.code);
+				console.error("Erro adicionando extra: ",data.code);
+				cb(false);
+			}
+		}
+	);
+}
+
+function APIEditMachineExtra(machineuuid, name, value, cb)	{
+	ShowLoadingBar();
+	APIRequest("editmachineextra", 
+		{
+			"machineuuid"		: machineuuid,
+			"name"				: name,
+			"value"				: value
+		}, function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				if(cb!==undefined)
+					cb(true);
+			}else{
+				ShowError("Erro",data.code);
+				console.error("Erro editando extra: ",data.code);
+				cb(false);
+			}
+		}
+	);
+}
+
+function APIDelMachineExtra(machineuuid, name, cb)	{
+	ShowLoadingBar();
+	APIRequest("delmachineextra", 
+		{
+			"machineuuid"		: machineuuid,
+			"name"				: name
+		}, function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				if(cb!==undefined)
+					cb(true);
+			}else{
+				ShowError("Erro",data.code);
+				console.error("Erro deletando extra: ",data.code);
 				cb(false);
 			}
 		}

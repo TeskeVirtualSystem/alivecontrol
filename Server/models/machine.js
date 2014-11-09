@@ -17,8 +17,55 @@ exports.Schemas = function(mg)	{
 	  current_status    :   Number,
 	  uptime 	        :   String,
 	  lastupdate		:   Number, 
+	  extras				: 	[{name:String, value:String}]
 	});
 
+	machineSchema.methods.findExtra			=	function(name)	{
+		if(this.extras === undefined)
+			return -1;
+		for(var i in this.extras)	{
+			if(this.extras[i].name == name)
+				return i;
+		}
+		return -1;
+	}
+
+	machineSchema.methods.AddExtra			=	function(name, value, cb)	{
+		if(this.findExtra(name) == -1)	{
+			this.extras.push({"name":name,"value":value});
+			this.save(function(err)	{
+				if(cb)
+					cb(!err, err);
+			});
+		}else
+			if(cb)
+				cb(false, "Already Exists");
+	};
+
+	machineSchema.methods.UpdateExtra			=	function(name, value, cb)	{
+		var idx = this.findExtra(name);
+		if(idx >= 0)	{
+			this.extras[idx].value = value;
+			this.save(function(err)	{
+				if(cb)
+					cb(!err, err);
+			});
+		}else
+			this.AddExtra(name, value, cb);
+	};
+
+	machineSchema.methods.DelExtra			=	function(name, cb)	{
+		var idx = this.findExtra(name);
+		if(idx >= 0)	{
+			this.extras.splice(idx,1);
+			this.save(function(err)	{
+				if(cb)
+					cb(!err, err);
+			});
+		}else
+			if(cb)
+				cb(true);
+	};
 
 	machineSchema.methods.GenUUID          	= 	function()  	{  	this.uuid = uuid.v1();  };
 	machineSchema.methods.CheckStatus		=	function()		{	return this.current_status >= 1; };

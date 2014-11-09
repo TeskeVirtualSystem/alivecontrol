@@ -462,6 +462,191 @@ function AddMListAccordion(uuid)	{
 	});
 }
 
+function UIEditExtra(id)	{
+	$("#extra_"+id+"_panel").fadeOut();
+	$("#extra_"+id+"_edit").fadeIn();
+}
+
+function DelExtra(name,machineuuid)	{
+	APIDelMachineExtra(machineuuid, name, function(ok)	{
+		if(ok)	{
+			var m = GetT("machines");
+			var id = 0;
+			for(var i in m)	{
+				if(m[i].uuid == machineuuid)	{
+					id = i;
+					for(var z in m[i].extras)	{
+						if(m[i].extras[z].name == name)	{
+							m[i].extras.splice(z,1);
+							break;
+						}
+					}
+					break;
+				}
+			}
+			UILoadMachineExtras(m[id].extras, machineuuid, m[id].name);
+		}
+	});
+}
+
+function UIDelExtra(id)	{
+	var extra = $("#extra_"+id+"_name").val();
+	var machineuuid = $("#extra_"+id+"_machineuuid").val();
+	var machinename = $("#extra_"+id+"_machinename").val();
+	ShowMessage(
+		"Deseja excluir Informação \""+extra+"\"?",
+		"Você realmente deseja excluir a informação \""+extra+"\" na máquina "+machinename+" do banco de dados?<BR> Essa ação não é reversível!",
+		[
+			{"title":"Não","data-dismiss":"modal", "class":"btn-success"},
+			{"title":"Sim","data-dismiss":"modal", "class":"btn-warning", "onClick":"DelExtra('"+extra+"','"+machineuuid+"');"}
+		],
+		"btn-warning");
+}
+
+function SaveEditExtra(id)	{
+	var name = $("#extra_"+id+"_name").val();
+	var machineuuid = $("#extra_"+id+"_machineuuid").val();
+	var value = $("#extra_"+id+"_edit_value").val();
+	APIEditMachineExtra(machineuuid, name, value, function(ok)	{
+		if(ok)	{
+			var m = GetT("machines");
+			var id = 0;
+			for(var i in m)	{
+				if(m[i].uuid == machineuuid)	{
+					id = i;
+					for(var z in m[i].extras)	{
+						if(m[i].extras[z].name == name)	{
+							m[i].extras[z].value = value;
+							break;
+						}
+					}
+					break;
+				}
+			}
+			CloseEditExtra(id);
+			UILoadMachineExtras(m[id].extras, machineuuid, m[id].name);
+		}		
+	});
+
+}
+
+function CloseEditExtra(id)	{
+	$("#extra_"+id+"_panel").fadeIn();
+	$("#extra_"+id+"_edit").fadeOut();
+}
+
+function ShowAddExtra()	{
+	$("#extras_add_form").fadeIn();
+	$("#extras_add_extra").fadeOut();
+}
+
+function CloseAddExtra()	{
+	$("#extras_add_form").fadeOut();
+	$("#extras_add_extra").fadeIn();
+}
+
+function AddExtra()	{
+	var machineuuid = $("#extras_add_machineuuid").val();
+	var name = $("#extras_add_name").val();
+	var value = $("#extras_add_value").val();
+	APIAddMachineExtra(machineuuid, name, value, function(ok)	{
+		if(ok)	{
+			var m = GetT("machines");
+			var id = 0;
+			for(var i in m)	{
+				if(m[i].uuid == machineuuid)	{
+					id = i;
+					m[i].extras.push({
+						"name"	: name, 
+						"value" : value
+					});
+					break;
+				}
+			}
+			CloseAddExtra(id);
+			UILoadMachineExtras(m[id].extras, machineuuid, m[id].name);
+		}		
+	});
+}
+
+function UILoadMachineExtras(extras, machineuuid, machinename)	{
+	var ex = "";
+	for(var e in extras)	{
+		var extra = extras[e];
+		ex += '<div class="panel-group" id="extra_'+e+'_accordion">';
+		ex += '	<div class="panel panel-info" id="extra_'+e+'_panel">';
+		ex += '		<div class="panel-heading">';
+		ex += '			<h4 class="panel-title">';
+		ex += '				<a data-toggle="collapse" data-parent="#extra_'+e+'_accordion" id="extra_'+e+'_name_val" href="#extra_'+e+'_collapse">'+extra.name+'</a>';
+		ex += '				<a href="javascript:void(0);" onClick="UIEditExtra('+e+');"><span class="glyphicon glyphicon-edit pull-right">&nbsp;</span></a>&nbsp;&nbsp;&nbsp;';
+		ex += '				<a href="javascript:void(0);" onClick="UIDelExtra('+e+');">  <span class="glyphicon glyphicon-remove pull-right">&nbsp;</span></a>';
+		ex += '			</h4>';
+		ex += '		</div>';
+		ex += '		<div id="extra_'+e+'_collapse" class="panel-collapse collapse">';
+		ex += '			<input type="hidden" id="extra_'+e+'_name" value="'+extra.name+'">';
+		ex += '			<input type="hidden" id="extra_'+e+'_machineuuid" value="'+machineuuid+'">';
+		ex += '			<input type="hidden" id="extra_'+e+'_machinename" value="'+machinename+'">';
+		ex += '			<div class="panel-body">';
+		ex += '					'+extra.value;
+		ex += '			</div>';
+		ex += '		</div>';
+		ex += '	</div>';
+		ex += '</div>';
+		ex += '<div class="panel-body" id="extra_'+e+'_edit" style="display: none">';
+		ex += '	<form class="form-horizontal" role="form">';
+		ex += '		<div class="form-group">';
+    	ex += '			<label class="col-sm-2 control-label" for="extra_'+e+'_edit_name">Nome</label>';
+    	ex += '			<div class="col-sm-10">';
+    	ex += '				<div class="control-label pull-left" id="extra_'+e+'_edit_name"><B>'+extra.name+'</B></div>';
+    	ex += '			</div>';
+  		ex += '		</div>';
+		ex += '		<div class="form-group">';
+    	ex += '			<label class="col-sm-2 control-label" for="extra_'+e+'_edit_value">Valor</label>';
+    	ex += '			<div class="col-sm-10">';
+    	ex += '				<textarea class="form-control" rows="6" id="extra_'+e+'_edit_value" placeholder="Conteúdo">'+extra.value+'</textarea>';
+    	ex += '			</div>';
+  		ex += '		</div>';
+		ex += '		<div class="form-group">';
+		ex += '			<div class="col-sm-offset-2 col-sm-10">';
+		ex += '				<button type="button" onClick="SaveEditExtra('+e+');"  class="btn btn-success">Salvar</button>';
+		ex += '				<button type="button" onClick="CloseEditExtra('+e+');" class="btn btn-danger">Cancelar</button>';
+		ex += '			</div>';
+		ex += '		</div>';
+  		ex += '	</form>';
+		ex += '</div>';
+	}
+
+	ex += '<div id="extras_add_extra" class="text-center col-sm-10">';
+	ex += '	<button type="button" onClick="ShowAddExtra();"  class="btn btn-success">Adicionar</button>';
+	ex += '</div>';	
+
+	ex += '<div class="panel-body" id="extras_add_form" style="display: none">';
+	ex += '	<form class="form-horizontal" role="form">';
+	ex += '		<input type="hidden" id="extras_add_machineuuid" value="'+machineuuid+'">';
+	ex += '		<div class="form-group">';
+	ex += '			<label class="col-sm-2 control-label" for="extras_add_name">Nome</label>';
+	ex += '			<div class="col-sm-10">';
+	ex += '				<input type="text" class="form-control" id="extras_add_name" placeholder="Nome">';
+	ex += '			</div>';
+	ex += '		</div>';
+	ex += '		<div class="form-group">';
+	ex += '			<label class="col-sm-2 control-label" for="extras_add_value">Valor</label>';
+	ex += '			<div class="col-sm-10">';
+	ex += '				<textarea class="form-control" rows="6" id="extras_add_value" placeholder="Conteúdo"></textarea>';
+	ex += '			</div>';
+	ex += '		</div>';
+	ex += '		<div class="form-group">';
+	ex += '			<div class="col-sm-offset-2 col-sm-10">';
+	ex += '				<button type="button" onClick="AddExtra();"  class="btn btn-success">Salvar</button>';
+	ex += '				<button type="button" onClick="CloseAddExtra();" class="btn btn-danger">Cancelar</button>';
+	ex += '			</div>';
+	ex += '		</div>';
+	ex += '	</form>';
+	ex += '</div>';
+
+	$("#extrascontent").html(ex);
+}
+
 function UILoadMachine(uuid)	{
 	var machines = GetT("machines");
 	if(Array.isArray(machines) && machines.length > 0)	{
@@ -520,14 +705,19 @@ function ResetMachineFields()	{
 	$("#mountstablerows").html('<td colspan=5>Carregando...</td>');
 	$("#drbdtablerows").html('<td colspan=5>Carregando...</td>');
 	$("#vmstablerows").html('<td colspan=6>Carregando...</td>');
+	$("#extrascontent").html('Carregando...');
 }
 
 function RefreshMachineDevices(data)	{
 	$("#deviceslist").html("");
 	for(var i in data)	
 		$("#deviceslist").append('<li class="list-group-item">'+data[i].name+'</li>');
-	if(data.length == 0)
+	if(data.length == 0)	{
 		$("#deviceslist").html('<li class="list-group-item">Nenhum dispositivo PCI/PCI-e</li>');
+		$("#devicesaccordion").hide();
+	}else{
+		$("#devicesaccordion").show();
+	}
 }
 
 function RefreshMachineEthernets(data)	{
@@ -546,8 +736,12 @@ function RefreshMachineEthernets(data)	{
 			</tr>\
 		');
 	}
-	if(data.length == 0)
+	if(data.length == 0)	{
 		$("#ethernetstablerows").html('<td colspan=6>Nenhum dispositivo de rede</td>');
+		$("#ethernetsaccordion").hide();
+	}else{
+		$("#ethernetsaccordion").show();
+	}
 }
 
 function RefreshMachineDisks(data)	{
@@ -580,8 +774,12 @@ function RefreshMachineDisks(data)	{
 			</tr>\
 		');
 	}
-	if(data.length == 0)
+	if(data.length == 0)	{
 		$("#diskstablerows").html('<td colspan=8>Nenhum disco</td>');
+		$("#disksaccordion").hide();
+	}else
+		$("#disksaccordion").show();
+
 }
 
 function RefreshMachineMounts(data)	{
@@ -613,8 +811,11 @@ function RefreshMachineMounts(data)	{
 			</tr>\
 		');
 	}
-	if(data.length == 0)
+	if(data.length == 0)	{
 		$("#mountstablerows").html('<td colspan=4>Nenhum ponto de montagem</td>');
+		$("#mountsaccordion").hide();
+	}else
+		$("#mountsaccordion").show();
 }
 
 function RefreshMachineMYSQLs(data)	{
@@ -631,8 +832,11 @@ function RefreshMachineMYSQLs(data)	{
 			</tr>\
 		');
 	}
-	if(data.length == 0)
+	if(data.length == 0)	{
 		$("#mysqltablerows").html('<td colspan=5>Nenhum Slave MySQL</td>');
+		$("#mysqlsaccordion").hide();
+	}else
+		$("#mysqlsaccordion").show();
 }
 
 function RefreshMachineDRBDs(data)	{
@@ -650,8 +854,11 @@ function RefreshMachineDRBDs(data)	{
 			</tr>\
 		');
 	}
-	if(data.conns.length == 0)
+	if(data.conns.length == 0) {
 		$("#drbdtablerows").html('<td colspan=5>Nenhum DRBD</td>');
+		$("#drbdaccordion").hide();
+	}else
+		$("#drbdaccordion").show();
 }
 
 function RefreshMachineVMs(data)	{
@@ -687,8 +894,11 @@ function RefreshMachineVMs(data)	{
 			</tr>\
 		');
 	}
-	if(data.length == 0)
+	if(data.length == 0)	{
 		$("#vmstablerows").html('<td colspan=6>Nenhuma máquina virtual</td>');
+		$("#vmsaccordion").hide();
+	}else
+		$("#vmsaccordion").show();
 }
 
 function labelFormatter(label, series) {
