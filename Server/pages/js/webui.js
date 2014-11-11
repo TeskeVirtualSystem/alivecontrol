@@ -506,7 +506,8 @@ function UIDelExtra(id)	{
 function SaveEditExtra(id)	{
 	var name = $("#extra_"+id+"_name").val();
 	var machineuuid = $("#extra_"+id+"_machineuuid").val();
-	var value = $("#extra_"+id+"_edit_value").val();
+	//var value = $("#extra_"+id+"_edit_value").val();
+	var value = $("#extra_"+id+"_edit_value").code();
 	APIEditMachineExtra(machineuuid, name, value, function(ok)	{
 		if(ok)	{
 			var m = GetT("machines");
@@ -548,7 +549,8 @@ function CloseAddExtra()	{
 function AddExtra()	{
 	var machineuuid = $("#extras_add_machineuuid").val();
 	var name = $("#extras_add_name").val();
-	var value = $("#extras_add_value").val();
+	//var value = $("#extras_add_value").val();
+	var value = $("#extras_add_value").code();
 	APIAddMachineExtra(machineuuid, name, value, function(ok)	{
 		if(ok)	{
 			var m = GetT("machines");
@@ -603,7 +605,7 @@ function UILoadMachineExtras(extras, machineuuid, machinename)	{
 		ex += '		<div class="form-group">';
     	ex += '			<label class="col-sm-2 control-label" for="extra_'+e+'_edit_value">Valor</label>';
     	ex += '			<div class="col-sm-10">';
-    	ex += '				<textarea class="form-control" rows="6" id="extra_'+e+'_edit_value" placeholder="Conteúdo">'+extra.value+'</textarea>';
+    	ex += '				<textarea class="form-control summernote" rows="6" id="extra_'+e+'_edit_value" placeholder="Conteúdo">'+extra.value+'</textarea>';
     	ex += '			</div>';
   		ex += '		</div>';
 		ex += '		<div class="form-group">';
@@ -632,7 +634,7 @@ function UILoadMachineExtras(extras, machineuuid, machinename)	{
 	ex += '		<div class="form-group">';
 	ex += '			<label class="col-sm-2 control-label" for="extras_add_value">Valor</label>';
 	ex += '			<div class="col-sm-10">';
-	ex += '				<textarea class="form-control" rows="6" id="extras_add_value" placeholder="Conteúdo"></textarea>';
+	ex += '				<textarea class="form-control summernote" rows="6" id="extras_add_value" placeholder="Conteúdo"></textarea>';
 	ex += '			</div>';
 	ex += '		</div>';
 	ex += '		<div class="form-group">';
@@ -645,6 +647,12 @@ function UILoadMachineExtras(extras, machineuuid, machinename)	{
 	ex += '</div>';
 
 	$("#extrascontent").html(ex);
+	$(".summernote").summernote({
+		height: 300,                 // set editor height
+
+		minHeight: null,             // set minimum height of editor
+		maxHeight: null,             // set maximum height of editor
+	});
 }
 
 function UILoadMachine(uuid)	{
