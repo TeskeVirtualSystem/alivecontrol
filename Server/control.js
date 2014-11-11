@@ -8,6 +8,37 @@ var TemplateList	=	[
 	"smartmessage"
 ];
 
+function toNotationUnit(value, base)	{
+ 	if(base == null || base == undefined)
+ 		base = 10;
+    var units = [ 'y','z','a','f','p','n','u','m',' ', 'k','M','G','T','P','E','Z','Y'] ;
+    var counter = 8;
+    var div = 1.0;
+    if(base == 10)	
+    	div = 1000.0;
+    else if(base == 2)	
+    	div = 1024.0;
+    else{
+    	// TODO: Other bases, maybe?
+    	console.log("Unsuported base!");
+    	return null;
+    }
+
+    val = value > 0 ? value : -value
+    if(val < 1)	{
+        while(( val < 1.00) && !(counter == 0))	{
+            counter = counter - 1;
+            val = val * div;
+        }
+    }else{
+        while(( val >= div ) && !(counter == 16))	{
+            counter = counter + 1;
+        	val = val / div;
+        }
+    }	
+	return [ ( value > 0 ? val : -val) , units[counter]]   
+}
+
 var control = function(database, app, config)	{
 	this.db 	= 	database;
 	this.app 	= 	app;
@@ -140,7 +171,21 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 			if(level == 0)			{	//	Reserved for future use
 				// TODO: Nothing for now, we wont use it for now.
 			}else if(level == 1)	{	//	Warning
-				var message = ejs.render(TemplateList["diskspacemessage"], {"mdata":mdata,"data":data,"config":_this.config,"diskminpercent":_this.config.diskspace.warning});
+				var free = toNotationUnit(data.free, 2);
+				var size = toNotationUnit(data.size, 2);
+				var used = toNotationUnit(data.used, 2);
+				var data2 = {
+					machineuuid: data.machineuuid,
+					mountpoint: data.mountpoint,
+					device: data.device,
+					vfree: data.free,
+					vsize: data.size,
+					vused: data.used
+				}
+				data2.free = Math.round(free[0]*100)/100 + " " + free[1] + "B";
+				data2.size = Math.round(size[0]*100)/100 + " " + size[1] + "B";
+				data2.used = Math.round(used[0]*100)/100 + " " + used[1] + "B";
+				var message = ejs.render(TemplateList["diskspacemessage"], {"mdata":mdata,"data":data2,"config":_this.config,"diskminpercent":_this.config.diskspace.warning});
 				var report = new _this.db.Warnings({
 				    target    : Date.now(),
 				    title     : "Espaço insuficiente",
@@ -151,18 +196,23 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 				    to        : mdata.owneruuid,
 				    solved    : false
 				});
-				/*
-				report.GenUUID();
-				report.save(function(err)	{
-					if(err)	
-						console.log("Save error for disk space report: "+err);
-					else
-						console.log("Report added.");
-				});
-				*/
 				_this._SendReport(report, _this.db.Warnings);
 			}else if(level == 2)	{	//	Problem
-				var message = ejs.render(TemplateList["diskspacemessage"], {"mdata":mdata,"data":data,"config":_this.config,"diskminpercent":_this.config.diskspace.critical});
+				var free = toNotationUnit(data.free, 2);
+				var size = toNotationUnit(data.size, 2);
+				var used = toNotationUnit(data.used, 2);
+				var data2 = {
+					machineuuid: data.machineuuid,
+					mountpoint: data.mountpoint,
+					device: data.device,
+					vfree: data.free,
+					vsize: data.size,
+					vused: data.used
+				}
+				data2.free = Math.round(free[0]*100)/100 + " " + free[1] + "B";
+				data2.size = Math.round(size[0]*100)/100 + " " + size[1] + "B";
+				data2.used = Math.round(used[0]*100)/100 + " " + used[1] + "B";
+				var message = ejs.render(TemplateList["diskspacemessage"], {"mdata":mdata,"data":data2,"config":_this.config,"diskminpercent":_this.config.diskspace.critical});
 				var report = new _this.db.Problems({
 				    target    : Date.now(),
 				    title     : "Espaço insuficiente",
@@ -173,15 +223,6 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 				    to        : mdata.owneruuid,
 				    solved    : false
 				});
-				/*
-				report.GenUUID();
-				report.save(function(err)	{
-					if(err)	
-						console.log("Save error for disk space report: "+err);
-					else
-						console.log("Report added.");
-				});
-				*/
 				_this._SendReport(report, _this.db.Problems);
 			}
 		}else{
@@ -204,14 +245,6 @@ control.prototype._DoSMARTReport	=	function(sdata, mdata)	{
 	    to        : mdata.owneruuid,
 	    solved    : false
 	});
-	/*
-	report.GenUUID();
-	report.save(function(err)	{
-		if(err)	
-			console.log("Save error for smart report: "+err);
-		else
-			console.log("Report added.");
-	});*/
 
 	_this._SendReport(report, _this.db.Problems);
 }

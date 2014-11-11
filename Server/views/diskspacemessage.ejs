@@ -1,2 +1,2 @@
 Seu disco <B><%= data.mountpoint %></B> em <B><%= mdata.name %></B> está com a capacidade abaixo de <B><%= diskminpercent %>%</B>
-<BR> Você está com <B><%= data.free %></B> bytes livres <B>(<%= Math.round(100*(data.free/data.size)) %>%)</B> diante de <B><%= data.size %></B> bytes de espaço.
+<BR> Você está com <B><%= data.free %></B> livres <B>(<%= Math.round(100*(data.vfree/data.vsize)) %>%)</B> diante de <B><%= data.size %></B> de espaço.
