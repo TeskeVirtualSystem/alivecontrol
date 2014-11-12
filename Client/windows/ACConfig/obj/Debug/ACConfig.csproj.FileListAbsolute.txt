@@ -4,8 +4,8 @@ C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\ACConfig\bin\Debug\A
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\ACConfig\bin\Debug\Newtonsoft.Json.dll
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\ACConfig\bin\Debug\AliveControl.pdb
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\ACConfig\obj\Debug\ACConfig.csprojResolveAssemblyReference.cache
-C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\ACConfig\obj\Debug\ACConfig.Form1.resources
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\ACConfig\obj\Debug\ACConfig.Properties.Resources.resources
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\ACConfig\obj\Debug\ACConfig.csproj.GenerateResource.Cache
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\ACConfig\obj\Debug\ACConfig.exe
 C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\ACConfig\obj\Debug\ACConfig.pdb
+C:\Users\lucas\Documents\GitHub\alivecontrol\Client\windows\ACConfig\obj\Debug\ACConfig.AcConfig.resources

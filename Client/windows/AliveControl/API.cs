@@ -11,7 +11,7 @@ namespace AliveControl
 {
     public class API
     {
-        public static String APIURL = "http://10.0.5.180:82";
+        public static String APIURL = "http://tvsac.teske.net.br";
         
         public static String SessionKey = null;
         public static String UUID = null;
