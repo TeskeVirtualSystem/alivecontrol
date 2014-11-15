@@ -17,7 +17,7 @@ exports.Schemas = function(mg)	{
 	  current_status    :   Number,
 	  uptime 	        :   String,
 	  lastupdate		:   Number, 
-	  extras				: 	[{name:String, value:String}]
+	  extras			: 	[{name:String, value:String}]
 	});
 
 	machineSchema.methods.findExtra			=	function(name)	{
@@ -76,6 +76,8 @@ exports.Schemas = function(mg)	{
 	machineSchema.methods.GetDRBDs			=	function(cb)	{	return this.model("DRBD")		.find({"machineuuid":this.uuid}, cb); };
 	machineSchema.methods.GetMYSQLs			=	function(cb)	{	return this.model("MYSQL")		.find({"machineuuid":this.uuid}, cb); };
 	machineSchema.methods.GetVMs			=	function(cb)	{	return this.model("VMS")		.find({"machineuuid":this.uuid}, cb); };
+	machineSchema.methods.GetFolderGroups	=	function(cb)	{	return this.model("FolderGroup").find({"machineuuid":this.uuid}, cb); };
+	machineSchema.methods.GetMailDomains	=	function(cb)	{	return this.model("MailDomain")	.find({"machineuuid":this.uuid}, cb); };
 
 	/** Clean functions **/
 	machineSchema.methods.CleanDevices		=	function(cb)	{
@@ -159,6 +161,30 @@ exports.Schemas = function(mg)	{
 		});
 	};
 
+	machineSchema.methods.CleanFolderGroups	=	function(cb)	{
+		var thisschema = this;
+		this.GetFolderGroups(function(err, data)	{
+			if(data.length > 0)		{
+					data[0].remove(function (err, product) {
+						thisschema.CleanFolderGroups(cb);
+					});
+			}else
+				cb();
+		});
+	};
+
+	machineSchema.methods.CleanMailDomain	=	function(cb)	{
+		var thisschema = this;
+		this.GetMailDomains(function(err, data)	{
+			if(data.length > 0)		{
+					data[0].remove(function (err, product) {
+						thisschema.CleanMailDomain(cb);
+					});
+			}else
+				cb();
+		});
+	};
+
 	machineSchema.methods.CleanMachineData	=	function(cb)	{
 		/** TODO: Better way to clean **/
 		var thisschema = this;
@@ -174,8 +200,14 @@ exports.Schemas = function(mg)	{
 							thisschema.CleanMYSQLs(function()	{
 								//console.log("Cleaning VMs");
 								thisschema.CleanVMs(function()	{
-									//console.log("Clean finish");
-									cb();
+									//console.log("Cleaning FolderGroups");
+									thisschema.CleanFolderGroups(function() {
+										//console.log("Cleaning MailDomains");
+										thisschema.CleanMailDomain(function() {
+											//console.log("Clean Finish");
+											cb();
+										});
+									});
 								});
 							});
 						});
@@ -270,6 +302,28 @@ exports.Schemas = function(mg)	{
 		slaveiorunning		: Number,
 		slavesqlrunning		: Number  
 	});
+	var folderGroupSchema = new Schema({
+		machineuuid			: { type: String, index: true },
+		name				: { type: String, index: true },
+		description 		: String,
+		folders 			: [
+								{
+									name				: String,
+									size 				: Number,
+									files 				: Number,
+									folders 			: Number,
+									free 				: Number 
+								}
+							] 
+	});
+
+	var mailDomainSchema = new Schema({
+		machineuuid			: { type: String, index: true },
+		domain 				: { type: String, index: true },
+		name   				: String,
+		mailboxes 			: [{username:String, size:Number}]
+	})
+
 	var ex = {};
 	ex.machineSchema 		= 	machineSchema;
 	ex.deviceSchema			=	deviceSchema;
@@ -280,6 +334,8 @@ exports.Schemas = function(mg)	{
 	ex.drbdconnSchema		=	drbdconnSchema;
 	ex.mysqlSchema			=	mysqlSchema;
 	ex.vmSchema				=	vmSchema;
+	ex.folderGroupSchema 	=	folderGroupSchema;
+	ex.mailDomainSchema		=	mailDomainSchema;
 	return ex;
 };
 /*

@@ -24,6 +24,8 @@ var apimanager = function(database, app, config)	{
 	app.post("/api/updatemysqls"		,	function(r, q) { _this.updatemysqls(r,q);  		});
 	app.post("/api/updatedrbds"			,	function(r, q) { _this.updatedrbds(r,q);  		});
 	app.post("/api/updatevms"			,	function(r, q) { _this.updatevms(r,q);  		});
+	app.post("/api/updatefoldergroups"	,	function(r, q) { _this.updatefoldergroups(r,q);	});
+	app.post("/api/updatemaildomains"	,	function(r, q) { _this.updatemaildomains(r,q);	});
 
 	app.post("/api/addmachineextra"		,	function(r, q) { _this.addmachineextra(r,q);  	});
 	app.post("/api/delmachineextra"		,	function(r, q) { _this.delmachineextra(r,q);  	});
@@ -52,6 +54,8 @@ var apimanager = function(database, app, config)	{
 	app.post("/api/loadmdrbds"			,	function(r, q) { _this.loadmdrbds(r,q);			});
 	app.post("/api/loadmmysqls"			,	function(r, q) { _this.loadmmysqls(r,q);		});
 	app.post("/api/loadmvms"			,	function(r, q) { _this.loadmvms(r,q);			});
+	app.post("/api/loadmfoldergroups"	,	function(r, q) { _this.loadmfoldergroups(r,q);	});
+	app.post("/api/loadmmaildomains"	,	function(r, q) { _this.loadmmaildomains(r,q);	});
 };
 
 apimanager.prototype.apibase		=	function(req, res)	{
@@ -419,6 +423,36 @@ apimanager.prototype.updatevms	=	function(req, res)	{
 	});
 };
 
+apimanager.prototype.updatefoldergroups =	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("foldergroups"))	{
+				data.CleanFolderGroups(function()	{
+					for(var i in req.body.foldergroups)
+						this.AddFolderGroup(uuid, data.foldersgroup[i].name, data.foldersgroup[i].description, data.foldersgroup[i].folders);
+					res.json({"status":"OK"});
+				});
+			}
+		}
+	});
+};
+
+apimanager.prototype.updatemaildomains =	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			if(req.body.hasOwnProperty("maildomains"))	{
+				data.CleanMailDomains(function()	{
+					for(var i in req.body.maildomains)
+						this.AddMailDomain(uuid, data.maildomains[i].domain, data.maildomains[i].name, data.maildomains[i].mailboxes);
+					res.json({"status":"OK"});
+				});
+			}
+		}
+	});
+};
+
 apimanager.prototype.loadmdevices		=	function(req, res)	{
 	var db = this.db;
 	this._loadmachine(req, res, function(err, data)	{
@@ -509,6 +543,30 @@ apimanager.prototype.loadmvms		=	function(req, res)	{
 	this._loadmachine(req, res, function(err, data)	{
 		if(!err)	{
 			data.GetVMs(function(err,mdata)	{
+				if(err) res.json({"status":"OK","data":[]});
+				else    res.json({"status":"OK","data":mdata});
+			});
+		}
+	});
+};
+
+apimanager.prototype.loadmfoldergroups		=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			data.GetFolderGroups(function(err,mdata)	{
+				if(err) res.json({"status":"OK","data":[]});
+				else    res.json({"status":"OK","data":mdata});
+			});
+		}
+	});
+};
+
+apimanager.prototype.loadmmaildomains		=	function(req, res)	{
+	var db = this.db;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{
+			data.GetMailDomains(function(err,mdata)	{
 				if(err) res.json({"status":"OK","data":[]});
 				else    res.json({"status":"OK","data":mdata});
 			});

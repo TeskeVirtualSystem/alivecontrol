@@ -247,6 +247,8 @@ function LoadMachine(data)	{
 	LoadMachineDRBDs(data.uuid);
 	LoadMachineMYSQLs(data.uuid);
 	LoadMachineVMs(data.uuid);
+	LoadMachineFolderGroups(data.uuid);
+	LoadMachineMailDomains(data.uuid)
 }
 function LoadMachineDevices(uuid)		{
 	ShowLoadingBar();
@@ -429,6 +431,48 @@ function LoadMachineVMs(uuid)		{
 			if(data.status == "OK")	{
 				console.log(data.data.length+" máquinas virtuais carregadas.");
 				RefreshMachineVMs(data.data);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_OWNER")	{
+				console.error("Esta máquina não pertence a você!");
+				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
+				Page("dashboard");
+			}else
+				console.error("Não foi possível carregar as maquinas!");
+		}
+	);
+}
+
+function LoadMachineFolderGroups(uuid)		{
+	ShowLoadingBar();
+	console.log("Carregando Grupos de Pastas para "+uuid);
+	APIRequest("loadmfoldergroups",{"machineuuid":uuid},
+		function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				console.log(data.data.length+" grupos de pastas carregados.");
+				RefreshMachineFolderGroups(data.data);
+			}else if(data.status == "NOT_AUTHORIZED")
+				NotAuthorizedFallback();
+			else if(data.status == "NOT_OWNER")	{
+				console.error("Esta máquina não pertence a você!");
+				ShowError("Esta máquina não percente a você!","Certifique-se de que a máquina correspondente pertença a você.");
+				Page("dashboard");
+			}else
+				console.error("Não foi possível carregar as maquinas!");
+		}
+	);
+}
+
+function LoadMachineMailDomains(uuid)		{
+	ShowLoadingBar();
+	console.log("Carregando Domínios de Email para "+uuid);
+	APIRequest("loadmmaildomains",{"machineuuid":uuid},
+		function(data)	{
+			HideLoadingBar();
+			if(data.status == "OK")	{
+				console.log(data.data.length+" domínios de email carregados.");
+				RefreshMachineMailDomains(data.data);
 			}else if(data.status == "NOT_AUTHORIZED")
 				NotAuthorizedFallback();
 			else if(data.status == "NOT_OWNER")	{

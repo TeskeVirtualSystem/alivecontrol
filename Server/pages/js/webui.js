@@ -909,6 +909,119 @@ function RefreshMachineVMs(data)	{
 		$("#vmsaccordion").show();
 }
 
+function RefreshMachineFolderGroups(data)	{
+	$("#foldergroupscontent").html("");
+
+	var ex = "";
+	for(var e in data)	{
+		var fg = data[e];
+		ex += '<div class="panel-group" id="foldergroups_'+e+'_accordion">';
+		ex += '	<div class="panel panel-info" id="foldergroups_'+e+'_panel">';
+		ex += '		<div class="panel-heading">';
+		ex += '			<h4 class="panel-title">';
+		ex += '				<a data-toggle="collapse" data-parent="#foldergroups_'+e+'_accordion" href="#foldergroups_'+e+'_collapse">'+fg.name+'</a>';
+		ex += '			</h4>';
+		ex += '		</div>';
+		ex += '		<div id="foldergroups_'+e+'_collapse" class="panel-collapse collapse">';
+		ex += '			<div class="panel-body">';
+		ex += '				'+fg.description+'<BR><BR>';
+		ex += '             <table class="table table-hover table-striped">';
+		ex += '             	<thead>';
+		ex += '                 	<tr>';
+		ex += '                     	<th>Nome</th>';
+		ex += '                         <th>Tamanho</th>';
+		ex += '                         <th>Arquivos</th>';
+		ex += '                         <th>Pastas</th>';
+		ex += '                         <th>Livre</th>';
+		ex += '                     </tr>';
+		ex += '                 </thead>';
+		ex += '                 <tbody id="foldergroups_'+e+'_tablerows">';
+		if(fg.folders.length == 0)	{
+			ex += '                 <tr>';
+			ex += '                 	<td colspan=5>Nenhuma pasta</td>';
+			ex += '                 </tr>';
+		}else{
+			for(var i in fg.folders)	{
+				var size 	= toNotationUnit(fg.folders[i].size 	, 10);
+				var files 	= toNotationUnit(fg.folders[i].files 	, 10);
+				var folders = toNotationUnit(fg.folders[i].folders 	, 10);
+				var free 	= toNotationUnit(fg.folders[i].free 	, 10);
+				ex += '             <tr>';
+				ex += '             	<td>'+fg.folders[i].name+       '</td>';
+				ex += '             	<td>'+size[0]+   ' '+size[1]+   'B</td>';
+				ex += '             	<td>'+files[0]+  ' '+files[1]+  '</td>';
+				ex += '             	<td>'+folders[0]+' '+folders[1]+'</td>';
+				ex += '             	<td>'+free[0]+   ' '+free[1]+   'B</td>';
+				ex += '             </tr>';
+			}
+		}
+		ex += '                 </tbody>';
+		ex += '         	</table>';
+		ex += '			</div>';
+		ex += '		</div>';
+		ex += '	</div>';
+		ex += '</div>';
+	}
+	$("#foldergroupscontent").html(ex);
+
+	if(data.length == 0)	{
+		$("#foldergroupsaccordion").hide();
+	}else
+		$("#foldergroupsaccordion").show();
+}
+
+
+function RefreshMachineMailDomains(data)	{
+	$("#maildomainscontent").html("");
+	var ex = "";
+	for(var e in data)	{
+		var md = data[e];
+		ex += '<div class="panel-group" id="maildomains_'+e+'_accordion">';
+		ex += '	<div class="panel panel-info" id="maildomains_'+e+'_panel">';
+		ex += '		<div class="panel-heading">';
+		ex += '			<h4 class="panel-title">';
+		ex += '				<a data-toggle="collapse" data-parent="#maildomains_'+e+'_accordion" href="#maildomains_'+e+'_collapse">'+md.domain+' '+((md.name.length > 0)?'('+md.name+')':'')+'</a>';
+		ex += '			</h4>';
+		ex += '		</div>';
+		ex += '		<div id="maildomains_'+e+'_collapse" class="panel-collapse collapse">';
+		ex += '			<div class="panel-body">';
+		ex += '             <table class="table table-hover table-striped">';
+		ex += '             	<thead>';
+		ex += '                 	<tr>';
+		ex += '                     	<th>Usuário</th>';
+		ex += '                         <th>Tamanho</th>';
+		ex += '                     </tr>';
+		ex += '                 </thead>';
+		ex += '                 <tbody id="maildomains_'+e+'_tablerows">';
+		if(md.mailboxes.length == 0)	{
+			ex += '                 <tr>';
+			ex += '                 	<td colspan=5>Nenhum usuário</td>';
+			ex += '                 </tr>';
+		}else{
+			for(var i in md.mailboxes)	{
+				var size 	= toNotationUnit(md.mailboxes[i].size 	, 10);
+				ex += '             <tr>';
+				ex += '             	<td>'+md.mailboxes[i].username+'</td>';
+				ex += '             	<td>'+size[0]+   ' '+size[1]+   'B</td>';
+				ex += '             </tr>';
+			}
+		}
+		ex += '                 </tbody>';
+		ex += '         	</table>';
+		ex += '			</div>';
+		ex += '		</div>';
+		ex += '	</div>';
+		ex += '</div>';
+	}
+	$("#maildomainscontent").html(ex);
+
+
+	if(data.length == 0)	{
+		$("#maildomainsaccordion").hide();
+	}else
+		$("#maildomainsaccordion").show();
+}
+
 function labelFormatter(label, series) {
 	return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;background-color:rgba(0,0,0,0.5);'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
 }

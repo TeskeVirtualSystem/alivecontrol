@@ -16,23 +16,25 @@ var database = function(url, config)	{
 	this.usrchema 	=	user.Schemas(this._mg);
 	this.infoschema	=	info.Schemas(this._mg);
 
-	this.Users 		= 	this._mg.model("Users", 	this.usrchema.userSchema);
-	this.Machines 	= 	this._mg.model("Machines", 	this.mscheme.machineSchema); 
-	this.Sessions	=	this._mg.model("Sessions",	this.usrchema.sessionSchema);
-	this.Alerts		=	this._mg.model("Alerts",    this.infoschema.alertSchema);
+	this.Users 		= 	this._mg.model("Users", 		this.usrchema.userSchema);
+	this.Machines 	= 	this._mg.model("Machines", 		this.mscheme.machineSchema); 
+	this.Sessions	=	this._mg.model("Sessions",		this.usrchema.sessionSchema);
+	this.Alerts		=	this._mg.model("Alerts",    	this.infoschema.alertSchema);
 
-	this.Warnings	=	this._mg.model("Warnings",	this.infoschema.TWPSchema);
-	this.Tasks		=	this._mg.model("Tasks",		this.infoschema.TWPSchema);
-	this.Problems	=	this._mg.model("Problems",	this.infoschema.TWPSchema);
+	this.Warnings	=	this._mg.model("Warnings",		this.infoschema.TWPSchema);
+	this.Tasks		=	this._mg.model("Tasks",			this.infoschema.TWPSchema);
+	this.Problems	=	this._mg.model("Problems",		this.infoschema.TWPSchema);
 
-	this.Devices	=	this._mg.model("Devices", 	this.mscheme.deviceSchema); 
-	this.Ethernets	=	this._mg.model("Ethernets", this.mscheme.ethernetSchema); 
-	this.Disks		=	this._mg.model("Disks", 	this.mscheme.diskSchema); 
-	this.Mounts		=	this._mg.model("Mounts", 	this.mscheme.mountSchema); 
-	this.DRBD 		=	this._mg.model("DRBD", 		this.mscheme.drbdSchema); 
-	this.DRBDCONN	=	this._mg.model("DRBDCONN", 	this.mscheme.drbdconnSchema); 
-	this.MYSQL		=	this._mg.model("MYSQL", 	this.mscheme.mysqlSchema); 
-	this.VMS		=	this._mg.model("VMS", 		this.mscheme.vmSchema); 
+	this.Devices	=	this._mg.model("Devices", 		this.mscheme.deviceSchema); 
+	this.Ethernets	=	this._mg.model("Ethernets", 	this.mscheme.ethernetSchema); 
+	this.Disks		=	this._mg.model("Disks", 		this.mscheme.diskSchema); 
+	this.Mounts		=	this._mg.model("Mounts", 		this.mscheme.mountSchema); 
+	this.DRBD 		=	this._mg.model("DRBD", 			this.mscheme.drbdSchema); 
+	this.DRBDCONN	=	this._mg.model("DRBDCONN", 		this.mscheme.drbdconnSchema); 
+	this.MYSQL		=	this._mg.model("MYSQL", 		this.mscheme.mysqlSchema); 
+	this.VMS		=	this._mg.model("VMS", 			this.mscheme.vmSchema); 
+	this.FolderGroup=	this._mg.model("FolderGroup", 	this.mscheme.vmSchema); 
+	this.MailDomain	=	this._mg.model("MailDomain", 	this.mscheme.vmSchema); 
 	//return this;
 };
 
@@ -498,6 +500,55 @@ database.prototype.AddVM	=	function(machineuuid, name, guestos, memory, cpus, ty
 	});
 };
 
+database.prototype.AddFolderGroup	=	function(machineuuid, name, description, folders, cb)	{
+	var _this = this;
+	this.CheckMachineUUID(machineuuid, function(ok)	{
+		if(ok)	{
+			var fg = new _this.FolderGroup({
+				machineuuid			: machineuuid,
+				name				: name,
+				description			: description
+			});
+			for(var i in folders)	{
+				var folder = {
+					name				: folders[i].name,
+					size 				: folders[i].size    || 0,
+					files 				: folders[i].files   || 0,
+					folders 			: folders[i].folders || 0,
+					free 				: folders[i].free    || 0			
+				};
+				fg.folders.push(folder);
+			}
+			fg.save(function(err)	{
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(fg);
+			});	
+		}else
+			if(cb !== undefined) cb(null,"Machine ("+machineuuid+" does not exists.");
+	});
+};
+
+database.prototype.AddMailDomain	=	function(machineuuid, domain, name, mailboxes, cb)	{
+	var _this = this;
+	this.CheckMachineUUID(machineuuid, function(ok)	{
+		if(ok)	{
+			var md = new _this.MailDomain({
+				machineuuid			: machineuuid,
+				domain 				: domain,
+				name   				: name,
+				mailboxes 			: mailboxes
+			});
+			md.save(function(err)	{
+				if(err)	if(cb !== undefined) cb(null, "Save error", err);
+				if(cb !== undefined) cb(md);
+			});	
+		}else
+			if(cb !== undefined) cb(null,"Machine ("+machineuuid+" does not exists.");
+	});
+};
+
+
+
 database.prototype.UpdateMachine	=	function(uuid, data, cb)	{
 	var dbthis = this;
 	if(uuid == null)	{
@@ -573,6 +624,16 @@ database.prototype._AddMachineData	=	function(uuid, data, cb)	{
 	if(data.hasOwnProperty("vms"))
 		for(var i in data.vms)
 			this.AddVM(uuid, data.vms[i].name, data.vms[i].guestos, data.vms[i].memory, data.vms[i].cpus, data.vms[i].type, data.vms[i].status);
+
+	//	Add Folders Group
+	if(data.hasOwnProperty("foldersgroup"))
+		for(var i in data.foldersgroup)
+			this.AddFolderGroup(uuid, data.foldersgroup[i].name, data.foldersgroup[i].description, data.foldersgroup[i].folders);
+
+	//	Add Mail Domain
+	if(data.hasOwnProperty("maildomains"))
+		for(var i in data.maildomains)
+			this.AddMailDomain(uuid, data.maildomains[i].domain, data.maildomains[i].name, data.maildomains[i].mailboxes);
 
 	if(cb !== undefined) cb(uuid, data);
 }
