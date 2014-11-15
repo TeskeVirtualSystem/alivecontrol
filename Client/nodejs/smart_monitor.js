@@ -86,6 +86,11 @@ function DoUpdate()	{
 	console.log("Getting Folders Group");
 	var foldersgroup 			= 	tvs.GetFolderGroups(config.FolderGroups);
 
+	if(config.hasOwnProperty("MailDomains"))	{
+		var md = tvs.GetMailDomains(config.MailDomains);
+		machinedata.maildomains = md;
+	}
+
 	machinedata.processor 		= 	cpu.cpu_model_name;
 	machinedata.total_memory	=	mem.total;
 	machinedata.free_memory		=	mem.free;

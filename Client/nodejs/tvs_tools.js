@@ -705,3 +705,25 @@ exports.GetFolderGroups		=	function(folderGroupConfig)	{
 	}
 	return fgdata;
 }
+
+exports.GetMailDomains		=	function(mailDomainsConfig)	{
+	var dmf = mailDomainsConfig.domainFolders;
+	var domains = GetFolderList(dmf);
+	var mds = [];
+	for(var i in domains)	{
+		var domain = {
+			domain : domains[i],
+			name : "",
+			mailboxes : []
+		}
+		var users = GetFolderList(dmf+"/"+domains[i]);
+		for(var z in users)	{
+			var user = users[z];
+			var size = GetFolderSize(dmf+"/"+domains[i]+"/"+user);
+			domain.mailboxes.push({username:user, size:size});
+		}
+		mds.push(domain);
+	}
+
+	return mds;
+}
