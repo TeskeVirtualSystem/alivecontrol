@@ -529,13 +529,13 @@ database.prototype.AddFolderGroup	=	function(machineuuid, name, description, fol
 	});
 };
 
-database.prototype.AddMailDomain	=	function(machineuuid, domain, name, mailboxes, cb)	{
+database.prototype.AddMailDomain	=	function(machineuuid, maildomain, name, mailboxes, cb)	{
 	var _this = this;
 	this.CheckMachineUUID(machineuuid, function(ok)	{
 		if(ok)	{
 			var md = new _this.MailDomain({
 				machineuuid			: machineuuid,
-				domain 				: domain,
+				maildomain 			: maildomain,
 				name   				: name,
 				mailboxes 			: mailboxes
 			});

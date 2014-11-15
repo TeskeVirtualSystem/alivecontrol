@@ -319,7 +319,7 @@ exports.Schemas = function(mg)	{
 
 	var mailDomainSchema = new Schema({
 		machineuuid			: { type: String, index: true },
-		domain 				: { type: String, index: true },
+		maildomain			: { type: String, index: true },
 		name   				: String,
 		mailboxes 			: [{username:String, size:Number}]
 	})

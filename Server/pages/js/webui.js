@@ -982,7 +982,7 @@ function RefreshMachineMailDomains(data)	{
 		ex += '	<div class="panel panel-info" id="maildomains_'+e+'_panel">';
 		ex += '		<div class="panel-heading">';
 		ex += '			<h4 class="panel-title">';
-		ex += '				<a data-toggle="collapse" data-parent="#maildomains_'+e+'_accordion" href="#maildomains_'+e+'_collapse">'+md.domain+' '+((md.name.length > 0)?'('+md.name+')':'')+'</a>';
+		ex += '				<a data-toggle="collapse" data-parent="#maildomains_'+e+'_accordion" href="#maildomains_'+e+'_collapse">'+md.maildomain+' '+((md.name.length > 0)?'('+md.name+')':'')+'</a>';
 		ex += '			</h4>';
 		ex += '		</div>';
 		ex += '		<div id="maildomains_'+e+'_collapse" class="panel-collapse collapse">';
