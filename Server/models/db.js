@@ -33,8 +33,8 @@ var database = function(url, config)	{
 	this.DRBDCONN	=	this._mg.model("DRBDCONN", 		this.mscheme.drbdconnSchema); 
 	this.MYSQL		=	this._mg.model("MYSQL", 		this.mscheme.mysqlSchema); 
 	this.VMS		=	this._mg.model("VMS", 			this.mscheme.vmSchema); 
-	this.FolderGroup=	this._mg.model("FolderGroup", 	this.mscheme.vmSchema); 
-	this.MailDomain	=	this._mg.model("MailDomain", 	this.mscheme.vmSchema); 
+	this.FolderGroup=	this._mg.model("FolderGroup", 	this.mscheme.folderGroupSchema); 
+	this.MailDomain	=	this._mg.model("MailDomain", 	this.mscheme.mailDomainSchema); 
 	//return this;
 };
 
@@ -507,7 +507,8 @@ database.prototype.AddFolderGroup	=	function(machineuuid, name, description, fol
 			var fg = new _this.FolderGroup({
 				machineuuid			: machineuuid,
 				name				: name,
-				description			: description
+				description			: description,
+				folders 			: []
 			});
 			for(var i in folders)	{
 				var folder = {

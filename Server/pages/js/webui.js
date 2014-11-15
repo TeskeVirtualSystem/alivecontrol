@@ -55,6 +55,8 @@ function toNotationUnit(value, base)	{
     	console.log("Unsuported base!");
     	return null;
     }
+    if(value == 0)	
+    	return [ 0 , units[counter]];
 
     val = value > 0 ? value : -value
     if(val < 1)	{
@@ -63,11 +65,13 @@ function toNotationUnit(value, base)	{
             val = val * div;
         }
     }else{
-        while(( val >= div ) && !(counter == 16))	{
+        while(( val >= div ) && !(counter == units.length))	{
             counter = counter + 1;
         	val = val / div;
         }
     }	
+    val = val.toFixed(3);
+    val = parseFloat(val);
 	return [ ( value > 0 ? val : -val) , units[counter]]   
 }
 
@@ -943,14 +947,12 @@ function RefreshMachineFolderGroups(data)	{
 		}else{
 			for(var i in fg.folders)	{
 				var size 	= toNotationUnit(fg.folders[i].size 	, 10);
-				var files 	= toNotationUnit(fg.folders[i].files 	, 10);
-				var folders = toNotationUnit(fg.folders[i].folders 	, 10);
 				var free 	= toNotationUnit(fg.folders[i].free 	, 10);
 				ex += '             <tr>';
 				ex += '             	<td>'+fg.folders[i].name+       '</td>';
 				ex += '             	<td>'+size[0]+   ' '+size[1]+   'B</td>';
-				ex += '             	<td>'+files[0]+  ' '+files[1]+  '</td>';
-				ex += '             	<td>'+folders[0]+' '+folders[1]+'</td>';
+				ex += '             	<td>'+fg.folders[i].files+  '</td>';
+				ex += '             	<td>'+fg.folders[i].folders+'</td>';
 				ex += '             	<td>'+free[0]+   ' '+free[1]+   'B</td>';
 				ex += '             </tr>';
 			}

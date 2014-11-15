@@ -559,10 +559,16 @@ exports.GetVBoxVMInfo = function(vm)   {
  	return data;
  }
 
+/**
+ * Gets the current KVM Node Architecture
+ **/
 exports.GetKVMNodeArch	=	function()	{
 	return ExecuteShell("virsh nodeinfo | grep \"CPU model\"|cut -d: -f2").trim();
 }
 
+/**
+ * Gets the current KVM Node Virtual Machines
+ **/
 exports.GetKVMVms	=	function()	{
 	try{
 		var data = ExecuteShell("virsh list --all | tail -n +3 | awk '{print $2}'").split("\n");
@@ -579,12 +585,15 @@ exports.GetKVMVms	=	function()	{
 	}
 }
 
+/**
+ * Gets the current KVM Node VirtualMachine Information
+ **/
 exports.GetKVMVMInfo	=	function(vmname)	{
 	var data = ExecuteShell("virsh dominfo \""+vmname+"\"").split("\n");	
 	var mdata = {};
 	var arch = this.GetKVMNodeArch();
 	for(var i in data)	{
-	    var item = datesa[i].split(":", 1)[0].trim();
+	    var item = data[i].split(":", 1)[0].trim();
 	    var item2 = data[i].replace(item+":","").replace(/\"/g,"").trim();
 	    mdata[item] = item2;
 	    if(item == "OS Type")
@@ -593,33 +602,106 @@ exports.GetKVMVMInfo	=	function(vmname)	{
 	return mdata;
 }
 
+/**
+ * Gets the KVM AC Virtual Machine list
+ **/
+
 exports.GetKVMACList	=	function()	{
  	var machines = this.GetKVMVms();
  	var data = [];
  	for(var i in machines)	{
- 		var mdata = machines[i];
- 		var status = -1;
- 		if(mdata["State"].indexOf("stopped") > -1 || mdata["State"].indexOf("defined") > -1)
- 			status = 0;
- 		else	if(mdata["State"].indexOf("running") > -1)
- 			status = 1;
- 		else	if(mdata["State"].indexOf("saving") > -1)
- 			status = 2;
- 		else	if(mdata["State"].indexOf("saved") > -1)
- 			status = 3;
- 		else	if(mdata["State"].indexOf("aborted") > -1)
- 			status = 4;
- 		else	if(mdata["State"].indexOf("restoring") > -1)
- 			status = 5;
+ 		try {
+	 		var mdata = machines[i];
+	 		var status = -1;
+	 		if(mdata["State"].indexOf("stopped") > -1 || mdata["State"].indexOf("defined") > -1)
+	 			status = 0;
+	 		else	if(mdata["State"].indexOf("running") > -1)
+	 			status = 1;
+	 		else	if(mdata["State"].indexOf("saving") > -1)
+	 			status = 2;
+	 		else	if(mdata["State"].indexOf("saved") > -1)
+	 			status = 3;
+	 		else	if(mdata["State"].indexOf("aborted") > -1)
+	 			status = 4;
+	 		else	if(mdata["State"].indexOf("restoring") > -1)
+	 			status = 5;
 
- 		data.push({
-			name				: mdata.Name,
-			guestos				: mdata["OS Type"],
-			memory 				: fromNotationUnit(mdata["Max memory"],2,2),
-			cpus				: parseInt(mdata["CPU(s)"]),
-			type				: "KVM",
-			status 				: status
- 		});
+	 		data.push({
+				name				: mdata.Name,
+				guestos				: mdata["OS Type"],
+				memory 				: fromNotationUnit(mdata["Max memory"],2,2),
+				cpus				: parseInt(mdata["CPU(s)"]),
+				type				: "KVM",
+				status 				: status
+	 		});
+	 	}catch(e)	{
+	 		console.error(e);
+	 	}
  	}
  	return data;
+}
+
+function GetFileCount(folder)	{
+	var cmd = "ls -lR \""+folder+"\" |grep -v ^total |grep -v ^\"./\" | grep -v ^d |grep -v -e '^$' | wc -l";
+	return parseInt(ExecuteShell(cmd));
+}
+
+function GetDirCount(folder)	{
+	var cmd = "ls -lR \""+folder+"\" |grep -v ^total |grep -v ^\"./\" | grep -v d |grep -v -e '^$' | wc -l";
+	return parseInt(ExecuteShell(cmd));
+}
+
+function GetFolderList(folder)	{
+	var cmd = "ls -l \""+folder+"\" | grep -v ^total | grep ^d | grep -v -e '^$' | awk '{print $9}'";
+	return ExecuteShell(cmd).split("\n");
+}
+
+function GetFolderFreeSpace(folder)	{
+	var cmd = " df -k \""+folder+"\" | nl -w 1 |grep ^2 | awk '{print $5}'";
+	return parseInt(ExecuteShell(cmd))  * 1000;
+}
+
+function GetFolderSize(folder)	{
+	var cmd = "du \""+folder+"\" | tail -n1 | awk '{print $1}'";
+	return parseInt(ExecuteShell(cmd)) * 1000;
+}
+
+exports.GetFolderGroups		=	function(folderGroupConfig)	{
+	var fgdata = [];
+	for(var i in folderGroupConfig)	{
+		var fgc = folderGroupConfig[i];
+		var fg = {
+			name				: fgc.name,
+			description 		: fgc.description,
+			folders 			: [] 
+		}
+		if(fgc.allsubfolders)	{
+			var folderlist = GetFolderList(fgc.path);
+			for(var i in folderlist)	{
+				var folder = folderlist[i];
+				var f = {
+					name 		: folder,
+					size 		: GetFolderSize(fgc.path +"/"+folder),
+					files 		: GetFileCount(fgc.path +"/"+folder),
+					folders 	: GetDirCount(fgc.path +"/"+folder),
+					free 		: GetFolderFreeSpace(fgc.path +"/"+folder)
+				}
+				fg.folders.push(f);
+			}
+		}else{
+			for(var i in fgc.folders)	{
+				var folder = fgc.folders[i];
+				var f = {
+					name 		: folder,
+					size 		: GetFolderSize(folder),
+					files 		: GetFileCount(folder),
+					folders 	: GetDirCount(folder),
+					free 		: GetFolderFreeSpace(folder)
+				}
+				fg.folders.push(f);
+			}			
+		}
+		fgdata.push(fg);
+	}
+	return fgdata;
 }

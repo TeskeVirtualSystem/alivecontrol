@@ -83,6 +83,8 @@ function DoUpdate()	{
 	for(var i in kvms)	
 		vms.push(kvms[i]);
 	
+	console.log("Getting Folders Group");
+	var foldersgroup 			= 	tvs.GetFolderGroups(config.FolderGroups);
 
 	machinedata.processor 		= 	cpu.cpu_model_name;
 	machinedata.total_memory	=	mem.total;
@@ -93,6 +95,7 @@ function DoUpdate()	{
 	machinedata.os 				=	os;
 	machinedata.drbds 			=	drbd;
 	machinedata.vms				=	vms;
+	machinedata.foldersgroup 	=	foldersgroup;
 	
 	machinedata.devices 		=	[];
 	for(var i in devs)	{
