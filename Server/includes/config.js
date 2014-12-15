@@ -21,7 +21,7 @@ var config = {
 		"diskPercentCritical"		: 5,
 		"diskPercentWarning" 		: 20,
 		"diskSmartOK"				: ["PASSED"],
-		"diskSmartProblem"			: ["FAIL"]
+		"diskSmartProblem"			: ["FAIL","UNKNOWN!"]
 	},
 	"webserver"			: 	{
 		"httpport"		: 82,
