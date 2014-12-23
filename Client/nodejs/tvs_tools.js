@@ -458,6 +458,8 @@ exports.GetVBoxMachines  =   function()  {
     var user = this.GetVBoxUser();
     if(user !== undefined && user !== "")	{
 	    var list = ExecuteShell("sudo su "+user+" -c \"VBoxManage list vms\"").split("\n");
+	    if(list.length > 0 && (list[0].search("vboxdrv") != -1))
+	    	  return machines;
 	    for(var i in list)	{
 	        if(list[i].trim() != "")   {
 	            var machinename =   regexname.exec(list[i])[1].replace("\"","").replace("\"","").trim();
@@ -571,7 +573,7 @@ exports.GetKVMNodeArch	=	function()	{
  **/
 exports.GetKVMVms	=	function()	{
 	try{
-		var data = ExecuteShell("virsh list --all | tail -n +3 | awk '{print $2}'").split("\n");
+		var data = ExecuteShell("LC_ALL=C virsh list --all | tail -n +3 | awk '{print $2}'").split("\n");
 		var vms = [];
 		for(var i in data)	{
 			if(data[i].trim() != "")	{
@@ -589,7 +591,7 @@ exports.GetKVMVms	=	function()	{
  * Gets the current KVM Node VirtualMachine Information
  **/
 exports.GetKVMVMInfo	=	function(vmname)	{
-	var data = ExecuteShell("virsh dominfo \""+vmname+"\"").split("\n");	
+	var data = ExecuteShell("LC_ALL=C virsh dominfo \""+vmname+"\"").split("\n");	
 	var mdata = {};
 	var arch = this.GetKVMNodeArch();
 	for(var i in data)	{
