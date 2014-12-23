@@ -615,7 +615,7 @@ exports.GetKVMACList	=	function()	{
  		try {
 	 		var mdata = machines[i];
 	 		var status = -1;
-	 		if(mdata["State"].indexOf("stopped") > -1 || mdata["State"].indexOf("defined") > -1)
+	 		if(mdata["State"].indexOf("stopped") > -1 || mdata["State"].indexOf("shut off") > -1 || mdata["State"].indexOf("defined") > -1)
 	 			status = 0;
 	 		else	if(mdata["State"].indexOf("running") > -1)
 	 			status = 1;
