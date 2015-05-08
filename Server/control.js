@@ -71,7 +71,7 @@ var control = function(database, app, config)	{
 
 control.prototype._SlackFunc			=	function(message, cb)	{
 	if(this.config.slack !== undefined)
-		SendNotification(this.slack.url, {
+		SendNotification(this.config.slack.url, {
 			"channel"	: this.config.slack.channel !== undefined ? this.config.slack.channel : "#general", 
 			"username"	: "AliveControl", 
 			"text"		: message, 
@@ -221,7 +221,7 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 				    to        : mdata.owneruuid,
 				    solved    : false
 				});
-				_this._SlackFunc("Espaço em disco insuficiente de "+data.mountpoint+" em "+mdata.name+" ("+data2.free+" free from "+data2.size")");
+				_this._SlackFunc("Espaço em disco insuficiente de *"+data.mountpoint+"* em *"+mdata.name+"* (_"+data2.free+"_ free from _"+data2.size+")_");
 				_this._SendReport(report, _this.db.Warnings);
 			}else if(level == 2)	{	//	Problem
 				var free = toNotationUnit(data.free, 2);
@@ -249,7 +249,7 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 				    to        : mdata.owneruuid,
 				    solved    : false
 				});
-				_this._SlackFunc("Espaço em disco insuficiente de "+data.mountpoint+" em "+mdata.name+" ("+data2.free+" free from "+data2.size")");
+				_this._SlackFunc("Espaço em disco insuficiente de *"+data.mountpoint+"* em *"+mdata.name+"* (_"+data2.free+"_ free from _"+data2.size+")_");
 				_this._SendReport(report, _this.db.Problems);
 			}
 		}else{
@@ -272,7 +272,7 @@ control.prototype._DoSMARTReport	=	function(sdata, mdata)	{
 	    to        : mdata.owneruuid,
 	    solved    : false
 	});
-	_this._SlackFunc("O disco "+sdata.device+" em "+mdata.name+" está falhando!");
+	_this._SlackFunc("O disco *"+sdata.device+"* em *"+mdata.name+"* está falhando!");
 	_this._SendReport(report, _this.db.Problems);
 }
 
