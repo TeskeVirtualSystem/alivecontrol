@@ -31,6 +31,12 @@ var config = {
 		"httpskey"		: "ssl/server.key",
 		//"httpscabundle"	: "cabundle.pem" 	//	If needed
 	}, 
+	/*
+	"slack"				: 	{
+		"url"			: "SLACK URL",
+		"channel"		: "#general",  
+	}, 
+	*/
 };
 
 exports.cfg = config;
