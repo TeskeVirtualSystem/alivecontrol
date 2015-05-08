@@ -69,11 +69,11 @@ var control = function(database, app, config)	{
 	this._CheckSMART();
 }
 
-control.prototype._SlackFunc			=	function(message, cb)	{
+control.prototype._SlackFunc			=	function(message, username, cb)	{
 	if(this.config.slack !== undefined)
 		SendNotification(this.config.slack.url, {
 			"channel"	: this.config.slack.channel !== undefined ? this.config.slack.channel : "#general", 
-			"username"	: "AliveControl", 
+			"username"	: "TVSAC-"+username, 
 			"text"		: message, 
 			"icon_emoji": ":rocket:"
 		}, cb);
@@ -103,10 +103,11 @@ control.prototype._CheckAlive			=	function()	{
 		}else{
 			var mc = 0;
 			for(var i in data)	{
-				if(Date.now() - data[i].lastupdate > Timings.MachineDead)	{
+				if(Date.now() - data[i].lastupdate > Timings.MachineDead && data[i].current_status != 0)	{
 					data[i].current_status = 0;
 					data[i].save();
 					mc++;
+					_this._SlackFunc("I'm offline :scream:", data[i].name);
 				}
 			}
 			console.log(mc+" machines are dead.");
@@ -221,7 +222,7 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 				    to        : mdata.owneruuid,
 				    solved    : false
 				});
-				_this._SlackFunc("Espaço em disco insuficiente de *"+data.mountpoint+"* em *"+mdata.name+"* (_"+data2.free+"_ free from _"+data2.size+")_");
+				_this._SlackFunc("Meu disco *"+data.mountpoint+"* está com espaço insuficiente :pensive: (_"+data2.free+"_ free from _"+data2.size+")_", mdata.name);
 				_this._SendReport(report, _this.db.Warnings);
 			}else if(level == 2)	{	//	Problem
 				var free = toNotationUnit(data.free, 2);
@@ -249,7 +250,7 @@ control.prototype._DoDiskSpaceReport	=	function(data, level)	{
 				    to        : mdata.owneruuid,
 				    solved    : false
 				});
-				_this._SlackFunc("Espaço em disco insuficiente de *"+data.mountpoint+"* em *"+mdata.name+"* (_"+data2.free+"_ free from _"+data2.size+")_");
+				_this._SlackFunc("Meu disco *"+data.mountpoint+"* está com espaço *crítico* :persevere: (_"+data2.free+"_ free from _"+data2.size+")_", mdata.name);
 				_this._SendReport(report, _this.db.Problems);
 			}
 		}else{
@@ -272,7 +273,7 @@ control.prototype._DoSMARTReport	=	function(sdata, mdata)	{
 	    to        : mdata.owneruuid,
 	    solved    : false
 	});
-	_this._SlackFunc("O disco *"+sdata.device+"* em *"+mdata.name+"* está falhando!");
+	_this._SlackFunc(":no_entry: Meu disco *"+sdata.device+"* está *falhando*! :finnadie:", mdata.name);
 	_this._SendReport(report, _this.db.Problems);
 }
 
