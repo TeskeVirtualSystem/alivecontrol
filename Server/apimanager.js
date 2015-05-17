@@ -1,11 +1,12 @@
 
 
-var apimanager = function(database, app, config)	{
+var apimanager = function(database, app, config, control)	{
 	console.log("Initializing API Manager");
 
 	this.db 	= database;
 	this.app 	= app;
 	this.config	= config;
+	this.control = control;
 	var _this 	= this;
 
 	app.get("/api/"						,	function(r, q) { _this.apibase(r,q); 			});
@@ -56,6 +57,8 @@ var apimanager = function(database, app, config)	{
 	app.post("/api/loadmvms"			,	function(r, q) { _this.loadmvms(r,q);			});
 	app.post("/api/loadmfoldergroups"	,	function(r, q) { _this.loadmfoldergroups(r,q);	});
 	app.post("/api/loadmmaildomains"	,	function(r, q) { _this.loadmmaildomains(r,q);	});
+
+	control.SlackAsMaster("API Ready");
 };
 
 apimanager.prototype.apibase		=	function(req, res)	{
@@ -785,6 +788,7 @@ apimanager.prototype.logout			=	function(req, res)	{
 
 apimanager.prototype.updatemachine	=	function(req, res)	{
 	var db = this.db;
+	var _this = this;
 	db.CheckSession(req.body.sessionkey, function(ok, data)	{
 		/** Checks if Session is Valid **/
 		if(ok)	{
@@ -802,6 +806,9 @@ apimanager.prototype.updatemachine	=	function(req, res)	{
 						if(data.length > 0)	{
 							/** If belongs to the user, lets just update **/
 							if(data[0].owneruuid == session.useruuid)	{
+								if (data[0].current_status == 0)
+									_this.control._SlackFunc("Estou de volta!", data[0].name);
+				
 								data[0].current_status = 1;
 								data[0].lastupdate = Date.now();
 								data[0].save();
@@ -812,18 +819,21 @@ apimanager.prototype.updatemachine	=	function(req, res)	{
 							else{
 							/** If not, we create a new machine  and ignore the Machine UUID **/
 								db.UpdateMachine(null, machinedata, function(uuid, data) {
+									_this.control._SlackFunc("Olá, eu sou novo por aqui!", machinedata.name);
 									res.json({"status":"OK","machineuuid":uuid});
 								});	
 							}	
 						/** If not, just create one and ignore the UUID **/		
 						}else
 							db.UpdateMachine(null, machinedata, function(uuid, data) {
+								_this.control._SlackFunc("Olá, eu sou novo por aqui!", machinedata.name);
 								res.json({"status":"OK","machineuuid":uuid});
 							});
 					});
 				/** If its new, just add it **/
 				}else
 					db.UpdateMachine(null, machinedata, function(uuid, data) {
+						_this.control._SlackFunc("Olá, eu sou novo por aqui!", machinedata.name);
 						res.json({"status":"OK","machineuuid":uuid});
 					});
 			}else

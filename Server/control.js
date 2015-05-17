@@ -48,8 +48,13 @@ function SendNotification(hookurl, payload, cb)	{
 				"payload"	: JSON.stringify(payload)
 			}
 		}, 
-		cb
+		cb !== undefined ? cb : SNERROR
 	);
+}
+
+function SNERROR(err, code, msg)	{
+	if(err)
+		console.error("Error ("+code+"): "+err+" - "+msg);
 }
 
 var control = function(database, app, config)	{
@@ -60,6 +65,7 @@ var control = function(database, app, config)	{
 	Timings 	=	config.internals.timings;
 	
 	console.log("Initializing Control Manager");
+	this.SlackAsMaster("Initializing TVSAC");
 
 	this._LoadTemplates();
 	this._CheckSystemUser();
@@ -67,6 +73,28 @@ var control = function(database, app, config)	{
 	this._CheckDiskSpaces();
 	this._CheckAlive();
 	this._CheckSMART();
+	this.SlackAsMaster("Started");
+}
+
+control.prototype.Shutdown	=	function()	{
+	this.SlackAsMaster("Estou sendo desligado!");
+	console.log("Closing application.");
+	var _this = this;
+	setTimeout(function() {
+		_this.app._htserv.close(function() {
+			console.log("Closed out remaining connections.");
+			process.exit();
+		});
+
+		setTimeout(function() {
+			console.log("Cannot gracefully close application. Aborting.");
+			process.exit();
+		}, 10*1000);
+	}, 2000);
+}
+
+control.prototype.SlackAsMaster 		=	function(message, cb)	{
+	this._SlackFunc(message, "Master");
 }
 
 control.prototype._SlackFunc			=	function(message, username, cb)	{
@@ -82,6 +110,7 @@ control.prototype._SlackFunc			=	function(message, username, cb)	{
 }
 
 control.prototype._LoadTemplates		=	function()	{
+	this._SlackFunc("Loading Templates", "Master");
 	console.log(TemplateList.length+" templates to load.");
 	for(var i in TemplateList)	{
 		var tplname = TemplateList[i];

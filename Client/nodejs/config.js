@@ -1,6 +1,7 @@
 
 exports.ServerURL		=	"https://localhost";
 exports.FolderGroups 	=	[
+	/*
 	{
 		"name"			: "Home",							//	FolderGroup Name
 		"description" 	: "Diretórios Home dos Usuários", 	//	FolderGroup Description
@@ -15,7 +16,7 @@ exports.FolderGroups 	=	[
 			"/root/",
 			"/home/lucas"
 		]
-	},
+	},*/
 ];
 /*
 exports.MailDomains 	=	{

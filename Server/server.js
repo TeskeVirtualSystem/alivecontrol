@@ -22,11 +22,22 @@ app.use(bodyParser());
 app.set('view engine', 'ejs');
 
 
-var api             =   new apiman.api(db,app, config);
-var page            =   new _page_.page(db,app,config);
 var control         =   new _control_.control(db,app,config);
+var api             =   new apiman.api(db,app, config, control);
+var page            =   new _page_.page(db,app,config);
+
+function doShutdown()	{
+	control.Shutdown();
+}
+
+// listen for TERM signal .e.g. kill 
+process.on ('SIGTERM', doShutdown);
+
+// listen for INT signal e.g. Ctrl-C
+process.on ('SIGINT', doShutdown); 
 
 httpserver.listen(config.webserver.httpport);
+app._htserv = httpserver;
 
 if(config.webserver.httpsenable)	{
 	var ca = [];

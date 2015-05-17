@@ -33,10 +33,10 @@ var config = {
 	}, 
 	/*
 	"slack"				: 	{
-		"url"			: "SLACK URL",
+		"url"			: "https://hooks.slack.com/services/KEY",
 		"channel"		: "#general",  
-	}, 
-	*/
+	},*/ 
+	
 };
 
 exports.cfg = config;
