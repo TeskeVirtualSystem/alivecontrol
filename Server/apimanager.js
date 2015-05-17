@@ -27,6 +27,7 @@ var apimanager = function(database, app, config, control)	{
 	app.post("/api/updatevms"			,	function(r, q) { _this.updatevms(r,q);  		});
 	app.post("/api/updatefoldergroups"	,	function(r, q) { _this.updatefoldergroups(r,q);	});
 	app.post("/api/updatemaildomains"	,	function(r, q) { _this.updatemaildomains(r,q);	});
+	app.post("/api/updatestate"			,	function(r, q) { _this.updatestate(r,q); 		});
 
 	app.post("/api/addmachineextra"		,	function(r, q) { _this.addmachineextra(r,q);  	});
 	app.post("/api/delmachineextra"		,	function(r, q) { _this.delmachineextra(r,q);  	});
@@ -451,6 +452,27 @@ apimanager.prototype.updatemaildomains =	function(req, res)	{
 						this.AddMailDomain(uuid, data.maildomains[i].domain, data.maildomains[i].name, data.maildomains[i].mailboxes);
 					res.json({"status":"OK"});
 				});
+			}
+		}
+	});
+};
+
+
+apimanager.prototype.updatestate	=	function(req, res)	{
+	var db = this.db;
+	var _this = this;
+	this._loadmachine(req, res, function(err, data)	{
+		if(!err)	{			
+			if(req.body.hasOwnProperty("mstatus"))	{
+				data.current_status = req.body.mstatus;
+				data.save();
+				if(req.body.mstatus == 0)
+					_this.control._SlackFunc("Estou sendo desligado!", data.name);
+				else
+					_this.control._SlackFunc("Estou de volta!", data.name);
+				res.json({"status":"OK"});
+			}else{
+				res.json({"status":"NOK","code":"NO_STATUS","error":"No status to update!"});
 			}
 		}
 	});

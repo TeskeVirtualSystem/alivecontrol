@@ -34,7 +34,7 @@ var config = {
 	/*
 	"slack"				: 	{
 		"url"			: "https://hooks.slack.com/services/KEY",
-		"channel"		: "#general",  
+		"channel"		: "testes",  
 	},*/ 
 	
 };

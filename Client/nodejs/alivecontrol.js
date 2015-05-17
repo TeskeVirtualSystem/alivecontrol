@@ -140,5 +140,15 @@ alivecontrol.prototype.vms				=	function(machineuuid, vms, sessionkey, cb)			{
 	});
 }
 
+alivecontrol.prototype.updatestate	=	function(machineuuid, status, sessionkey, cb)		{
+	this._CallAPI("updatestate",  { form: { sessionkey: sessionkey, mstatus : status, machineuuid : machineuuid  } }, function(ok, body, error)	{
+		if(ok)	{
+            var data = JSON.parse(body);
+			cb(data.status == "OK");
+		}else
+			cb(false);
+	});
+}
+
 exports.alivecontrol = alivecontrol;
 
