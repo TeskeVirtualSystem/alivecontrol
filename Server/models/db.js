@@ -390,6 +390,12 @@ database.prototype.AddDisk	=	function(machineuuid, family, capacity, ontime, pow
 				}
 				ontime = Math.round(realontime*100) / 100.0;
 			}
+			if (readerrors.indexOf("/") > -1)
+				readerrors = readerrors.split("/")[0]
+
+			if (realocatedsectors == "")
+				realocatedsectors = 0;
+
 			var disk = new _this.Disks({
 				machineuuid			: machineuuid,
 				family				: family,
