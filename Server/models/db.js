@@ -376,6 +376,20 @@ database.prototype.AddDisk	=	function(machineuuid, family, capacity, ontime, pow
 	var _this = this;
 	this.CheckMachineUUID(machineuuid, function(ok)	{
 		if(ok)	{
+			if (ontime.indexOf("h+") > -1) {
+				ontime = ontime.split("+");
+				var realontime = 0;
+				for(var i in ontime) {
+					var ontime_n = parseFloat(ontime[i]);
+					if (ontime[i].indexOf("h") > -1)
+						realontime += ontime_n;
+					if (ontime[i].indexOf("m") > -1)
+						realontime += ontime_n / 60;
+					if (ontime[i].indexOf("s") > -1)
+						realontime += ontime_n / 3600;
+				}
+				ontime = Math.round(realontime*100) / 100.0;
+			}
 			var disk = new _this.Disks({
 				machineuuid			: machineuuid,
 				family				: family,
