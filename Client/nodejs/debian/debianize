@@ -1,0 +1,53 @@
+#!/bin/bash
+
+PKG_NAME="alivecontrol-client"
+
+REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../"
+DIR="/tmp/package/${PKG_NAME}"
+ETC="${DIR}/etc/"
+ALIVEETC="${ETC}/alivecontrol/"
+INITD="${ETC}/init.d"
+APPDIR="${DIR}/usr/local/alivecontrol/"
+CROND="${ETC}/cron.d"
+DEBIAN="${DIR}/DEBIAN"
+
+rm -rf ${DIR}
+
+mkdir -p ${DIR}
+mkdir -p ${DEBIAN}
+mkdir -p ${INITD}
+mkdir -p ${APPDIR}
+mkdir -p ${ALIVEETC}
+mkdir -p ${CROND}
+
+G_REV=`git rev-parse --short=8 HEAD`
+DATE=`date +"%Y%m%d%H%M%S"`
+VERSION="1-git+${DATE}.${G_REV}~$1"
+
+cat <<- EOF > ${DEBIAN}/control
+Package: ${PKG_NAME}
+Priority: optional
+Maintainer: Lucas Teske <lucas@teske.net.br>
+Architecture: all
+Description: Alive Control NodeJS Client Application
+Version: ${VERSION}
+Depends: nodejs (>= 0.9), npm (>= 1.3), smartmontools (>= 6.0), debconf (>= 0.2.26)
+EOF
+
+cp postinst ${DEBIAN}
+cp postrm ${DEBIAN}
+cp conffiles ${DEBIAN}
+cp alivecontrol ${CROND}/
+#git --no-pager log -4 >> ${DEBIAN}/changelog
+
+DEB_PKG="${PKG_NAME}_${VERSION}_all.deb"
+
+cp -rf ${REPO_DIR}/* ${APPDIR}
+
+rm -fr ${APPDIR}/node_modules
+rm -fr ${APPDIR}/data.json
+mv ${APPDIR}/config.js ${ALIVEETC}
+
+dpkg-deb -b ${DIR} ./${DEB_PKG}
+
+echo ${DEB_PKG}
