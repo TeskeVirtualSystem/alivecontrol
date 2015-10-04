@@ -1,0 +1,17 @@
+{
+  "name": "alivecontrol-client",
+  "description": "Alive Control NodeJS Client Application",
+  "version": "1.0.1",
+  "author": "Lucas Teske <lucas@teske.net.br>",
+  "dependencies": {
+    "exec-sync" : "*",
+    "prompt"    : "*",
+    "request"   : "*"
+  }, 
+  "license": "GPLv3",
+  "repository" :
+  { 
+    "type" : "git", 
+    "url" : "https://github.com/TeskeVirtualSystem/alivecontrol.git"
+  }
+}

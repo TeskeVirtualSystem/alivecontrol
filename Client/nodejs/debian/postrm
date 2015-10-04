@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    remove)
+        # do some magic
+        rm -fr /usr/local/alivecontrol/node_modules/
+        exit 0
+        ;;
+
+    upgrade)
+        # Done before upgrading a package
+        exit 0
+        ;;
+    purge)
+        exit 0;
+        ;;
+
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 0
+        ;;
+esac
+
+exit 0
