@@ -15,9 +15,9 @@ var api   =   new av.alivecontrol(config.ServerURL);
 var dataConfig;
 var AllOKToRun = false;
 
-console.log("Trying to find dataConfig file (data.json)");
+console.log("Trying to find dataConfig file (/etc/alivecontrol/data.json)");
 try{
-  dataConfig  =   fs.readFileSync("data.json", {"encoding":"utf8"});
+  dataConfig  = fs.readFileSync("/etc/alivecontrol/data.json", {"encoding":"utf8"});
   dataConfig  = JSON.parse(dataConfig);
   if(!dataConfig.hasOwnProperty("Key"))
     throw("No Session Key");
@@ -95,11 +95,11 @@ function DoUpdate() {
   machinedata.total_memory  = mem.total;
   machinedata.free_memory   = mem.free;
   machinedata.total_swap    = mem.swaptotal;
-  machinedata.free_swap   = mem.swapfree;
-  machinedata.uptime      = uptime;
-  machinedata.os        = os;
-  machinedata.drbds       = drbd;
-  machinedata.vms       = vms;
+  machinedata.free_swap     = mem.swapfree;
+  machinedata.uptime        = uptime;
+  machinedata.os            = os;
+  machinedata.drbds         = drbd;
+  machinedata.vms           = vms;
   machinedata.foldersgroup  = foldersgroup;
   
   machinedata.devices     = [];
@@ -113,12 +113,12 @@ function DoUpdate() {
   machinedata.ethernets   = [];
   for(var i in nets)  {
     machinedata.ethernets.push({
-      "iface"     : nets[i].Device, 
-      "address"   : nets[i].IP,
+      "iface"       : nets[i].Device, 
+      "address"     : nets[i].IP,
       "broadcast"   : nets[i].Broadcast,
-      "netmask"   : nets[i].NetMask,
-      "rxbytes"   : nets[i].RX,
-      "txbytes"   : nets[i].TX
+      "netmask"     : nets[i].NetMask,
+      "rxbytes"     : nets[i].RX,
+      "txbytes"     : nets[i].TX
     });
   }
 
@@ -126,10 +126,10 @@ function DoUpdate() {
   for(var i in disksuse)  {
     machinedata.mounts.push({
       "mountpoint"  : disksuse[i].MountPoint, 
-      "device"    : disksuse[i].Device,
-      "used"      : disksuse[i].Used,
-      "free"      : disksuse[i].Free,
-      "size"      : disksuse[i].Size,
+      "device"      : disksuse[i].Device,
+      "used"        : disksuse[i].Used,
+      "free"        : disksuse[i].Free,
+      "size"        : disksuse[i].Size,
     });
   }
 
@@ -137,14 +137,14 @@ function DoUpdate() {
   for(var i in smart) {
     var sm = smart[i];
     machinedata.disks.push({
-      "family"      : (sm.ModelFamily.trim()=="")?sm.DeviceModel:sm.ModelFamily,
-      "capacity"      : sm.UserCapacity,
-      "ontime"      : sm.PowerOnHours,
-      "powercycles"   : sm.PowerCycleCount,
-      "readerrors"    : sm.ReadErrorRate,
+      "family"            : (sm.ModelFamily.trim()=="")?sm.DeviceModel:sm.ModelFamily,
+      "capacity"          : sm.UserCapacity,
+      "ontime"            : sm.PowerOnHours,
+      "powercycles"       : sm.PowerCycleCount,
+      "readerrors"        : sm.ReadErrorRate,
       "realocatedsectors" : sm.ReallocatedSector,
-      "diskstatus"    : sm.DiskHealth,
-      "device"      : sm.Device
+      "diskstatus"        : sm.DiskHealth,
+      "device"            : sm.Device
     });
   }
 
@@ -153,7 +153,7 @@ function DoUpdate() {
     if(ok)    {
       console.log("Machine Updated successfully! (",machineuuid,")");
       if(!dataConfig.hasOwnProperty("MachineUUID")) {
-        console.log("This machine doesnt have an UUID. Saving "+machineuuid+" to data.json");
+        console.log("This machine doesnt have an UUID. Saving "+machineuuid+" to /etc/alivecontrol/data.json");
         dataConfig.MachineUUID = machineuuid;
         SaveDataConfig();
         console.log("Finished");
@@ -173,7 +173,7 @@ function CheckOK()  {
 
 function SaveDataConfig() {
   var d = JSON.stringify(dataConfig);
-  fs.writeFileSync("data.json", d, {"encoding":"utf8"});
+  fs.writeFileSync("/etc/alivecontrol/data.json", d, {"encoding":"utf8"});
 }
 
 
